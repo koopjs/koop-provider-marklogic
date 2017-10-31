@@ -1,0 +1,19 @@
+{
+  "port" : @KOOP_PORT@,
+  "ssl": {
+    "enabled" : @KOOP_SSL_ENABLED@,
+    "port" : @KOOP_SSL_PORT@,
+    "cert" : "@KOOP_SSL_CERT@",
+    "key" : "@KOOP_SSL_KEY@"
+  },
+
+  "marklogic": {
+    "connection": {
+      "host":     "@ML_HOST@",
+      "port":     @ML_PORT@,
+      "user":     "@ML_USER@",
+      "password": "@ML_PASSWORD@",
+      "authType": "DIGEST"
+    }
+  }
+}

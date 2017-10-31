@@ -1,0 +1,87 @@
+{
+  "info" : {
+    "name" : "GDeltGKG",
+    "description" : "GDelt GKG data. Georesolution values are 1=country, 2=US State / non-US ADM1, 3=city/landmark."
+  },
+
+  "layers" : [
+    {
+      "id": 0,
+      "name" : "GKG level 1",
+      "decription": "GDelt GKG article data at geores 1 (country)",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "view" : "Article",
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 1 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      }
+    },
+    {
+      "id": 1,
+      "name" : "GKG level 2",
+      "decription": "GDelt GKG article data at geores 2 (US State / non-US ADM1)",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "view" : "Article",
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 2 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name" : "GKG level 3",
+      "decription": "GDelt GKG article data at geores 3 (city/landmark)",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "view" : "Article",
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 3 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      }
+    }
+  ]
+}

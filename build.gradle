@@ -1,0 +1,206 @@
+/*
+ * In order to use ml-gradle, it must be applied. This occurs after the two above blocks for overriding properties so
+ * that those blocks can override properties before ml-gradle initializes itself.
+ */
+plugins {
+  id 'net.saliman.properties' version '1.4.6'
+
+  id "com.marklogic.ml-gradle" version "2.9.0"
+
+  id "com.moowork.node" version "1.1.1"
+
+  // The following plugins are optional
+
+  // The Java plugin is used to compile and run JUnit tests
+  id "java"
+
+  // These plugins are used to generate IDE files
+  id "eclipse"
+  id "idea"
+}
+
+/*
+ * This lists the repositories for finding project dependencies (which differ from buildscript dependencies - buildscript
+ * dependencies are not included in project artifacts that are built). These repositories are needed to satisfy the
+ * dependencies expressed below.
+ */
+repositories {
+  jcenter()
+
+	// Needed for mlcp dependencies
+	maven { url "https://developer.marklogic.com/maven2/" }
+
+	// Needed for hadoop dependencies for mlcp
+	maven { url "http://repository.cloudera.com/artifactory/cloudera-repos/" }
+}
+
+configurations {
+  mlcp {
+      resolutionStrategy {
+        force "xml-apis:xml-apis:1.4.01"
+      }
+    }
+}
+
+dependencies {
+  mlcp "com.marklogic:mlcp:8.0.6.3"
+
+	/**
+	 * If you need to import delimited text, be sure to include this dependency as well.
+	 */
+	mlcp "org.apache.commons:commons-csv:1.2"
+}
+
+ext {
+  mlAppConfig {
+    if (project.hasProperty("mlSchemasDatabaseName")) {
+      schemasDatabaseName = project.property("mlSchemasDatabaseName")
+    }
+
+    println "content database: " + contentDatabaseName
+    println "schemas database: " + schemasDatabaseName
+  }
+
+}
+
+task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'installKoop']) {
+  // make sure these folders exist so we can add service descriptors and templates to them
+  doFirst {
+    project.file('config').mkdirs()
+    project.file('config/feature-services').mkdirs()
+    project.file('config/templates').mkdirs()
+  }
+}
+
+task installServices(dependsOn: ['installConnector', 'loadFeatureServices', 'loadSchemas'])
+
+task buildPlugin(type: Exec) {
+  doFirst {
+    copy {
+      from 'src/main/ml-native-plugins/variance'
+      into 'build/variancenativeplugin'
+    }
+  }
+
+  workingDir 'build/variancenativeplugin'
+  commandLine 'make'
+}
+
+task installPlugin(dependsOn: [ 'buildPlugin', 'mlDeploy' ], type: com.marklogic.gradle.task.MarkLogicTask) {
+  doLast {
+    // load binary to the modules database
+    def config = getAppConfig()
+    def client = com.marklogic.client.DatabaseClientFactory.newClient(
+      config.getHost(),
+      config.getRestPort(),
+      config.getModulesDatabaseName(),
+      config.getRestAdminUsername(),
+      config.getRestAdminPassword(),
+      config.getRestAuthentication(),
+      config.getRestSslContext(),
+      config.getRestSslHostnameVerifier()
+    )
+
+    def pluginZip = "build/variancenativeplugin/varianceplugin.zip"
+    def pluginUri = "/native-plugins/varianceplugin.zip"
+
+    def docMgr = client.newBinaryDocumentManager()
+    docMgr.write(
+      pluginUri,
+      new com.marklogic.client.io.FileHandle().with(new File(pluginZip))
+    )
+
+    // eval xquery to install the plugin
+    def query = '''
+      xquery version "1.0-ml";
+      import module namespace plugin = "http://marklogic.com/extension/plugin" at "MarkLogic/plugin/plugin.xqy";
+      declare variable $plugin-uri as xs:string external;
+      plugin:install-from-zip("native", fn:doc($plugin-uri)/node())
+    '''
+    def result = client.newServerEval()
+      .xquery(query)
+      .addVariable("plugin-uri", pluginUri)
+      .evalAs(String.class)
+
+    println "Installed " + result + " native plugin(s)"
+  }
+}
+
+node {
+  // Base URL for fetching node distributions (change if you have a mirror).
+  distBaseUrl = 'https://nodejs.org/dist'
+
+  // If true, it will download node using above parameters.
+  // If false, it will try to use globally installed node.
+  download = true
+
+  // Set the work directory for unpacking node
+  workDir = file("${project.buildDir}/koop/nodejs")
+
+  // Set the work directory for NPM
+  npmWorkDir = file("${project.buildDir}/koop/npm")
+}
+
+task buildKoop(type: Copy, dependsOn: []) {
+  from("src/koop") {
+    include "**"
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+      KOOP_PORT : project.property("koopPort"),
+      KOOP_SSL_ENABLED : project.property("koopSSLEnabled"),
+      KOOP_SSL_PORT : project.property("koopSSLPort"),
+      KOOP_SSL_CERT : project.property("koopSSLCert"),
+      KOOP_SSL_KEY : project.property("koopSSLKey"),
+      ML_HOST : mlAppConfig.host,
+      ML_PORT : mlAppConfig.restPort.toString(),
+      ML_USER : mlAppConfig.restAdminUsername,
+      ML_PASSWORD : mlAppConfig.restAdminPassword
+    ])
+  }
+
+  into "build/koop"
+}
+
+task installKoop(type: NpmTask, dependsOn: [ 'buildKoop' ]) {
+  args = ['install']
+  workingDir = file('build/koop')
+}
+
+task runKoop(type: NodeTask) {
+  script = file('build/koop/server.js')
+  execOverrides {
+    it.workingDir = 'build/koop'
+    //it.standardOutput = new FileOutputStream('logs/my.log')
+  }
+}
+
+task loadFeatureServices(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  port = mlAppConfig.restPort
+  database = mlAppConfig.contentDatabaseName
+  input_file_path = "config/feature-services"
+  input_file_type = "documents"
+  output_collections = "http://marklogic.com/feature-services"
+  output_permissions = "rest-reader,read,rest-writer,update"
+  output_uri_replace = ".*/config/,'/'"
+}
+
+task loadSchemas(type: com.marklogic.gradle.task.schemas.LoadSchemasTask, dependsOn: ['mlDeploy']) {
+  ext {
+    mlAppConfig {
+      schemasPath = 'config/templates'
+    }
+  }
+}
+
+task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  port = mlAppConfig.restPort
+  database = mlAppConfig.contentDatabaseName
+  input_file_path = "example/data/gkg_geojson"
+  input_compressed = "true"
+  output_collections = "example-gkg"
+  output_permissions = "rest-reader,read,rest-writer,update"
+  output_uri_replace = ".*/example/data/,'/'"
+}

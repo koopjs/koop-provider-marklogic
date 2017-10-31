@@ -1,0 +1,132 @@
+{
+  "_args": [
+    [
+      "flora-errors@^0.7.0",
+      "/Users/jkerr/dev/projects/esri/temp/node_modules/flora-sql-parser"
+    ]
+  ],
+  "_from": "flora-errors@>=0.7.0 <0.8.0",
+  "_id": "flora-errors@0.7.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/flora-errors",
+  "_nodeVersion": "6.9.2",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/flora-errors-0.7.0.tgz_1483447631992_0.2895527146756649"
+  },
+  "_npmUser": {
+    "email": "nico@kaiser.me",
+    "name": "nicokaiser"
+  },
+  "_npmVersion": "3.10.9",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "flora-errors",
+    "raw": "flora-errors@^0.7.0",
+    "rawSpec": "^0.7.0",
+    "scope": null,
+    "spec": ">=0.7.0 <0.8.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/flora-sql-parser"
+  ],
+  "_resolved": "https://registry.npmjs.org/flora-errors/-/flora-errors-0.7.0.tgz",
+  "_shasum": "808a79c0be82ae9a9ab4467fce0212a2e394e9b7",
+  "_shrinkwrap": null,
+  "_spec": "flora-errors@^0.7.0",
+  "_where": "/Users/jkerr/dev/projects/esri/temp/node_modules/flora-sql-parser",
+  "author": {
+    "email": "it@boerse-go.de",
+    "name": "BörseGo AG"
+  },
+  "bugs": {
+    "url": "https://github.com/godmodelabs/flora-errors/issues"
+  },
+  "contributors": [
+    {
+      "email": "mark.plomer@boerse-go.de",
+      "name": "Mark Plomer"
+    },
+    {
+      "email": "nico.kaiser@boerse-go.de",
+      "name": "Nico Kaiser"
+    },
+    {
+      "email": "marco.baumgartl@boerse-go.de",
+      "name": "Marco Baumgartl"
+    }
+  ],
+  "dependencies": {
+    "has": "^1.0.1"
+  },
+  "description": "Error definitions for Flora",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "eslint": "^3.11.0",
+    "eslint-config-airbnb-base": "^11.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-eslint": "^18.00",
+    "grunt-mocha-istanbul": "^5.0.1",
+    "grunt-mocha-test": "^0.13.2",
+    "istanbul": "^0.4.2",
+    "load-grunt-tasks": "^3.4.0",
+    "mocha": "^3.0.0",
+    "mocha-bamboo-reporter": "^1.1.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "808a79c0be82ae9a9ab4467fce0212a2e394e9b7",
+    "tarball": "https://registry.npmjs.org/flora-errors/-/flora-errors-0.7.0.tgz"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "gitHead": "badfae847a5e7e2f17ac3da23527001b1b2438d3",
+  "homepage": "https://github.com/godmodelabs/flora-errors",
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "email": "marco.baumgartl@boerse-go.de",
+      "name": "mbaumgartl"
+    },
+    {
+      "email": "nico@kaiser.me",
+      "name": "nicokaiser"
+    },
+    {
+      "email": "not-implemented@mark-plomer.de",
+      "name": "not-implemented"
+    },
+    {
+      "email": "riplexus@gmail.com",
+      "name": "riplexus"
+    }
+  ],
+  "name": "flora-errors",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/godmodelabs/flora-errors.git"
+  },
+  "scripts": {
+    "lint": "eslint index.js",
+    "test": "grunt test"
+  },
+  "version": "0.7.0",
+  "warnings": [
+    {
+      "code": "ENOTSUP",
+      "pkgid": "flora-errors@0.7.0",
+      "required": {
+        "node": ">=6"
+      }
+    }
+  ]
+}

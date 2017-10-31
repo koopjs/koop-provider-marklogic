@@ -1,0 +1,9 @@
+<metadata>
+	<title>KoopProvider</title>
+	<description>
+		<div>
+			REST extension that implements the Koop provider "getData()" function
+		</div>
+	</description>
+	<method name="POST"/>
+</metadata>

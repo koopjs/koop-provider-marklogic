@@ -1,0 +1,143 @@
+{
+  "_args": [
+    [
+      "flora-sql-parser",
+      "/Users/jkerr/dev/projects/esri/temp"
+    ]
+  ],
+  "_from": "flora-sql-parser@latest",
+  "_id": "flora-sql-parser@0.7.1",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/flora-sql-parser",
+  "_nodeVersion": "7.5.0",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/flora-sql-parser-0.7.1.tgz_1487769965353_0.22727064695209265"
+  },
+  "_npmUser": {
+    "email": "marco.baumgartl@boerse-go.de",
+    "name": "mbaumgartl"
+  },
+  "_npmVersion": "4.1.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "flora-sql-parser",
+    "raw": "flora-sql-parser",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/flora-sql-parser/-/flora-sql-parser-0.7.1.tgz",
+  "_shasum": "b9b7d4412063b0b2291689d13d1748c1ee0bb4ef",
+  "_shrinkwrap": null,
+  "_spec": "flora-sql-parser",
+  "_where": "/Users/jkerr/dev/projects/esri/temp",
+  "author": {
+    "email": "it@boerse-go.de",
+    "name": "BörseGo AG"
+  },
+  "bugs": {
+    "url": "https://github.com/godmodelabs/flora-sql-parser/issues"
+  },
+  "contributors": [
+    {
+      "email": "marco.baumgartl@boerse-go.de",
+      "name": "Marco Baumgartl"
+    },
+    {
+      "email": "nico.kaiser@boerse-go.de",
+      "name": "Nico Kaiser"
+    },
+    {
+      "email": "mark.plomer@boerse-go.de",
+      "name": "Mark Plomer"
+    }
+  ],
+  "dependencies": {
+    "flora-errors": "^0.7.0",
+    "has": "^1.0.1",
+    "pegjs": "^0.10.0"
+  },
+  "description": "Parse SQL (select) statements into abstract syntax tree (AST) and convert ASTs back to SQL.",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "eslint": "^3.11.1",
+    "eslint-config-airbnb-base": "^11.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-eslint": "^19.0.0",
+    "grunt-exec": "^1.0.0",
+    "grunt-mocha-istanbul": "^5.0.1",
+    "grunt-mocha-test": "^0.13.2",
+    "istanbul": "^0.4.2",
+    "load-grunt-tasks": "^3.4.0",
+    "mocha": "^3.0.0",
+    "mocha-bamboo-reporter": "^1.1.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "b9b7d4412063b0b2291689d13d1748c1ee0bb4ef",
+    "tarball": "https://registry.npmjs.org/flora-sql-parser/-/flora-sql-parser-0.7.1.tgz"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "gitHead": "6b093954e4e36f0075a5ebfc9c31a0240c4c2119",
+  "homepage": "https://github.com/godmodelabs/flora-sql-parser",
+  "keywords": [
+    "sql",
+    "parser",
+    "ast"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "email": "nico@kaiser.me",
+      "name": "nicokaiser"
+    },
+    {
+      "email": "not-implemented@mark-plomer.de",
+      "name": "not-implemented"
+    },
+    {
+      "email": "riplexus@gmail.com",
+      "name": "riplexus"
+    }
+  ],
+  "name": "flora-sql-parser",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/godmodelabs/flora-sql-parser.git"
+  },
+  "scripts": {
+    "install": "pegjs -o pegjs-parser.js sql.pegjs",
+    "lint": "grunt lint",
+    "test": "grunt test"
+  },
+  "version": "0.7.1",
+  "warnings": [
+    {
+      "code": "ENOTSUP",
+      "pkgid": "flora-sql-parser@0.7.1",
+      "required": {
+        "node": ">=6"
+      }
+    },
+    {
+      "code": "ENOTSUP",
+      "pkgid": "flora-sql-parser@0.7.1",
+      "required": {
+        "node": ">=6"
+      }
+    }
+  ]
+}

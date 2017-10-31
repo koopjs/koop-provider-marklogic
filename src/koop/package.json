@@ -1,0 +1,37 @@
+{
+  "name": "@koopjs/provider-marklogic",
+  "version": "0.0.1",
+  "description": "A Marklogic provider for Koop",
+  "main": "index.js",
+  "directories": {
+  },
+  "scripts": {
+    "start": "node server.js",
+  },
+  "dependencies": {
+    "config": "^1.25.1",
+    "express": "^4.15.3",
+    "koop": "^3.5.1",
+    "marklogic": "^2.0.2"
+  },
+  "author": "MarkLogic",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koopjs/koop-provider-marklogic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/koopjs/koop-provider-marklogic/issues"
+  },
+  "homepage": "https://github.com/koopjs/koop-provider-marklogic",
+  "keywords": [
+    "koop",
+    "marklogic",
+    "docs",
+    "nosql",
+    "esri"
+  ],
+  "devDependencies": {
+    "standard": "^9.0.2"
+  }
+}
