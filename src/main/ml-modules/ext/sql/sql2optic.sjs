@@ -91,6 +91,10 @@ function binaryExpression(expr) {
       const left = sql2optic(expr.left);
       return op.or(...sql2optic(expr.right).map(value => op.eq(left, value)));
     }
+    case "not in": {
+      const left = sql2optic(expr.left);
+      return op.not(op.or(...sql2optic(expr.right).map(value => op.eq(left, value))));
+    }
     case "between": {
       const column = sql2optic(expr.left);
       const nums = sql2optic(expr.right);
