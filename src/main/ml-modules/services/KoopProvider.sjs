@@ -168,7 +168,7 @@ function generateLayerDescriptor(serviceName, layerNumber) {
   if (layer) {
     return layer;
   } else {
-    throw "No layer number " + layerNumber + "found";
+    throw "No layer number " + layerNumber + " found";
   }
 }
 
@@ -235,7 +235,8 @@ function query(req) {
     },
     filtersApplied: {
       geometry: true, // true if a geometric filter has already been applied to the data
-      where: true // true if a sql-like where filter has already been applied to the data
+      where: true, // true if a sql-like where filter has already been applied to the data
+      offset: true
     }
   };
 
@@ -842,7 +843,7 @@ function getAggregateGroupByDef(stats) {
 function getAggregateStatDef(stat) {
   const statsType = stat.statisticType;
   const statsFieldName = stat.onStatisticField;
-  const statsOutFieldName = stat.outStatisticFieldName;
+  const statsOutFieldName = stat.outStatisticFieldName || stat.onStatisticField + "_" + statsType;
 
   //"statisticType": "<count | sum | min | max | avg | stddev | var>"
   switch (statsType.toLowerCase()) {
