@@ -1,5 +1,5 @@
 {
-  "user-name" : "esri-insights-writer",
-  "password" : "esri-insights-writer",
-  "role" : [ "esri-insights-writer" ]
+  "user-name" : "esri-connector-writer",
+  "password" : "esri-connector-writer",
+  "role" : [ "esri-connector-writer" ]
 }

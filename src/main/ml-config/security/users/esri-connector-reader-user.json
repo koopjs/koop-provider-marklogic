@@ -1,5 +1,5 @@
 {
-  "user-name" : "esri-insights-reader",
-  "password" : "esri-insights-reader",
-  "role" : [ "esri-insights-reader" ]
+  "user-name" : "esri-connector-reader",
+  "password" : "esri-connector-reader",
+  "role" : [ "esri-connector-reader" ]
 }
