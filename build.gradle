@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+       classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+    }
+}
+
 /*
  * In order to use ml-gradle, it must be applied. This occurs after the two above blocks for overriding properties so
  * that those blocks can override properties before ml-gradle initializes itself.
@@ -204,3 +210,36 @@ task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
   output_permissions = "rest-reader,read,rest-writer,update"
   output_uri_replace = ".*/example/data/,'/'"
 }
+
+import groovyx.net.http.HTTPBuilder
+import static groovyx.net.http.Method.POST
+import static groovyx.net.http.ContentType.JSON
+
+task testExampleService(type: com.marklogic.gradle.task.MarkLogicTask) {
+  doLast {
+    def config = getAppConfig()
+    def url = 'http://' + config.getHost() + ':' + config.getRestPort() + '/LATEST/resources/KoopProvider'
+
+    def http = new HTTPBuilder(url)
+    http.auth.basic config.getRestAdminUsername() , config.getRestAdminPassword()
+
+    def response = http.request( POST, JSON ) { req ->
+      body = [
+        params : [
+          id : "GDeltGKG",
+          layer : 0,
+          method : "query"
+        ],
+        query : [
+          resultRecordCount : 5,
+          outFields : "*"
+        ]
+      ]
+
+      response.success = { resp, json ->
+        println(json)
+      }
+    }
+  }
+}
+
