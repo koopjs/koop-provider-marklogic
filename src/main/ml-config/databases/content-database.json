@@ -16,5 +16,14 @@
       "range-value-positions": false,
       "invalid-values": "reject"
     }
+  ],
+  "geospatial-region-path-index": [
+    {
+      "path-expression": "\/envelope\/cts-region",
+      "coordinate-system": "wgs84",
+      "units": "miles",
+      "geohash-precision": 2,
+      "invalid-values": "reject"
+    }
   ]
 }
