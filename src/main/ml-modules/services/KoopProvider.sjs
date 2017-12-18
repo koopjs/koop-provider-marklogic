@@ -45,14 +45,7 @@ function getData(req) {
     if (req.params.layer >= 0) {
       return generateLayerDescriptor(req.params.id, req.params.layer);
     } else {
-      const sd = generateServiceDescriptor(req.params.id);
-
-      // check to see if this is a "/layers" call to just get the layer list
-      if (req.url && req.url.endsWith("/layers")) {
-        return sd.layers;
-      } else {
-        return sd;
-      }
+      return generateServiceDescriptor(req.params.id);
     }
   }
 
