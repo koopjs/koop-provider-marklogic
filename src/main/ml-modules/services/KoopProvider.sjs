@@ -249,6 +249,10 @@ function query(req) {
 
     geojson.count = Array.from(aggregate(req))[0].count;
 
+    // this is a workaround for https://github.com/koopjs/FeatureServer/issues/70
+    if (geojson.count === 0) {
+      geojson.features = [];
+    }
   } else if (req.query.outStatistics != null) {
 
     console.log("running aggregation");
