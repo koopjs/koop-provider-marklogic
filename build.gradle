@@ -55,6 +55,10 @@ dependencies {
 	 * If you need to import delimited text, be sure to include this dependency as well.
 	 */
 	mlcp "org.apache.commons:commons-csv:1.2"
+
+  testImplementation 'io.rest-assured:rest-assured:3.0.0'
+  testImplementation 'junit:junit:4.12'
+
 }
 
 ext {
