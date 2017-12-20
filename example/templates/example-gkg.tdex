@@ -25,6 +25,12 @@
       	      <val>urlpubtimedate</val>
       	      <nullable>true</nullable>
       	    </column>
+            <column>
+              <name>urlpubdate</name>
+              <scalar-type>date</scalar-type>
+              <val>xs:date(xs:dateTime(urlpubtimedate))</val>
+              <nullable>true</nullable>
+            </column>
       	    <column>
       	      <name>url</name>
       	      <scalar-type>string</scalar-type>
