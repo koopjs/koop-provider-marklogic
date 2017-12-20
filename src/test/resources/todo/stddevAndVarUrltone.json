@@ -1,0 +1,18 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "groupByFieldsForStatistics": null,
+    "outStatistics": "[
+      {\"statisticType\":\"count\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"count_urltone\"},
+      {\"statisticType\":\"min\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"min_urltone\"},
+      {\"statisticType\":\"max\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"max_urltone\"},
+      {\"statisticType\":\"avg\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"avg_urltone\"},
+      {\"statisticType\":\"stddev\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"stddev_urltone\"},
+      {\"statisticType\":\"var\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"var_urltone\"}
+    ]"
+  }
+}

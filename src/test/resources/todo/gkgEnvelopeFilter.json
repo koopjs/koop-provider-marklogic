@@ -1,0 +1,26 @@
+{
+	"params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+		"method" : "query"
+	},
+	"query" : {
+		//"resultRecordCount" : 10,
+		"returnCountOnly" : true,
+		"geometryType": "esriGeometryEnvelope",
+		"extension" : {
+	    "geometry":{
+	      "type":"Polygon",
+	      "coordinates":[
+	        [
+	          [50,36],
+	          [50,37],
+	          [49,37],
+	          [49,36],
+	          [50,36]
+	        ]
+	      ]
+	    }
+		}
+	}
+}

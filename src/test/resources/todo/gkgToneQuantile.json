@@ -1,0 +1,11 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method": "generateRenderer"
+  },
+  "query" : {
+    "classificationDef": "{\"type\":\"classBreaksDef\",\"classificationField\":\"urltone\",\"classificationMethod\":\"esriClassifyQuantile\",\"breakCount\":5}",
+    "where": "1=1"
+  }
+}

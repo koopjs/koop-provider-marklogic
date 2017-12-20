@@ -1,0 +1,16 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "groupByFieldsForStatistics": "domain",
+    "orderByFields": "average_urltone DESC",
+    "outStatistics": "[
+      {\"statisticType\":\"avg\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"average_urltone\"},
+      {\"statisticType\":\"min\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"minimum_urltone\"},
+      {\"statisticType\":\"max\",\"onStatisticField\":\"urltone\",\"outStatisticFieldName\":\"maximum_urltone\"}
+    ]"
+  }
+}

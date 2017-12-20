@@ -1,0 +1,13 @@
+{
+	"params" : {
+    "id" : "Restaurants",
+    "layer" : 0,
+		"method" : "query"
+	},
+	"query" : {
+		"where" : "City='FONTANA' OR City='YUCCA VALLEY'",
+		"groupByFieldsForStatistics": "City",
+		"orderByFields": "objectid_count DESC",
+		"outStatistics": "[ {\"statisticType\":\"count\",\"onStatisticField\":\"OBJECTID\",\"outStatisticFieldName\":\"objectid_count\"} ]"
+	}
+}

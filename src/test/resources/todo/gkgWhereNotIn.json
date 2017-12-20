@@ -1,0 +1,11 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "where": "OBJECTID NOT IN (1738, 3233, 38530, 35645)",
+    "returnCountOnly" : true
+  }
+}

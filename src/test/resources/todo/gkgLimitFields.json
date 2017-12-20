@@ -1,0 +1,13 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "resultRecordCount" : 20,
+    "orderByFields": "domain ASC",
+    "outFields" : "domain,name,OBJECTID",
+    "returnGeometry" : true
+  }
+}
