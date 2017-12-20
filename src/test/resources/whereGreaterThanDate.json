@@ -1,0 +1,11 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "returnCountOnly" : true,
+    "where": "urlpubdate > date '2017-10-20'"
+  }
+}

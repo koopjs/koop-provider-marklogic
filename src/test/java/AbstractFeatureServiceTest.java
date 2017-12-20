@@ -63,11 +63,7 @@ public abstract class AbstractFeatureServiceTest {
 
                 Object value = query.get(param);
                 if (value != null) {
-                    try {
-                        url += param + "=" + URLEncoder.encode(value.toString(), "UTF-8") + "&";
-                    } catch(UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
+                    url += param + "=" + value.toString() + "&";
                 }
             }
         }
