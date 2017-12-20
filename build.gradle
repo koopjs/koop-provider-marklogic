@@ -56,9 +56,10 @@ dependencies {
 	 */
 	mlcp "org.apache.commons:commons-csv:1.2"
 
-  testImplementation 'io.rest-assured:rest-assured:3.0.0'
+  testImplementation 'io.rest-assured:rest-assured:3.0.6'
   testImplementation 'junit:junit:4.12'
 
+  compile 'io.rest-assured:json-path:3.0.6'
 }
 
 ext {
@@ -71,6 +72,13 @@ ext {
     println "schemas database: " + schemasDatabaseName
   }
 
+}
+
+test {
+  systemProperty "featureService.host", mlHost
+  systemProperty "featureService.port", koopPort
+  systemProperty "featureService.user", mlUsername
+  systemProperty "featureService.password", mlPassword
 }
 
 task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'installKoop']) {

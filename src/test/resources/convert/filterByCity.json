@@ -1,0 +1,12 @@
+{
+	"params" : {
+    "id" : "Restaurants",
+    "layer" : 0,
+		"method" : "query"
+	},
+	"query" : {
+		"where" : "City='FONTANA' OR City='YUCCA VALLEY'",
+		"resultRecordCount" : 100,
+		"orderByFields": "City DESC"
+	}
+}

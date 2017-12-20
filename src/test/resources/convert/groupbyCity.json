@@ -1,0 +1,13 @@
+{
+	"params" : {
+    "id" : "Restaurants",
+    "layer" : 0,
+		"method" : "query"
+	},
+	"query" : {
+		"groupByFieldsForStatistics": "City",
+		"orderByFields": "objectid_count DESC",
+		"where": "1=1",
+		"outStatistics": "[ {\"statisticType\":\"count\",\"onStatisticField\":\"OBJECTID\",\"outStatisticFieldName\":\"objectid_count\"} ]"
+	}
+}

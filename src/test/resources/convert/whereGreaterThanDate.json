@@ -1,0 +1,11 @@
+{
+  "params" : {
+    "id" : "Restaurants",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "returnCountOnly" : true,
+    "where": "Inspection > date '2015-06-25'"
+  }
+}

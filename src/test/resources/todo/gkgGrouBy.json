@@ -1,0 +1,14 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "groupByFieldsForStatistics": "domain",
+    "orderByFields": "domain_count DESC",
+    "outStatistics": "[
+      {\"statisticType\":\"count\",\"outStatisticFieldName\":\"domain_count\"}
+    ]"
+  }
+}

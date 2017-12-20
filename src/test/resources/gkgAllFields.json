@@ -1,0 +1,11 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "resultRecordCount" : 5,
+    "outFields" : "*"
+  }
+}
