@@ -1,0 +1,11 @@
+{
+	"params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+		"method" : "query"
+	},
+	"query" : {
+    "where" : "domain='nikkei.com' OR domain='livetradingnews.com'",
+		"resultRecordCount" : 1000
+	}
+}

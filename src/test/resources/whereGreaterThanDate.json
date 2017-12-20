@@ -1,12 +1,11 @@
 {
   "params" : {
-    "id" : "Restaurants",
+    "id" : "GDeltGKG",
     "layer" : 0,
     "method" : "query"
   },
   "query" : {
     "returnCountOnly" : true,
-    "where": "(Inspection BETWEEN DATE '2016-12-02' AND DATE '2017-12-02')"
+    "where": "urlpubdate > date '2017-10-20'"
   }
 }
-

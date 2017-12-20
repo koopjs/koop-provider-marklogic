@@ -47,8 +47,8 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .log().ifValidationFails()
                 .body("id", is(0))
                 .body("name", is("GKG level 1"))
-                .body("fields.size()", is(8))
-                .body("fields.name", hasItems("OBJECTID", "urlpubtimedate", "url", "name", "urltone", "domain", "urllangcode", "geores"))
+                .body("fields.size()", is(9))
+                .body("fields.name", hasItems("OBJECTID", "urlpubtimedate", "urlpubdate", "url", "name", "urltone", "domain", "urllangcode", "geores"))
             ;
 
       // we should probably add more validation here or just add new tests if there are

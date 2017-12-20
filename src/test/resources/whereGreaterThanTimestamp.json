@@ -1,11 +1,11 @@
 {
   "params" : {
-    "id" : "Restaurants",
+    "id" : "GDeltGKG",
     "layer" : 0,
     "method" : "query"
   },
   "query" : {
     "returnCountOnly" : true,
-    "where": "Inspection > timestamp '2015-06-25 03:59:59'"
+    "where": "urlpubtimedate > timestamp '2017-05-24 06:00:00'"
   }
 }
