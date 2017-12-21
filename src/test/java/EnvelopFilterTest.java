@@ -9,8 +9,10 @@ public class EnvelopFilterTest extends AbstractFeatureServiceTest {
 	@Test
     public void testGkgEnvelopFilter() {
 
-        String path = request2path("gkgEnvelopeFilter.json");
+        String path = request2pathWithEncoding("gkgEnvelopeFilter.json");
+    	RestAssured.urlEncodingEnabled = false;
 
+        try{
         RestAssured
             .given()
             .when()
@@ -21,8 +23,11 @@ public class EnvelopFilterTest extends AbstractFeatureServiceTest {
                 .log().ifError()
                 .statusCode(200)
                 .log().ifValidationFails()
-                .body("count", is(33338))
+                .body("count", is(38765))
             ;
-    }
-	
+        } 
+        finally{
+        	RestAssured.reset();
+        }
+	}
 }

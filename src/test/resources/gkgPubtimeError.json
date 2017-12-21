@@ -1,0 +1,14 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "where": " ( urlpubtimedate >= TIMESTAMP '2015-12-3 23:00:00' ) AND ( urlpubtimedate < TIMESTAMP '2015-12-4 00:00:00' ) ",
+    "returnCountOnly" : true
+  }
+}
+
+
+

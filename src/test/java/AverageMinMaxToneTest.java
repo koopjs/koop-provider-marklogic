@@ -9,8 +9,10 @@ public class AverageMinMaxToneTest extends AbstractFeatureServiceTest {
 	@Test
     public void testAverageMinMaxTone() {
 
-        String path = request2path("gkgAvgMinMaxTone.json");
+        String path = request2pathWithEncoding("gkgAvgMinMaxTone.json");
+    	RestAssured.urlEncodingEnabled = false;
 
+        try{
         RestAssured
             .given()
             .when()
@@ -33,11 +35,15 @@ public class AverageMinMaxToneTest extends AbstractFeatureServiceTest {
                 .body("fields[0].alias", is("domain"))
                 .body("fields[0].length", is(128))
                 
-                .body("features.size()", is(2123))
+                .body("features.size()", is(2455))
                 .body("features[0].attributes.domain", is("newsbeast.gr"))
                 .body("features[0].attributes.average_urltone", is(12.96f))
                 .body("features[0].attributes.minimum_urltone", is(12.96f))
                 .body("features[0].attributes.maximum_urltone", is(12.96f))
             ;
+        }
+        finally{
+        	RestAssured.reset();
+        }
     }
 }

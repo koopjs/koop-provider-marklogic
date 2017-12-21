@@ -9,8 +9,10 @@ public class GroupByTest extends AbstractFeatureServiceTest{
 	@Test
     public void testGkgGroupBy() {
 
-        String path = request2path("gkgGroupBy.json");
+        String path = request2pathWithEncoding("gkgGroupBy.json");
+    	RestAssured.urlEncodingEnabled = false;
 
+        try{
         RestAssured
             .given()
             .when()
@@ -34,13 +36,17 @@ public class GroupByTest extends AbstractFeatureServiceTest{
                 .body("fields[1].type", is("esriFieldTypeInteger"))
                 .body("fields[1].alias", is("domain_count"))
                 
-                .body("features.size()", is(2123))
+                .body("features.size()", is(2455))
                 .body("features[0].attributes.domain", is("fax.al"))
-                .body("features[0].attributes.domain_count", is(569))
+                .body("features[0].attributes.domain_count", is(1259))
                 
-                .body("features[9].attributes.domain", is("moonofalabama.org"))
-                .body("features[9].attributes.domain_count", is(196))
+                .body("features[9].attributes.domain", is("entornointeligente.com"))
+                .body("features[9].attributes.domain_count", is(199))
             ;
-    }
+        }
 	
+	finally{
+		RestAssured.reset();
+	}
+	}
 }

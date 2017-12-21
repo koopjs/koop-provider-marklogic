@@ -1,5 +1,8 @@
 import static org.hamcrest.Matchers.is;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.junit.Test;
 
 import io.restassured.RestAssured;
@@ -7,12 +10,15 @@ import io.restassured.RestAssured;
 public class AverageToneTest extends AbstractFeatureServiceTest {
 
 	@Test
-    public void testAverageTone() {
+    public void testAverageTone() throws UnsupportedEncodingException {
 
-        String path = request2path("gkgAvgTone.json");
+        String path = request2pathWithEncoding("gkgAvgTone.json");        
+    	RestAssured.urlEncodingEnabled = false;
 
+    	try {
         RestAssured
             .given()
+
             .when()
                 .log().uri()
                 .get(path)
@@ -34,13 +40,18 @@ public class AverageToneTest extends AbstractFeatureServiceTest {
                 .body("fields[1].type", is("esriFieldTypeDouble"))
                 .body("fields[1].alias", is("average_urltone"))
                 
-                .body("features.size()", is(2123))
+                .body("features.size()", is(2455))
                 .body("features[0].attributes.domain", is("newsbeast.gr"))
                 .body("features[0].attributes.average_urltone", is(12.96f))
                 
-                .body("features[9].attributes.domain", is("stardaily.com.cn"))
-                .body("features[9].attributes.average_urltone", is(7.99866666666667f))
+                .body("features[9].attributes.domain", is("camdencourier.com.au"))
+                .body("features[9].attributes.average_urltone", is(8.33f))
+                
             ;
+    	}
+    	finally {
+    		RestAssured.reset();
+    	}
     }
 	
 }
