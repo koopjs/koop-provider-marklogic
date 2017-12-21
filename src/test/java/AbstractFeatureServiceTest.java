@@ -37,6 +37,7 @@ public abstract class AbstractFeatureServiceTest {
             password = "admin";
         }
 
+	RestAssured.urlEncodingEnabled = false;
         RestAssured.authentication = basic(user, password);
     }
 
