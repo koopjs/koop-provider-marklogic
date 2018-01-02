@@ -6,6 +6,6 @@
 	},
 	"query" : {
 		"resultRecordCount" : 10,
-		"orderByFields": "domain DESC"
+		"orderByFields": "domain DESC, OBJECTID ASC"
 	}
 }

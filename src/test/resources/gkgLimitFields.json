@@ -6,7 +6,7 @@
   },
   "query" : {
     "resultRecordCount" : 20,
-    "orderByFields": "domain ASC",
+    "orderByFields": "OBJECTID ASC",
     "outFields" : "domain,name,OBJECTID",
     "returnGeometry" : true
   }
