@@ -70,4 +70,51 @@ public abstract class AbstractFeatureServiceTest {
 
         return url;
     }
+    
+    public static String request2pathWithEncoding(String requestFile) {
+        JsonPath jsonPath = new JsonPath(AbstractFeatureServiceTest.class.getResource("/" + requestFile));
+
+        String service = jsonPath.getString("params.id");
+        String url = "/marklogic/" + service + "/FeatureServer";
+
+        String layer = jsonPath.getString("params.layer");
+        if (layer != null) {
+            url += "/" + layer;
+        }
+
+        String method = jsonPath.getString("params.method");
+        if (method != null) {
+            url += "/" + method;
+        }
+
+        Map<String, Object> query = jsonPath.getJsonObject("query");
+        if (query != null) {
+            url += "?";
+            for (String param : query.keySet()) {
+
+                Object value = query.get(param);
+                if (value != null) {
+                    try {
+                        url += param + "=" + URLEncoder.encode(value.toString(), "UTF-8") + "&";
+                    } catch(UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        return url;
+    }
+    
+
 }
+
+
+
+/**
+try {
+	                         url += param + "=" + URLEncoder.encode(value.toString(), "UTF-8") + "&";
+	                     } catch(UnsupportedEncodingException e) {
+	                         throw new RuntimeException(e);
+}
+**/

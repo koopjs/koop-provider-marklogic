@@ -5,7 +5,6 @@
 		"method" : "query"
 	},
 	"query" : {
-		//"resultRecordCount" : 10,
 		"returnCountOnly" : true,
 		"geometryType": "esriGeometryEnvelope",
 		"extension" : {
