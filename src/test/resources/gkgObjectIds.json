@@ -5,6 +5,7 @@
     "method" : "query"
   },
   "query" : {
-    "objectIds" : "56577,56576"
+    "objectIds" : "56577,56576",
+    "orderByFields": "OBJECTID DESC"
   }
 }

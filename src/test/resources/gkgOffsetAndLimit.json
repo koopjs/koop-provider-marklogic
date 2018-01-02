@@ -7,6 +7,6 @@
   "query" : {
     "resultOffset" : 100,
     "resultRecordCount" : 10,
-    "orderByFields": "domain DESC"
+    "orderByFields": "domain DESC, OBJECTID ASC"
   }
 }
