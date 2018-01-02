@@ -25,7 +25,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("count", is(197))
             ;
     }
-	
+
 	@Test
     public void testGkgWhereISNOTNULL() {
 
@@ -44,7 +44,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("count", is(38765))
             ;
     }
-	
+
 	@Test
     public void testGkgWhereISNULL() {
 
@@ -63,7 +63,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("count", is(0))
             ;
     }
-	
+
 	@Test
     public void testGkgWhereIn() {
 
@@ -83,9 +83,9 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("globalIdFieldName", is(""))
                 .body("hasZ", is(false))
                 .body("hasM", is(false))
-                
+
                 .body("spatialReference.wkid", is(4326))
-                
+
                 .body("fields.size()", is(9))
                 .body("fields.name", hasItems("OBJECTID", "urlpubtimedate", "urlpubdate", "url", "name", "urltone", "domain", "urllangcode", "geores"))
                 .body("fields[0].name", is("OBJECTID"))
@@ -102,7 +102,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("fields[8].editable", is(false))
                 .body("fields[8].nullable", is(true))
                 .body("fields[8].domain", IsNull.nullValue())
-                
+
                 .body("features.size()", is(2))
                 .body("features[1].attributes.OBJECTID", is(56576))
                 .body("features[1].attributes.urlpubtimedate", is(1495636200000L))
@@ -113,7 +113,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("features[1].attributes.domain", is("bendigoadvertiser.com.au"))
                 .body("features[1].attributes.urllangcode", is("eng"))
                 .body("features[1].attributes.geores", is(1))
-                
+
                 .body("features[0].attributes.OBJECTID", is(56577))
                 .body("features[0].attributes.urlpubtimedate", is(1495636200000L))
                 .body("features[0].attributes.urlpubdate", is(1495584000000L))
@@ -123,12 +123,12 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("features[0].attributes.domain", is("bendigoadvertiser.com.au"))
                 .body("features[0].attributes.urllangcode", is("eng"))
                 .body("features[0].attributes.geores", is(1))
-                
+
                 .body("exceededTransferLimit", is(false))
             ;
     }
-	
-	
+
+
 	@Test
     public void testGkgWhereNotIn() {
 
@@ -147,7 +147,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("count", is(38763))
             ;
     }
-	
+
 	@Test
     public void testGkgtoDateWhere() {
 
@@ -168,9 +168,9 @@ public class WhereTest extends AbstractFeatureServiceTest{
             .body("globalIdFieldName", is(""))
             .body("hasZ", is(false))
             .body("hasM", is(false))
-            
+
             .body("spatialReference.wkid", is(4326))
-            
+
             .body("fields.size()", is(2))
             .body("fields.name", hasItems("OBJECTID", "urlpubtimedate"))
             .body("fields[0].name", is("urlpubtimedate"))
@@ -187,14 +187,14 @@ public class WhereTest extends AbstractFeatureServiceTest{
             .body("fields[1].editable", is(false))
             .body("fields[1].nullable", is(false))
             .body("fields[1].domain", IsNull.nullValue())
-            
+
             .body("features.size()", is(2000))
             .body("features[0].attributes.urlpubtimedate", is(1495623600000L))
 
-            .body("exceededTransferLimit", is(true))            
+            .body("exceededTransferLimit", is(true))
         ;
     }
-	
+
     @Test
     public void testOneField() {
 
@@ -328,5 +328,25 @@ public class WhereTest extends AbstractFeatureServiceTest{
                 .body("count", is(33462))
             ;
     }
+
+    @Test
+    public void testLike() {
+        String path = request2path("whereLike.json");
+
+        RestAssured
+            .given()
+            .when()
+                .log().uri()
+                .get(path)
+
+            .then()
+                .log().ifError()
+                .statusCode(200)
+                .log().ifValidationFails()
+                .body("features.size()", is(227))
+                .body("features.attributes.domain", everyItem(containsString("journal")))
+            ;
+    }
+
 }
 
