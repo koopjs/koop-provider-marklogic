@@ -5,8 +5,6 @@
     "method" : "query"
   },
   "query" : {
-    "resultRecordCount" : 20,
-    "orderByFields": "name ASC",
-    "returnIdsOnly" : true
+    "where" : "domain LIKE '%journal%'"
   }
 }
