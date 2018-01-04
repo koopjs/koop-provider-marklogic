@@ -1,0 +1,12 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "groupByFieldsForStatistics": "domain",
+    "orderByFields": "objectid_count DESC",
+    "outStatistics": "[ {\"statisticType\":\"count\",\"onStatisticField\":\"OBJECTID\",\"outStatisticFieldName\":\"objectid_count\"} ]"
+  }
+}

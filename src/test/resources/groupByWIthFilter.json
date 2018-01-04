@@ -1,0 +1,13 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 0,
+    "method" : "query"
+  },
+  "query" : {
+    "groupByFieldsForStatistics": "domain",
+    "where" : "domain = '4-traders.com' OR domain = '9news.com.au' ",
+    "orderByFields": "objectid_count DESC",
+    "outStatistics": "[ {\"statisticType\":\"count\",\"onStatisticField\":\"OBJECTID\",\"outStatisticFieldName\":\"objectid_count\"} ]"
+  }
+}

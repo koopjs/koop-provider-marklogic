@@ -14,8 +14,8 @@ import static org.hamcrest.Matchers.*;
 
 public abstract class AbstractFeatureServiceTest {
 
-    @BeforeClass
-    public static void setup() {
+    @Before
+    public void setupRestAssured() {
         String port = System.getProperty("featureServer.port");
         if (port == null) {
             port = "9080";
@@ -38,9 +38,14 @@ public abstract class AbstractFeatureServiceTest {
         }
 
         RestAssured.authentication = basic(user, password);
+        RestAssured.urlEncodingEnabled = false; // we encode the URL parameters manually
     }
 
     public static String request2path(String requestFile) {
+        return request2path(requestFile, true);
+    }
+
+    public static String request2path(String requestFile, boolean urlEncode) {
         JsonPath jsonPath = new JsonPath(AbstractFeatureServiceTest.class.getResource("/" + requestFile));
 
         String service = jsonPath.getString("params.id");
@@ -63,6 +68,14 @@ public abstract class AbstractFeatureServiceTest {
 
                 Object value = query.get(param);
                 if (value != null) {
+                    if (urlEncode) {
+                        try {
+                            value = URLEncoder.encode(value.toString(), "UTF-8");
+                        } catch(UnsupportedEncodingException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
                     url += param + "=" + value.toString() + "&";
                 }
             }
@@ -70,51 +83,4 @@ public abstract class AbstractFeatureServiceTest {
 
         return url;
     }
-    
-    public static String request2pathWithEncoding(String requestFile) {
-        JsonPath jsonPath = new JsonPath(AbstractFeatureServiceTest.class.getResource("/" + requestFile));
-
-        String service = jsonPath.getString("params.id");
-        String url = "/marklogic/" + service + "/FeatureServer";
-
-        String layer = jsonPath.getString("params.layer");
-        if (layer != null) {
-            url += "/" + layer;
-        }
-
-        String method = jsonPath.getString("params.method");
-        if (method != null) {
-            url += "/" + method;
-        }
-
-        Map<String, Object> query = jsonPath.getJsonObject("query");
-        if (query != null) {
-            url += "?";
-            for (String param : query.keySet()) {
-
-                Object value = query.get(param);
-                if (value != null) {
-                    try {
-                        url += param + "=" + URLEncoder.encode(value.toString(), "UTF-8") + "&";
-                    } catch(UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
-
-        return url;
-    }
-    
-
 }
-
-
-
-/**
-try {
-	                         url += param + "=" + URLEncoder.encode(value.toString(), "UTF-8") + "&";
-	                     } catch(UnsupportedEncodingException e) {
-	                         throw new RuntimeException(e);
-}
-**/
