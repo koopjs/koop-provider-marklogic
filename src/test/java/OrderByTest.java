@@ -12,7 +12,6 @@ public class OrderByTest extends AbstractFeatureServiceTest {
 
         String path = request2path("gkgOrderbyTop10.json");
 
-
         RestAssured
         .given()
         .when()

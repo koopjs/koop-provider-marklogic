@@ -12,8 +12,6 @@ public class OffsetAndLimitTest extends AbstractFeatureServiceTest {
 
         String path = request2path("gkgOffsetAndLimit.json");
 
-
-
         RestAssured
         .given()
         .when()

@@ -10,7 +10,6 @@ public class PubtimeErrorTest extends AbstractFeatureServiceTest{
     public void testGkgPubtimeError0() {
 
         String path = request2path("gkgPubtimeError.json");
-        
 
         RestAssured
             .given()
