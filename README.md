@@ -131,8 +131,13 @@ The project uses the "gradle wrapper" so the `gradlew` or `gradlew.bat` files sh
 
 ### _Prerequisites_
 1) MarkLogic 9.0-3.1 or newer
+1) gcc to build the variance native plugin
 1) The install script uses https://github.com/srs/gradle-node-plugin to manage the installation and execution of node.js for Koop. If you have npm installed locally, it should use that as the build file does not specify a _npmVersion_. See https://github.com/srs/gradle-node-plugin/blob/master/docs/node.md#configuring-the-plugin for details on how to configure the gradle node plugin to use your desired version of node.js and npm.
+1) Connection to the internet - If you need to install the connector on a machine that is not connected to the internet, see [Build an Archive to Run in Disconnected Mode](#Build-Disconnected-Archive)
 
+> Note: The native plugin is a C++ program required to support standard deviation and variance aggregation calls for the feature service. gcc is used to build the plugin and then it is installed to MarkLogic via the management API. Because of this _the connector build must run on a machine that is the same platform that the MarkLogic cluster is running on_. I.E. you cannot build the connector from a Windows machine and install to MarkLogic running on Linux machines. If you don't need the standard deviation and variance aggregation functions, you can modify `build.gradle` to remove the dependencies on the `buildPlugin` and `installPlugin` tasks from the `buildConnector` and `installConnector` tasks.
+
+<a name="Install-to-Existing"></a>
 ### Install for an Existing Database
 If you have an existing database setup and you would like to use the connector to expose feature services for your data, use the following steps. In these instructions, the content database is called `MyContentDatabase`, the schemas database is called `MySchemasDatabase` and the environment name is `myenv`. Change these to fit your environment.
 >WARNING: Install will add TDE templates and geospatial index settings that may trigger a redindex of an existing database if the redindexer is enabled. It is highly recommended that you install the connector and configure the required TDE templates on a small test dataset, verify the functionality and then move to your larger environment with a larger database.
@@ -156,6 +161,7 @@ Note: If you have existing views in your MarkLogic database, you may be able to 
 1) Install the feature services `./gradlew -PenvironmentName=myenv installServices`
 1) See [Running the Connector](#Running-the-Connector) for how to start the Koop server
 
+<a name="Install-with-Example"></a>
 ### Install the Example as a New Database
 If you would like to try out the connector using the included example, follow these steps to install to the `example` environment. In addition to the modules database, this will also create new content and schemas databases called `esri-connector-example-content` and `esri-connector-example-schemas` respectively.
 > NOTE: The connector project uses ml-gradle so, technically, you could use the connector project to configure databases or other MarkLogic cluster configuration items but it is preferable to manage your overall MarkLogic configuration in a separate ml-gradle (or other tool) project. 
@@ -187,6 +193,19 @@ If you would like to try out the connector using the included example, follow th
 * Query layer 0 for the first 5 features: `http://<host>/marklogic/GDeltGKG/FeatureServer/0/query?resultRecordCount=5`
 * Query layer 0 for the count of features: `http://<host>/marklogic/GDeltGKG/FeatureServer/0/query?returnCountOnly=true`
 * Query layer 0 for the count of features where the "domain" is "indiatimes.com": `http://<host>/marklogic/GDeltGKG/FeatureServer/0/query?returnCountOnly=true&where=domain='indiatimes.com'`
+
+<a name="Build-Disconnected-Archive"></a>
+### Build an Archive to Run in Disconnected Mode
+There are times when you may need to install the connector from a machine that is not connected to the internet. To support this, the gradle build supports a number of tasks you can use to build an archive that has all the dependencies packaged up that you can install from.
+
+> Note: You must build the deployer archive from a machine running the same OS as where you will run the install and the connector from. I.E. if you will be running the connector from a Linux machine, you will need to 
+
+1) From a machine that has internet connectivity and is the same platform that you will be installing to, run `./gradlew buildMlDeployer`
+1) If successful, the `buildMlDeployer` task will have created the `build/MarkLogic-Esri-Connector.zip` zip file. The archive contains all of the dependencies needed to install and run the connector, including the node.js binaries and modules for the platform it was built on. The gradle properties in that zip file are set so installs from the archive will run in "disconnected" mode.
+1) Copy `MarkLogic-Esri-Connector.zip` to the machine you want to install on (presumably one that does not have internet connectivity)
+1) `unzip MarkLogic-Esri-Connector.zip`
+1) `cd MarkLogic-Esri-Connector`
+1) Follow the instructions to either [install to an existing database](#Install-to-Existing) or [install with the example](#Install-with-Example)
 
 <a name="Running-the-Connector"></a>
 ## Running the Connector
