@@ -83,35 +83,21 @@ else {
         testImplementation 'junit:junit:4.12'
     }
 
-    task copyGradleFiles(type: Copy, group: mlDeployerGroup) {
+    task copyProjectFiles(type: Copy, group: mlDeployerGroup) {
+        dependsOn = [
+            "installKoop",
+            "buildPlugin"
+	]
+
         from "."
         include "build.gradle", "gradle.properties", "gradle-example.properties", "gradlew", "gradlew.bat"
         include "gradle/**"
-        into mlDeployerDir
-    }
-
-    task copySourceFiles(type: Copy, group: mlDeployerGroup) {
-        from "."
         include "src/main/**"
         include "src/koop/**"
-        into mlDeployerDir
-    }
-
-    task copyKoopFiles(type: Copy, group: mlDeployerGroup) {
-        from "."
         include "build/koop/**"
-        into mlDeployerDir
-    }
-
-    task copyPluginFiles(type: Copy, group: mlDeployerGroup) {
-        from "."
         include "build/variancenativeplugin/**"
-        into mlDeployerDir
-    }
-
-    task copyLoggingFiles(type: Copy, group: mlDeployerGroup) {
-        from "."
         include "log/**"
+        include "example/**"
         into mlDeployerDir
     }
 
@@ -126,12 +112,6 @@ else {
         into mlDeployerDir + "/dependencies/mlcp"
     }
 
-    task copyExample(type: Copy, group: mlDeployerGroup) {
-        from "."
-        include "example/**"
-        into mlDeployerDir
-    }
-
     task addDisconnectedToGradleProperties {
         doLast {
             ant.propertyfile(file: "build/${mlDeployerAppName}/gradle.properties") {
@@ -140,20 +120,13 @@ else {
         }
     }
 
-    addDisconnectedToGradleProperties.mustRunAfter copyGradleFiles
+    addDisconnectedToGradleProperties.mustRunAfter copyProjectFiles
 
     task copyMlDeployerFiles(group: mlDeployerGroup) {
         dependsOn = [
-            "copyGradleFiles",
-            "copySourceFiles",
-            "installKoop",
-            "copyKoopFiles",
-            "copyLoggingFiles",
-            "buildPlugin",
-            "copyPluginFiles",
+            "copyProjectFiles",
             "copyBuildScriptDependencies",
             "copyMlcpDependencies",
-            "copyExample",
             "addDisconnectedToGradleProperties"
         ]
     }
