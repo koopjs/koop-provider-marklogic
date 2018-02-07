@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template xmlns="http://marklogic.com/xdmp/tde">
   <description>Example template for GDELT GKG GeoJSON documents</description>
-  <context>/properties</context>
+  <context>//properties</context>
   <collections>
     <collection>example-gkg</collection>
   </collections>
@@ -12,6 +12,71 @@
       	<row>
       	  <schema-name>GDeltGKG</schema-name>
       	  <view-name>Article</view-name>
+      	  <view-layout>sparse</view-layout>
+      	  <columns>
+      	    <column>
+      	      <name>OBJECTID</name>
+      	      <scalar-type>long</scalar-type>
+      	      <val>OBJECTID</val>
+      	    </column>
+      	    <column>
+      	      <name>urlpubtimedate</name>
+      	      <scalar-type>dateTime</scalar-type>
+      	      <val>urlpubtimedate</val>
+      	      <nullable>true</nullable>
+      	    </column>
+            <column>
+              <name>urlpubdate</name>
+              <scalar-type>date</scalar-type>
+              <val>xs:date(xs:dateTime(urlpubtimedate))</val>
+              <nullable>true</nullable>
+            </column>
+      	    <column>
+      	      <name>url</name>
+      	      <scalar-type>string</scalar-type>
+      	      <val>url</val>
+      	      <nullable>true</nullable>
+      	    </column>
+      	    <column>
+      	      <name>name</name>
+      	      <scalar-type>string</scalar-type>
+      	      <val>name</val>
+      	      <nullable>true</nullable>
+      	    </column>
+      	    <column>
+      	      <name>urltone</name>
+      	      <scalar-type>decimal</scalar-type>
+      	      <val>urltone</val>
+      	      <nullable>true</nullable>
+      	    </column>
+      	    <column>
+      	      <name>domain</name>
+      	      <scalar-type>string</scalar-type>
+      	      <val>domain</val>
+      	      <nullable>true</nullable>
+      	    </column>
+      	    <column>
+      	      <name>urllangcode</name>
+      	      <scalar-type>string</scalar-type>
+      	      <val>urllangcode</val>
+      	      <nullable>true</nullable>
+      	    </column>
+      	    <column>
+      	      <name>geores</name>
+      	      <scalar-type>integer</scalar-type>
+      	      <val>geores</val>
+      	      <nullable>true</nullable>
+      	    </column>
+      	  </columns>
+      	</row>
+      </rows>
+    </template>
+		<template xmlns:tde="http://marklogic.com/xdmp/tde">
+      <context>.</context>
+      <rows>
+      	<row>
+      	  <schema-name>GDeltGKG</schema-name>
+      	  <view-name>Region</view-name>
       	  <view-layout>sparse</view-layout>
       	  <columns>
       	    <column>

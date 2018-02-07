@@ -35,7 +35,7 @@ function returnErrToClient(statusCode, statusMsg, body) {
 
 // the same as the koop provider function without the callback parameter
 function getData(req) {
-  console.log(req);
+    console.log(req);
 
   if (req.params.method == "query") {
     return query(req);
@@ -409,7 +409,7 @@ function parseGeometry(query) {
     )
 
     const regionPaths = [
-      cts.geospatialRegionPathReference('/envelope/cts-region')
+      cts.geospatialRegionPathReference('/envelope/ctsRegion')
     ];
 
     const regionOptions = [];
@@ -422,9 +422,9 @@ function parseGeometry(query) {
       regionOptions
     )
 
-    //geoQuery = cts.orQuery([ pointQuery, regionQuery ]);
+    geoQuery = cts.orQuery([ pointQuery, regionQuery ]);
     // there seem to be some issues with region queries so leave that off for now
-    geoQuery = cts.orQuery([ pointQuery ]);
+    //geoQuery = cts.orQuery([ pointQuery ]);
   } else {
     // just match everything
     geoQuery = cts.trueQuery();

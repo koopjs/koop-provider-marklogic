@@ -19,7 +19,7 @@
   ],
   "geospatial-region-path-index": [
     {
-      "path-expression": "\/envelope\/cts-region",
+      "path-expression": "\/envelope\/ctsRegion",
       "coordinate-system": "wgs84",
       "units": "miles",
       "geohash-precision": 2,
