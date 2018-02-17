@@ -2,14 +2,16 @@
 import org.junit.Test;
 
 import io.restassured.RestAssured;
-import static org.hamcrest.Matchers.is;
+
 import static org.hamcrest.Matchers.*;
 
 public class EnvelopeQueries extends AbstractFeatureServiceTest{
 
+	//====================================Intersect========================================
 	//  Default operation is : Intersects
+	//testEnvelopeMarkLogicNeighborhoodIntersects
 	@Test
-    public void testEnvelopeMarkLogicNeighborhoodIntersects() {
+    public void testEnvelopeIntersects1() {
 
         String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
@@ -26,21 +28,13 @@ public class EnvelopeQueries extends AbstractFeatureServiceTest{
                 .log().ifError()
                 .statusCode(200)
                 .body("features.size()", is(9))
-                //.body("features..name", hasItems("Museum", "MarkLogic Neighborhood", "Wildlife Refuge","Airport","Hwy 101","Holly St"))
-                .body("features[0].attributes.name", is("MarkLogic HQ"))
-                .body("features[1].attributes.name", is("Museum"))
-                .body("features[2].attributes.name", is("Restaurant"))
-                .body("features[3].attributes.name", is("MarkLogic Neighborhood"))
-                .body("features[4].attributes.name", is("Wildlife Refuge"))
-                .body("features[5].attributes.name", is("Shopping Center"))
-                .body("features[6].attributes.name", is("Airport"))
-                .body("features[7].attributes.name", is("Hwy 101"))
-                .body("features[8].attributes.name", is("Holly St"))
+                .body("features.attributes.name", hasItems("MarkLogic HQ","Museum","Restaurant","Shopping Center","MarkLogic Neighborhood", "Wildlife Refuge","Airport","Hwy 101","Holly St"))
             ;
 	}
 	
+	//testEnvelopeAirportIntersects
 	@Test
-    public void testEnvelopeAirportIntersects() {
+    public void testEnvelopeIntersects2() {
 
         String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
@@ -57,18 +51,13 @@ public class EnvelopeQueries extends AbstractFeatureServiceTest{
                 .log().ifError()
                 .statusCode(200)
                 .body("features.size()", is(6))
-                //.body("features..name", hasItems("Museum", "MarkLogic Neighborhood", "Wildlife Refuge","Airport","Hwy 101","Holly St"))
-                .body("features[0].attributes.name", is("Museum"))
-                .body("features[1].attributes.name", is("MarkLogic Neighborhood"))
-                .body("features[2].attributes.name", is("Wildlife Refuge"))
-                .body("features[3].attributes.name", is("Airport"))
-                .body("features[4].attributes.name", is("Hwy 101"))
-                .body("features[5].attributes.name", is("Holly St"))
+                .body("features.attributes.name", hasItems("Museum","MarkLogic Neighborhood", "Wildlife Refuge","Airport","Hwy 101","Holly St"))
             ; 
 	}	
 	
+	//testEnvelopeShoppingCentreIntersects
 	@Test
-    public void testEnvelopeShoppingCentreIntersects() {
+    public void testEnvelopeIntersects3() {
 
         String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
@@ -89,8 +78,9 @@ public class EnvelopeQueries extends AbstractFeatureServiceTest{
             ; 
 	}
 	
+	//testEnvelopeWildlifeRefugeIntersects
 	@Test
-    public void testEnvelopeWildlifeRefugeIntersects() {
+    public void testEnvelopeIntersects4() {
 
         String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
@@ -107,15 +97,13 @@ public class EnvelopeQueries extends AbstractFeatureServiceTest{
                 .log().ifError()
                 .statusCode(200)
                 .body("features.size()", is(4))
-                .body("features[0].attributes.name", is("MarkLogic HQ"))
-                .body("features[1].attributes.name", is("MarkLogic Neighborhood"))
-                .body("features[2].attributes.name", is("Wildlife Refuge"))
-                .body("features[3].attributes.name", is("Airport"))
+                .body("features.attributes.name", hasItems("MarkLogic HQ","MarkLogic Neighborhood", "Wildlife Refuge","Airport"))
             ; 
 	}
 
+	//testEnvelopeAroundPointIntersects
 	@Test
-    public void testEnvelopeAroundPointIntersects() {
+    public void testEnvelopeIntersects5() {
 
         String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
@@ -132,13 +120,14 @@ public class EnvelopeQueries extends AbstractFeatureServiceTest{
                 .log().ifError()
                 .statusCode(200)
                 .body("features.size()", is(2))
-                .body("features[0].attributes.name", is("Restaurant"))
-                .body("features[1].attributes.name", is("MarkLogic Neighborhood"))
+                .body("features.attributes.name", hasItems("Restaurant","MarkLogic Neighborhood"))
+
             ; 
 	}
 	
+	//testEnvelopeEmptyIntersects
 	@Test
-    public void testEnvelopeEmptyIntersects() {
+    public void testEnvelopeIntersects6() {
 
         String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
@@ -158,4 +147,77 @@ public class EnvelopeQueries extends AbstractFeatureServiceTest{
             ; 
 	}
 	
+	//=========================Contains============================================
+	//Inside single Envelope - Expected : MarkLogic Neighborhood
+	@Test
+    public void testEnvelopeContains1() {
+
+        String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&spatialRel={spatialRel}";
+    	RestAssured.urlEncodingEnabled = false;
+ 	
+        RestAssured
+            .given()
+            	.pathParam("layer", 3)
+            	.pathParam("geometryType", "esriGeometryEnvelope")
+            	.pathParam("geometry", "-122.25723266601562,37.507070473180455,-122.25337028503418,37.50904498790216")
+                .pathParam("spatialRel","esrispatialrelcontains")
+
+            .when()
+                .log().uri()
+                .get(path)
+            .then()
+                .log().ifError()
+                .statusCode(200)
+                .body("features.size()", is(1))
+                .body("features[0].attributes.name", is("MarkLogic Neighborhood"))            ; 
+	}
+	
+	//Inside two Envelope - Expected : MarkLogic Neighborhood , Airport
+		@Test
+	    public void testEnvelopeContains2() {
+
+	        String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&spatialRel={spatialRel}";
+	    	RestAssured.urlEncodingEnabled = false;
+	 	
+	        RestAssured
+	            .given()
+	            	.pathParam("layer", 3)
+	            	.pathParam("geometryType", "esriGeometryEnvelope")
+	            	.pathParam("geometry", "-122.25113868713377,37.514763977179,-122.24907875061034,37.51694252449245")
+	                .pathParam("spatialRel","esrispatialrelcontains")
+
+	            .when()
+	                .log().uri()
+	                .get(path)
+	            .then()
+	                .log().ifError()
+	                .statusCode(200)
+	                .body("features.size()", is(2))
+	                .body("features.attributes.name", hasItems("MarkLogic Neighborhood","Airport"));
+	             		}
+		
+		//Inside a Envelope and intersecting 2 other features - Expected : MarkLogic Neighborhood 
+				@Test
+			    public void testEnvelopeContains3() {
+
+			        String path = "/marklogic/GDeltGKG/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&spatialRel={spatialRel}";
+			    	RestAssured.urlEncodingEnabled = false;
+			 	
+			        RestAssured
+			            .given()
+			            	.pathParam("layer", 3)
+			            	.pathParam("geometryType", "esriGeometryEnvelope")
+			            	.pathParam("geometry", "-122.24907875061034,37.51067902955361,-122.24547386169434,37.51367467")
+			                .pathParam("spatialRel","esrispatialrelcontains")
+
+			            .when()
+			                .log().uri()
+			                .get(path)
+			            .then()
+			                .log().ifError()
+			                .statusCode(200)
+			                .body("features.size()", is(1))
+			                .body("features[0].attributes.name", is("MarkLogic Neighborhood"))            ; 
+			             		}
+		
 }

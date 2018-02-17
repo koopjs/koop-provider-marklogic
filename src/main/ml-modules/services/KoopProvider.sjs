@@ -498,11 +498,13 @@ function parseRegionOperation(query) {
       case "esrispatialrelcontains":
         return "contains";
       case "esrispatialrelcrosses":
-        return "intersects";
+        return "crosses";
       case "esrispatialrelwithin":
         return "within";
       case "esrispatialreloverlaps":
+        return "overlaps";
       case "esrispatialreltouches":
+        return "touches";
       case "esrispatialrelenvelopeintersects":
       case "esrispatialrelindexintersects":
       case "esrispatialrelrelation":
@@ -670,10 +672,10 @@ function getObjects(req) {
 
   // TODO: see if there is any benefit to pushing the column select earlier in the pipeline
   // transform the rows into GeoJSON
-  pipeline = pipeline
-    .select(getSelectDef(outFields, columnDefs, returnGeometry));
+pipeline = pipeline
+.select(getSelectDef(outFields, columnDefs, returnGeometry));
 
-  return pipeline.result(null, bindParams);
+return pipeline.result(null, bindParams);
 }
 
 // returns a Sequence of aggregated results
