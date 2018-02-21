@@ -148,6 +148,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
             ;
     }
 
+/**
 	@Test
     public void testGkgtoDateWhere() {
 
@@ -194,6 +195,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
             .body("exceededTransferLimit", is(true))
         ;
     }
+ */
 
     @Test
     public void testOneField() {

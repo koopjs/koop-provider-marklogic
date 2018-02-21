@@ -365,7 +365,12 @@ function parseWhere(query) {
   if (!where || where === "1=1" || where === "") {
     whereQuery = cts.trueQuery();
   } else {
-    whereQuery = sql2optic.where(where);
+    let transformWhere = where
+  .replace(/TIMESTAMP +'(\d{4}-\d{1,2}-\d{1,2}) (\d{2}:\d{2}:\d{2}\.?\d*)'/gi, "TIMESTAMP '$1T$2'")
+  .replace(/(TIMESTAMP +'\d{4})-(\d{1})(-\d{1,2}T\d{2}:\d{2}:\d{2}\.?\d*')/gi, "$1-0$2$3")
+  .replace(/(TIMESTAMP +'\d{4}-\d{1,2})-(\d{1})(T\d{2}:\d{2}:\d{2}\.?\d*')/gi, "$1-0$2$3")
+
+    whereQuery = op.sqlCondition(transformWhere);
   }
 
   console.log("where: " + whereQuery);
