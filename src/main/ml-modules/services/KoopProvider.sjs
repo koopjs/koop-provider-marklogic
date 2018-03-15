@@ -35,7 +35,7 @@ function returnErrToClient(statusCode, statusMsg, body) {
 
 // the same as the koop provider function without the callback parameter
 function getData(req) {
-  console.log(req);
+    console.log(req);
 
   if (req.params.method == "query") {
     return query(req);
@@ -409,7 +409,7 @@ function parseGeometry(query) {
     )
 
     const regionPaths = [
-      cts.geospatialRegionPathReference('/envelope/cts-region')
+      cts.geospatialRegionPathReference('/envelope/ctsRegion')
     ];
 
     const regionOptions = [];
@@ -422,9 +422,9 @@ function parseGeometry(query) {
       regionOptions
     )
 
-    //geoQuery = cts.orQuery([ pointQuery, regionQuery ]);
+    geoQuery = cts.orQuery([ pointQuery, regionQuery ]);
     // there seem to be some issues with region queries so leave that off for now
-    geoQuery = cts.orQuery([ pointQuery ]);
+    //geoQuery = cts.orQuery([ pointQuery ]);
   } else {
     // just match everything
     geoQuery = cts.trueQuery();
@@ -498,11 +498,13 @@ function parseRegionOperation(query) {
       case "esrispatialrelcontains":
         return "contains";
       case "esrispatialrelcrosses":
-        return "intersects";
+        return "crosses";
       case "esrispatialrelwithin":
         return "within";
       case "esrispatialreloverlaps":
+        return "overlaps";
       case "esrispatialreltouches":
+        return "touches";
       case "esrispatialrelenvelopeintersects":
       case "esrispatialrelindexintersects":
       case "esrispatialrelrelation":
@@ -670,10 +672,10 @@ function getObjects(req) {
 
   // TODO: see if there is any benefit to pushing the column select earlier in the pipeline
   // transform the rows into GeoJSON
-  pipeline = pipeline
-    .select(getSelectDef(outFields, columnDefs, returnGeometry));
+pipeline = pipeline
+.select(getSelectDef(outFields, columnDefs, returnGeometry));
 
-  return pipeline.result(null, bindParams);
+return pipeline.result(null, bindParams);
 }
 
 // returns a Sequence of aggregated results

@@ -189,7 +189,6 @@ public class WhereTest extends AbstractFeatureServiceTest{
             .body("fields[1].domain", IsNull.nullValue())
 
             .body("features.size()", is(2000))
-            .body("features[0].attributes.urlpubtimedate", is(1495623600000L))
 
             .body("exceededTransferLimit", is(true))
         ;

@@ -79,8 +79,10 @@ else {
         mlcp "com.marklogic:marklogic-mapreduce2:2.2.3"
         mlcp files("log")
 
-        testImplementation 'io.rest-assured:rest-assured:3.0.6'
         testImplementation 'junit:junit:4.12'
+        testImplementation 'io.rest-assured:rest-assured:3.0.6'
+        testImplementation 'io.rest-assured:json-path:3.0.6'
+        testImplementation "com.googlecode.json-simple:json-simple:1.1.1"
     }
 
     task copyProjectFiles(type: Copy, group: mlDeployerGroup) {
