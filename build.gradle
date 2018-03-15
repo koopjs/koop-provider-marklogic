@@ -1,66 +1,152 @@
 buildscript {
-    dependencies {
-       classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+    if (project.hasProperty("disconnected")) {
+        dependencies {
+            classpath fileTree(dir: "dependencies/buildscript", include: "*.jar")
+        }
+    }
+    else {
+        repositories {
+            maven { url "https://plugins.gradle.org/m2/" }
+            jcenter()
+        }
+
+        dependencies {
+            classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+            classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+            classpath "net.saliman:gradle-properties-plugin:1.4.6"
+            classpath "com.marklogic:ml-gradle:3.3.0"
+        }
     }
 }
 
-/*
- * In order to use ml-gradle, it must be applied. This occurs after the two above blocks for overriding properties so
- * that those blocks can override properties before ml-gradle initializes itself.
- */
-plugins {
-  id 'net.saliman.properties' version '1.4.6'
-
-  id "com.marklogic.ml-gradle" version "2.9.0"
-
-  id "com.moowork.node" version "1.1.1"
-
-  // The following plugins are optional
-
-  // The Java plugin is used to compile and run JUnit tests
-  id "java"
-
-  // These plugins are used to generate IDE files
-  id "eclipse"
-  id "idea"
-}
-
-/*
- * This lists the repositories for finding project dependencies (which differ from buildscript dependencies - buildscript
- * dependencies are not included in project artifacts that are built). These repositories are needed to satisfy the
- * dependencies expressed below.
- */
-repositories {
-  jcenter()
-
-	// Needed for mlcp dependencies
-	maven { url "https://developer.marklogic.com/maven2/" }
-
-	// Needed for hadoop dependencies for mlcp
-	maven { url "http://repository.cloudera.com/artifactory/cloudera-repos/" }
-}
+apply plugin: 'java'
+apply plugin: 'net.saliman.properties'
+apply plugin: "com.moowork.node"
+apply plugin: "com.marklogic.ml-gradle"
 
 configurations {
-  mlcp {
-      resolutionStrategy {
-        force "xml-apis:xml-apis:1.4.01"
-      }
+    mlcp
+}
+
+ext {
+    mlDeployerAppName = "MarkLogic-Esri-Connector"
+    mlDeployerDir = "build/${mlDeployerAppName}"
+    mlDeployerGroup = "ML Deployer"
+    mlDeployerZipFilename = "${mlDeployerAppName}.zip"
+}
+
+/*
+ * If the project has the "disconnected" property defined, then we look for mlcp dependencies in a directory
+ * instead of retrieving them from a repository.
+ */
+if (project.hasProperty("disconnected") && disconnected) {
+    println "\nRUNNING IN DISCONNECTED MODE"
+
+    dependencies {
+        compile fileTree(dir: "dependencies/buildscript", include: "*.jar")
+
+        mlcp fileTree(dir: "dependencies/mlcp", include: "*.jar")
+        mlcp files("log")
+
+        testImplementation fileTree(dir: "dependencies/testImplementation", include: "*.jar")
     }
 }
 
-dependencies {
-  mlcp "com.marklogic:mlcp:8.0.6.3"
+/*
+ * If we're not in disconnected mode, then we grab dependencies from repositories, and we define a set of tasks
+ * for creating the "mlDeployer" zip file that can be used in a disconnected environment.
+ */
+else {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "http://repository.cloudera.com/artifactory/cloudera-repos/" }
+        maven { url "https://developer.marklogic.com/maven2/" }
 
-	/**
-	 * If you need to import delimited text, be sure to include this dependency as well.
-	 */
-	mlcp "org.apache.commons:commons-csv:1.2"
+        jcenter()
+    }
 
-  testImplementation 'io.rest-assured:rest-assured:3.0.6'
-  testImplementation 'junit:junit:4.12'
+    configurations {
+        mlcp {
+            resolutionStrategy {
+                force "xml-apis:xml-apis:1.4.01"
+            }
+        }
+    }
 
-  compile 'io.rest-assured:json-path:3.0.6'
-  compile "com.googlecode.json-simple:json-simple:1.1.1"
+    dependencies {
+        mlcp "com.marklogic:mlcp:9.0.3"
+        mlcp "org.apache.commons:commons-csv:1.2"
+        mlcp "com.marklogic:marklogic-mapreduce2:2.2.3"
+        mlcp files("log")
+
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'io.rest-assured:rest-assured:3.0.6'
+        testImplementation 'io.rest-assured:json-path:3.0.6'
+        testImplementation "com.googlecode.json-simple:json-simple:1.1.1"
+    }
+
+    task copyProjectFiles(type: Copy, group: mlDeployerGroup) {
+        dependsOn = [
+            "installKoop",
+            "buildPlugin"
+	]
+
+        from "."
+        include "build.gradle", "gradle.properties", "gradle-example.properties", "gradlew", "gradlew.bat"
+        include "gradle/**"
+        include "src/main/**"
+        include "src/koop/**"
+        include "build/koop/**"
+        include "build/variancenativeplugin/**"
+        include "log/**"
+        include "example/**"
+        into mlDeployerDir
+    }
+
+    task copyBuildScriptDependencies(type: Copy, group: mlDeployerGroup) {
+        from buildscript.configurations.classpath
+        into mlDeployerDir + "/dependencies/buildscript"
+    }
+
+    task copyMlcpDependencies(type: Copy, group: mlDeployerGroup) {
+        from configurations.mlcp
+        exclude "log4j.properties" // we copy this separately to the log dir
+        into mlDeployerDir + "/dependencies/mlcp"
+    }
+
+    task addDisconnectedToGradleProperties {
+        doLast {
+            ant.propertyfile(file: "build/${mlDeployerAppName}/gradle.properties") {
+                entry(key: "disconnected", value: "true")
+            }
+        }
+    }
+
+    addDisconnectedToGradleProperties.mustRunAfter copyProjectFiles
+
+    task copyMlDeployerFiles(group: mlDeployerGroup) {
+        dependsOn = [
+            "copyProjectFiles",
+            "copyBuildScriptDependencies",
+            "copyMlcpDependencies",
+            "addDisconnectedToGradleProperties"
+        ]
+    }
+
+    task deleteMlDeployer(type: Delete, group: mlDeployerGroup) {
+      delete mlDeployerDir, "build/${mlDeployerZipFilename}"
+    }
+
+    task buildMlDeployer (type: Zip, group: mlDeployerGroup) {
+        description "Create a zip of this project's Gradle dependencies and source code so that it can be deployer without Internet access"
+        dependsOn = ["deleteMlDeployer", "copyMlDeployerFiles"]
+        from mlDeployerDir
+        into mlDeployerAppName
+        destinationDir file('build')
+        archiveName mlDeployerZipFilename
+    }
+
+    copyMlDeployerFiles.mustRunAfter deleteMlDeployer
 }
 
 ext {
@@ -72,7 +158,6 @@ ext {
     println "content database: " + contentDatabaseName
     println "schemas database: " + schemasDatabaseName
   }
-
 }
 
 test {
@@ -82,7 +167,7 @@ test {
   systemProperty "featureService.password", mlPassword
 }
 
-task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'installKoop']) {
+task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'configureKoop']) {
   // make sure these folders exist so we can add service descriptors and templates to them
   doFirst {
     project.file('config').mkdirs()
@@ -91,7 +176,15 @@ task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'installKoop']) {
   }
 }
 
-task installServices(dependsOn: ['installConnector', 'loadFeatureServices', 'loadSchemas'])
+task buildConnector(dependsOn: ['buildPlugin', 'installKoop'])
+
+// Only build the plugin and install koop if we are not in disconnected mode
+if (! project.hasProperty("disconnected") || ! disconnected) {
+    installConnector.dependsOn("buildConnector")
+    installConnector.mustRunAfter buildConnector
+}
+
+task installServices(dependsOn: ['loadFeatureServices', 'loadSchemas'])
 
 task buildPlugin(type: Exec) {
   doFirst {
@@ -105,20 +198,10 @@ task buildPlugin(type: Exec) {
   commandLine 'make'
 }
 
-task installPlugin(dependsOn: [ 'buildPlugin', 'mlDeploy' ], type: com.marklogic.gradle.task.MarkLogicTask) {
+task installPlugin(dependsOn: [], type: com.marklogic.gradle.task.MarkLogicTask) {
   doLast {
     // load binary to the modules database
-    def config = getAppConfig()
-    def client = com.marklogic.client.DatabaseClientFactory.newClient(
-      config.getHost(),
-      config.getRestPort(),
-      config.getModulesDatabaseName(),
-      config.getRestAdminUsername(),
-      config.getRestAdminPassword(),
-      config.getRestAuthentication(),
-      config.getRestSslContext(),
-      config.getRestSslHostnameVerifier()
-    )
+    def client = newClient()
 
     def pluginZip = "build/variancenativeplugin/varianceplugin.zip"
     def pluginUri = "/native-plugins/varianceplugin.zip"
@@ -160,8 +243,8 @@ node {
   npmWorkDir = file("${project.buildDir}/koop/npm")
 }
 
-task buildKoop(type: Copy, dependsOn: []) {
-  from("src/koop") {
+task configureKoop(type: Copy, dependsOn: []) {
+  from("src/koop/config") {
     include "**"
     filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
       KOOP_PORT : project.property("koopPort"),
@@ -176,12 +259,21 @@ task buildKoop(type: Copy, dependsOn: []) {
     ])
   }
 
-  into "build/koop"
+  into "build/koop/config"
 }
 
-task installKoop(type: NpmTask, dependsOn: [ 'buildKoop' ]) {
-  args = ['install']
-  workingDir = file('build/koop')
+task installKoop(type: NpmTask, dependsOn: ['configureKoop']) {
+    doFirst {
+        copy {
+            from "src/koop"
+            include "**"
+            exclude "config"
+            into "build/koop"
+        }
+    }
+
+    args = ['install']
+    workingDir = file('build/koop')
 }
 
 task runKoop(type: NodeTask) {
@@ -204,13 +296,23 @@ task loadFeatureServices(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_replace = ".*/config/,'/'"
 }
 
-task loadSchemas(type: com.marklogic.gradle.task.schemas.LoadSchemasTask, dependsOn: ['mlDeploy']) {
+task loadSchemas(type: com.marklogic.gradle.task.schemas.LoadSchemasTask, dependsOn: []) {
   ext {
     mlAppConfig {
       schemasPath = 'config/templates'
     }
   }
 }
+
+task installExampleServices(type: Copy, dependsOn: []) {
+  from("example") {
+    include "feature-services/**"
+    include "templates/**"
+  }
+
+  into "config"
+}
+installExampleServices.finalizedBy installServices
 
 task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
   classpath = configurations.mlcp
