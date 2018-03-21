@@ -1,0 +1,12 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 1,
+    "method": "generateRenderer"
+  },
+  "query" : {
+    "classificationDef": "{\"type\":\"classBreaksDef\",\"classificationField\":\"OBJECTID\",\"classificationMethod\":\"esriClassifyGeometricalInterval\",\"breakCount\":5}",
+    "where": "1=1",
+    "f": "json"  
+    }
+}

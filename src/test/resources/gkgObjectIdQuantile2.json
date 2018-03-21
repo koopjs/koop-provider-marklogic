@@ -1,0 +1,11 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 2,
+    "method": "generateRenderer"
+  },
+  "query" : {
+    "classificationDef": "{\"type\":\"classBreaksDef\",\"classificationField\":\"OBJECTID\",\"classificationMethod\":\"esriClassifyQuantile\",\"breakCount\":20}",
+    "where": "1=1"
+  }
+}

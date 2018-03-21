@@ -35,7 +35,7 @@ function returnErrToClient(statusCode, statusMsg, body) {
 
 // the same as the koop provider function without the callback parameter
 function getData(req) {
-    console.log(req);
+  console.log(req);
 
   if (req.params.method == "query") {
     return query(req);
@@ -331,26 +331,26 @@ function queryClassificationValues(req) {
 
     switch (def.classificationMethod) {
       case "esriClassifyNaturalBreaks":
-        result.statistics = (new geostats(values)).getClassJenks(def.breakCount);
+        result.statistics = { classBreaks : [(new geostats(values)).getClassJenks(def.breakCount)]};
         break;
       case "esriClassifyEqualInterval":
-        result.statistics = (new geostats(values)).getClassEqInterval(def.breakCount);
+        result.statistics = { classBreaks : [(new geostats(values)).getClassEqInterval(def.breakCount)]};
         break;
       case "esriClassifyQuantile":
-        result.statistics = (new geostats(values)).getClassQuantile(def.breakCount);
-        break;
+        console.log("esriClassifyQuantile")
+        result.statistics = { classBreaks : [(new geostats(values)).getClassQuantile(def.breakCount)]};
+        break;
       case "esriClassifyStandardDeviation":
-        // this one doesn't seem to be implemented correctly so leaving it commented out for now
-        //result.statistics = (new geostats(values)).getClassStdDeviation(def.standardDeviationInterval);
-        //break;
-        throw "Unsupported classificationMethod: " + def.classificationMethod;
+        result.statistics = { classBreaks : [(new geostats(values)).getClassStdDeviation(def.standardDeviationInterval)]};
+        break;
+        //throw "Unsupported classificationMethod: " + def.classificationMethod;
       case "esriClassifyGeometricalInterval":
-        result.statistics = (new geostats(values)).getClassGeometricProgression(def.breakCount);
+        result.statistics = { classBreaks : [(new geostats(values)).getClassGeometricProgression(def.breakCount)]};
         break;
       default:
-        throw "Unsupported classificationMethod: " + def.classificationMethod;
-    }
+        throw "Unsupported classificationMethod: " + def.classificationMethod;}
   }
+}
 
   return result;
 }
@@ -491,7 +491,7 @@ function parseRegionOperation(query) {
   // can we implement the other ESRI relations with combinations of the MarkLogic
   // operations?
 
-  if (query.spatialRel) {
+if (query.spatialRel) {
     switch(query.spatialRel.toLowerCase()) {
       case "esrispatialrelintersects":
         return "intersects";
@@ -672,10 +672,10 @@ function getObjects(req) {
 
   // TODO: see if there is any benefit to pushing the column select earlier in the pipeline
   // transform the rows into GeoJSON
-pipeline = pipeline
-.select(getSelectDef(outFields, columnDefs, returnGeometry));
+  pipeline = pipeline
+    .select(getSelectDef(outFields, columnDefs, returnGeometry));
 
-return pipeline.result(null, bindParams);
+  return pipeline.result(null, bindParams);
 }
 
 // returns a Sequence of aggregated results

@@ -99,6 +99,7 @@ public class GroupByTest extends AbstractFeatureServiceTest{
             ;
     }
 
+    
     @Test
     public void testGroupByWithFilter() {
 
@@ -119,5 +120,5 @@ public class GroupByTest extends AbstractFeatureServiceTest{
                 .body("features.attributes.find { it.domain == '9news.com.au' }.objectid_count", is(14))
             ;
     }
-
+    
 }
