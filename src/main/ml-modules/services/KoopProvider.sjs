@@ -320,39 +320,60 @@ function queryClassificationValues(req) {
   }
 
   const result = query({ params : req.params, query : q });
+  console.log("queryClassificationValues calculating breaks for " + result.statistics.length + " values");
+
+  const classStatistics = {
+    geometryType : getLayerModel(req.params.id, req.params.layer).geometryType
+  }
 
   //http://pro.arcgis.com/en/pro-app/help/mapping/symbols-and-styles/data-classification-methods.htm
 
   if (def.type === "classBreaksDef") {
-    const values = [];
-    result.statistics.map((stat) => {
-      values.push(stat[def.classificationField]);
+    const values = result.statistics.map((stat) => {
+      return stat[def.classificationField];
     });
+
+    // it looks like the breaks need to be in pairs of min and max values
+    let classValues = null;
 
     switch (def.classificationMethod) {
       case "esriClassifyNaturalBreaks":
-        result.statistics = { classBreaks : [(new geostats(values)).getClassJenks(def.breakCount)]};
+        classValues = (new geostats(values)).getClassJenks(def.breakCount);
         break;
       case "esriClassifyEqualInterval":
-        result.statistics = { classBreaks : [(new geostats(values)).getClassEqInterval(def.breakCount)]};
+        classValues = (new geostats(values)).getClassEqInterval(def.breakCount);
         break;
       case "esriClassifyQuantile":
-        console.log("esriClassifyQuantile")
-        result.statistics = { classBreaks : [(new geostats(values)).getClassQuantile(def.breakCount)]};
+        classValues = (new geostats(values)).getClassQuantile(def.breakCount);
         break;
       case "esriClassifyStandardDeviation":
-        result.statistics = { classBreaks : [(new geostats(values)).getClassStdDeviation(def.standardDeviationInterval)]};
+        classValues = (new geostats(values)).getClassStdDeviation(def.standardDeviationInterval);
         break;
-        //throw "Unsupported classificationMethod: " + def.classificationMethod;
       case "esriClassifyGeometricalInterval":
-        result.statistics = { classBreaks : [(new geostats(values)).getClassGeometricProgression(def.breakCount)]};
+        classValues = (new geostats(values)).getClassGeometricProgression(def.breakCount);
         break;
       default:
-        throw "Unsupported classificationMethod: " + def.classificationMethod;}
+        throw "Unsupported classificationMethod: " + def.classificationMethod;
+    }
+
+    // make the values into range pairs
+    classStatistics.classBreaks = valuesToRanges(classValues);
+  } else {
+    classStatistics.uniqueValues = result.statistics;
   }
-}
+
+  // override the result statistics with the new statistics object
+  result.statistics = classStatistics;
 
   return result;
+}
+
+function valuesToRanges(values) {
+  const ranges = Array(values.length - 1);
+  for (i = 0; i < ranges.length; i++) {
+    ranges[i] = [values[i], values[i + 1]];
+  }
+  return ranges;
 }
 
 

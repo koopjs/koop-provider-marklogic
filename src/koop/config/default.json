@@ -1,4 +1,7 @@
 {
+  "logger" : {
+    "level" : "debug"
+  },
   "port" : @KOOP_PORT@,
   "ssl": {
     "enabled" : @KOOP_SSL_ENABLED@,

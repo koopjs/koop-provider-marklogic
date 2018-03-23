@@ -2,9 +2,9 @@
  * Copyright © 2017 MarkLogic Corporation
  */
 
-var marklogic = require('marklogic');
-
+const marklogic = require('marklogic');
 const config = require('config');
+const log = require('./logger');
 
 function MarkLogicQuery() {
   this.conn = config.marklogic.connection;
@@ -20,7 +20,7 @@ MarkLogicQuery.prototype.providerGetData = function providerGetData(request) {
 		}).result((response) => {
 		  resolve(response);
 		}, (error) => {
-		  console.log(JSON.stringify(error, null, 2));
+		  log.error(error);
 		});
   })
 }

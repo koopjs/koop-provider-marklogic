@@ -3,22 +3,24 @@
  */
 
  // use this to convert incoming ESRI geometry objects to GeoJSON in WGS84
-const options = require('winnow/dist/options');
 
-var MarkLogicQuery = require('./query');
+const config = require('config');
+const options = require('winnow/dist/options');
+const log = require('./logger');
+const MarkLogicQuery = require('./query');
 
 function MarkLogic () {}
 
 MarkLogic.prototype.getData = function getData (req, callback) {
-    console.log(":::req.url");
-    console.log(req.url);
-    console.log(":::req.params");
-    console.log(req.params);
-    console.log(":::req.query");
-    console.log(req.query);
+    log.info("req.url:", req.url);
 
-    // fix typing
-    req.query = coerceQuery(req.query);
+    log.debug("req.params:", req.params);
+    log.debug("req.query: ", req.query);
+
+    // fix typing and parse JSON
+    // this actually modifies the underlying request object so downstream
+    // koop functions will use the modified values
+    coerceQuery(req.query);
 
     // convert incoming geometry into GeoJSON in WGS84
     var geometry = options.prepare(req.query).geometry;
@@ -34,6 +36,8 @@ MarkLogic.prototype.getData = function getData (req, callback) {
         query : req.query
     }
 
+    log.debug("provider request: ", providerRequest);
+
     var mq = new MarkLogicQuery();
 	  mq.providerGetData(providerRequest)
 	    .then(data => {
@@ -42,7 +46,6 @@ MarkLogic.prototype.getData = function getData (req, callback) {
 	    });
 }
 
-// TODO: we may want to conver the statistics JSON strings too
 function coerceQuery (params) {
   Object.keys(params).forEach(function (param) {
     if (params[param] === 'false') { params[param] = false; }
@@ -53,18 +56,16 @@ function coerceQuery (params) {
     else if (param === 'outStatistics') {
       params[param] = (typeof params[param] === "string") ? JSON.parse(params[param]) : params[param];
     }
+    else if (param === 'classificationDef') {
+      params[param] = (typeof params[param] === "string") ? JSON.parse(params[param]) : params[param];
+    }
     else if (! isNaN(params[param])) { params[param] = Number(params[param]); }
   })
   return params;
 }
 
 function logResult(geojson) {
-  var nl = (process.platform === 'win32' ? '\r\n' : '\n')
-  console.log(nl)
-  console.log(nl)
-  console.log(geojson);
-  console.log(nl)
-  console.log(nl)
+  log.debug("result:", geojson);
 }
 
 module.exports = MarkLogic
