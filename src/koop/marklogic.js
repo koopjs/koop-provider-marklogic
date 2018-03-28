@@ -43,7 +43,10 @@ MarkLogic.prototype.getData = function getData (req, callback) {
 	    .then(data => {
 	      logResult(data);
 	      callback(null, data);
-	    });
+      })
+      .catch(function(error) {
+        callback(error)
+      });
 }
 
 function coerceQuery (params) {
