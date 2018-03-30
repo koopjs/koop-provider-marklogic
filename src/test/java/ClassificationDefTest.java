@@ -21,6 +21,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(3183.36201912057f))
                 .body("minValue", is(-13340.0579808794f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(5))
             ;
     }
 
@@ -41,6 +42,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(-44763.169857712f))
                 .body("minValue", is(-61804.899857712f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(10))
             ;
     }
 
@@ -61,6 +63,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(-124345.619126623f))
                 .body("minValue", is(-141140.379126623f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(20))
             ;
     }
 
@@ -81,6 +84,8 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(2.99261807854486f))
                 .body("minValue", is(1))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(10))
+
             ;
     }
 
@@ -101,9 +106,30 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(160.936078759448f))
                 .body("minValue", is(37))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(5))
             ;
     }
 
+@Test
+    public void gkgObjectIdGeometricInterval2() {
+        String path = request2path("gkgObjectIdGeometricInterval1.json");
+
+        RestAssured
+            .given()
+            .when()
+                .log().uri()
+                .get(path)
+
+            .then()
+                .log().ifError()
+                .statusCode(200)
+                .body("classBreakInfos[0].classMinValue", is(37))
+                .body("classBreakInfos[0].classMaxValue", is(160.936078759448f))
+                .body("minValue", is(37))
+                .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(5))
+            ;
+    }
     //gkgObjectIdQuantile
 
      @Test
@@ -123,6 +149,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(6437))
                 .body("minValue", is(1))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(10))
             ;
     }
 
@@ -144,6 +171,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(7805))
                 .body("minValue", is(37))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(5))
             ;
     }
 
@@ -164,6 +192,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(3042))
                 .body("minValue", is(0))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(20))                
             ;
     }
 
@@ -186,6 +215,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(-14.17f))
                 .body("minValue", is(-21.77f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(5))                
             ;
     }
 
@@ -207,6 +237,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(-13.206f))
                 .body("minValue", is(-15.72f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(10))   
             ;
     }
 
@@ -227,6 +258,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(-19.87f))
                 .body("minValue", is(-21.77f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(20))                
             ;
     }
 
@@ -249,6 +281,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(-8.48f))
                 .body("minValue", is(-21.77f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(10))                
             ;
     }
 
@@ -270,6 +303,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(-4.64f))
                 .body("minValue", is(-15.72f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(5))
             ;
     }
 
@@ -291,6 +325,7 @@ public class ClassificationDefTest extends AbstractFeatureServiceTest{
                 .body("classBreakInfos[0].classMaxValue", is(-10.82f))
                 .body("minValue", is(-21.77f))
                 .body("type", is("classBreaks"))
+                .body("classBreakInfos.size()", is(20))                
             ;
     }
 }
