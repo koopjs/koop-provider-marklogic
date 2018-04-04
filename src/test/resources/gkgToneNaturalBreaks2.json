@@ -1,0 +1,12 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 2,
+    "method": "generateRenderer"
+  },
+  "query" : {
+    "classificationDef": "{\"type\":\"classBreaksDef\",\"classificationField\":\"urltone\",\"classificationMethod\":\"esriClassifyNaturalBreaks\",\"breakCount\":20}",
+    "where": "1=1",
+    "f": "json"
+	}
+}

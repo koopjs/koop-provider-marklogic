@@ -7,6 +7,7 @@ process.on('SIGINT', () => process.exit(0))
 process.on('SIGTERM', () => process.exit(0))
 
 const config = require('config');
+const log = require('./logger');
 const fs = require('fs');
 const express = require('express');
 const app = express();
@@ -30,7 +31,7 @@ if (config.ssl.enabled) {
     app.use('/', koop.server)
   ).listen(config.ssl.port || 443);
 
-  console.log("Koop MarkLogic Provider listening for HTTPS on ${config.ssl.port}");
+  log.info("Koop MarkLogic Provider listening for HTTPS on ${config.ssl.port}");
 }
 
 koop.server.listen(config.port || 80);
@@ -41,4 +42,4 @@ Koop MarkLogic Provider listening for HTTP on ${config.port}
 
 Press control + c to exit
 `
-console.log(message)
+log.info(message)

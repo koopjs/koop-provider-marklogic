@@ -35,7 +35,7 @@ function returnErrToClient(statusCode, statusMsg, body) {
 
 // the same as the koop provider function without the callback parameter
 function getData(req) {
-    console.log(req);
+  console.log(req);
 
   if (req.params.method == "query") {
     return query(req);
@@ -320,39 +320,60 @@ function queryClassificationValues(req) {
   }
 
   const result = query({ params : req.params, query : q });
+  console.log("queryClassificationValues calculating breaks for " + result.statistics.length + " values");
+
+  const classStatistics = {
+    geometryType : getLayerModel(req.params.id, req.params.layer).geometryType
+  }
 
   //http://pro.arcgis.com/en/pro-app/help/mapping/symbols-and-styles/data-classification-methods.htm
 
   if (def.type === "classBreaksDef") {
-    const values = [];
-    result.statistics.map((stat) => {
-      values.push(stat[def.classificationField]);
+    const values = result.statistics.map((stat) => {
+      return stat[def.classificationField];
     });
+
+    // it looks like the breaks need to be in pairs of min and max values
+    let classValues = null;
 
     switch (def.classificationMethod) {
       case "esriClassifyNaturalBreaks":
-        result.statistics = (new geostats(values)).getClassJenks(def.breakCount);
+        classValues = (new geostats(values)).getClassJenks(def.breakCount);
         break;
       case "esriClassifyEqualInterval":
-        result.statistics = (new geostats(values)).getClassEqInterval(def.breakCount);
+        classValues = (new geostats(values)).getClassEqInterval(def.breakCount);
         break;
       case "esriClassifyQuantile":
-        result.statistics = (new geostats(values)).getClassQuantile(def.breakCount);
-        break;
+        classValues = (new geostats(values)).getClassQuantile(def.breakCount);
+        break;
       case "esriClassifyStandardDeviation":
-        // this one doesn't seem to be implemented correctly so leaving it commented out for now
-        //result.statistics = (new geostats(values)).getClassStdDeviation(def.standardDeviationInterval);
-        //break;
-        throw "Unsupported classificationMethod: " + def.classificationMethod;
+        classValues = (new geostats(values)).getClassStdDeviation(def.standardDeviationInterval);
+        break;
       case "esriClassifyGeometricalInterval":
-        result.statistics = (new geostats(values)).getClassGeometricProgression(def.breakCount);
+        classValues = (new geostats(values)).getClassGeometricProgression(def.breakCount);
         break;
       default:
         throw "Unsupported classificationMethod: " + def.classificationMethod;
     }
+
+    // make the values into range pairs
+    classStatistics.classBreaks = valuesToRanges(classValues);
+  } else {
+    classStatistics.uniqueValues = result.statistics;
   }
 
+  // override the result statistics with the new statistics object
+  result.statistics = classStatistics;
+
   return result;
+}
+
+function valuesToRanges(values) {
+  const ranges = Array(values.length - 1);
+  for (i = 0; i < ranges.length; i++) {
+    ranges[i] = [values[i], values[i + 1]];
+  }
+  return ranges;
 }
 
 
@@ -491,7 +512,7 @@ function parseRegionOperation(query) {
   // can we implement the other ESRI relations with combinations of the MarkLogic
   // operations?
 
-  if (query.spatialRel) {
+if (query.spatialRel) {
     switch(query.spatialRel.toLowerCase()) {
       case "esrispatialrelintersects":
         return "intersects";
@@ -672,10 +693,10 @@ function getObjects(req) {
 
   // TODO: see if there is any benefit to pushing the column select earlier in the pipeline
   // transform the rows into GeoJSON
-pipeline = pipeline
-.select(getSelectDef(outFields, columnDefs, returnGeometry));
+  pipeline = pipeline
+    .select(getSelectDef(outFields, columnDefs, returnGeometry));
 
-return pipeline.result(null, bindParams);
+  return pipeline.result(null, bindParams);
 }
 
 // returns a Sequence of aggregated results
