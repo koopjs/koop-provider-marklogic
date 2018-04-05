@@ -326,6 +326,21 @@ task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_replace = ".*/example/data/,'/'"
 }
 
+task loadZipCodeBoundaryData(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  port = mlAppConfig.restPort
+  database = mlAppConfig.contentDatabaseName
+  input_file_path = "example/data/zipcodes"
+  transform_module = "/ext/transform/wrap-geojson.sjs"
+  input_compressed = "true"
+  batch_size = 1
+  transaction_size = 1
+  output_collections = "zipcodes"
+  output_permissions = "rest-reader,read,rest-writer,update"
+  output_uri_replace = ".*/example/data/,'/'"
+}
+
 import groovyx.net.http.HTTPBuilder
 import static groovyx.net.http.Method.POST
 import static groovyx.net.http.ContentType.JSON
