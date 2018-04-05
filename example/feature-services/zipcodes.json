@@ -1,0 +1,30 @@
+{
+  "info" : {
+    "name" : "ZipCodes",
+    "description" : "US ZIP code boundaries"
+  },
+
+  "layers" : [
+    {
+      "id": 0,
+      "name" : "All",
+      "decription": "All US ZIP code boundaries",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "displayField": "zipcode",
+      "geometryPath": "//geometry",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "Boundaries",
+      "view" : "ZipCode"
+    }
+  ]
+}
