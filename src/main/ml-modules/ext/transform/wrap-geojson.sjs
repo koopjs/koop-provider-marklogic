@@ -1,6 +1,6 @@
 'use strict';
 
-var geojson = require('/MarkLogic/geospatial/geojson.xqy');
+var geoJsonModule = require('/MarkLogic/geospatial/geojson.xqy');
 
 function transform(content, context)
 {
@@ -9,7 +9,7 @@ function transform(content, context)
   const envelope = {
     envelope : {
       feature : geojson,
-      ctsRegion : geojson.parseGeojson(geojson.root.geometry)
+      ctsRegion : geoJsonModule.parseGeojson(geojson.root.geometry)
     }
   };
 
