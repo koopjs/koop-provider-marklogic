@@ -229,7 +229,8 @@ function query(req) {
     filtersApplied: {
       geometry: true, // true if a geometric filter has already been applied to the data
       where: true, // true if a sql-like where filter has already been applied to the data
-      offset: true
+      offset: true,
+      limit : true
     }
   };
 
@@ -661,9 +662,19 @@ function getObjects(req) {
   console.log("offset: " + offset);
 
   // what if the number of ids passed in is more than the max?
-  const limit = (!query.resultRecordCount ? MAX_RECORD_COUNT : Number(query.resultRecordCount));
-  console.log("limit: " + limit);
 
+    let limit = 0;
+    if (query.resultRecordCount) {
+      limit = Number(query.resultRecordCount)
+    }
+    else if ( query.returnIdsOnly ) {
+      limit = Number.MAX_SAFE_INTEGER 
+    }
+    else {
+      limit = MAX_RECORD_COUNT
+    }  
+
+  console.log("limit: " + limit);
   const bindParams = {
     "offset" : offset,
     "limit" : limit
