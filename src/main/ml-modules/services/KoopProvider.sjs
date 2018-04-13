@@ -277,11 +277,25 @@ function query(req) {
       });
     }
 
+    let req2 = req;
+    req2.query.outStatistics = [
+        { outStatisticFieldName : "count", statisticType : "count" }
+    ];
+    req2.query.returnCountOnly = true;
+    if (req2.query.orderByFields) { delete req2.query.orderByFields}
+
+    const totalCount = Array.from(aggregate(req2))[0].count;
+    console.log("totalCount : " +totalCount);
+    console.log("geojson features length :" + geojson.features.length)
+    if(geojson.features.length < totalCount) { geojson.metadata.limitExceeded = true}
+    else if (geojson.features.length >= totalCount) {geojson.metadata.limitExceeded = false}
+    else {}
+
     geojson.metadata.idField = layerModel.metadata.idField;
     geojson.metadata.displayField = layerModel.metadata.displayField;
   }
 
-  return geojson;
+return geojson;
 }
 
 /**
