@@ -562,7 +562,7 @@ function parseOrderByFields(query) {
   // return an array of { field, order } objects
   let fields = [];
   if (query.orderByFields) {
-    fn.tokenize(query.orderByFields, ", ?").toArray().map((field) => {
+    fn.tokenize(fn.normalizeSpace(query.orderByFields), ", ?").toArray().map((field) => {
      const parts = fn.tokenize(field, " +").toArray();
      fields.push(
        { "field" : parts[0], "order" : (parts[1] || "ASC" ) }
