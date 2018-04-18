@@ -71,4 +71,27 @@ public class OrderByTest extends AbstractFeatureServiceTest {
         ;
     }
 
+    @Test
+    public void testGkgOrderbyLeadingWhitespace() {
+
+        String path = request2path("gkgOrderbyLeadingWhitespace.json");
+
+        RestAssured
+        .given()
+        .when()
+            .log().uri()
+            .get(path)
+        .then()
+            .log().ifError()
+            .statusCode(200)
+            .log().ifValidationFails()
+            .body("objectIdFieldName", is("OBJECTID"))
+            .body("globalIdFieldName", is(""))
+            .body("hasZ", is(false))
+            .body("hasM", is(false))
+            .body("spatialReference.wkid", is(4326))
+            .body("features.size()", is(10))
+        ;
+    }
+
 }

@@ -161,10 +161,17 @@ ext {
 }
 
 test {
-  systemProperty "featureService.host", mlHost
-  systemProperty "featureService.port", koopPort
-  systemProperty "featureService.user", mlUsername
-  systemProperty "featureService.password", mlPassword
+  doFirst {
+    println "Running tests using the following properties:"
+    println "host: " + mlHost
+    println "port: " + koopPort
+    println "user: " + mlUsername
+  }
+
+  systemProperty "featureServer.host", mlHost
+  systemProperty "featureServer.port", koopPort
+  systemProperty "featureServer.user", mlUsername
+  systemProperty "featureServer.password", mlPassword
 }
 
 task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'configureKoop']) {
