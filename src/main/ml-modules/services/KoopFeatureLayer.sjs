@@ -4,6 +4,7 @@ const search = require('/MarkLogic/appservices/search/search.xqy');
 const sut = require('/MarkLogic/rest-api/lib/search-util.xqy');
 
 
+const koopConfigUri = '/koop/config.json';
 const collFeatureServices = 'http://marklogic.com/feature-services';
 
 // Returns all feature layers of a feature service
@@ -163,8 +164,24 @@ function createBoundingQuery(ctsQuery, qtext, searchOptions) {
   return xdmp.toJSON(query).toObject();
 }
 
+function getKoopConfig() {
+  // could be cached
+  return cts.doc(koopConfigUri).toObject();
+}
+
 function generateFeatureLayerUri(serviceName, layerId) {
-  return 'http://192.168.1.104:12050/marklogic/' + serviceName + '/FeatureServer/' + layerId;
+  let config = getKoopConfig()
+  return fn.concat(
+    config.ssl ? 'https' : 'http',
+    '://',
+    config.host,
+    ':',
+    config.port,
+    '/marklogic/',
+    serviceName,
+    '/FeatureServer/',
+    layerId
+  );
 }
 
 function returnErrToClient(statusCode, statusMsg, body) {

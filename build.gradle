@@ -11,6 +11,7 @@ buildscript {
         }
 
         dependencies {
+            classpath 'org.codehaus.groovy:groovy-json:2.4.15'
             classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
             classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
             classpath "net.saliman:gradle-properties-plugin:1.4.6"
@@ -283,7 +284,35 @@ task installKoop(type: NpmTask, dependsOn: ['configureKoop']) {
     workingDir = file('build/koop')
 }
 
-task runKoop(type: NodeTask) {
+import groovy.json.JsonBuilder
+import groovy.json.JsonOutput
+import com.marklogic.client.io.DocumentMetadataHandle
+import com.marklogic.client.io.DocumentMetadataHandle.Capability
+
+task registerKoop(type: com.marklogic.gradle.task.MarkLogicTask) {
+  doLast {
+    def json = new JsonBuilder()
+    def config = json {
+      'host' project.findProperty('koopHost') ?: mlAppConfig.host
+      'port' project.property('koopSSLEnabled').toBoolean() ? project.property('koopSSLPort') : project.property('koopPort')
+      'ssl' project.property('koopSSLEnabled').toBoolean()
+    }
+    def docUri = '/koop/config.json'
+    def client = newClient()
+    def docManager = client.newJSONDocumentManager()
+    def metadata = new DocumentMetadataHandle()
+    metadata.getCollections().addAll('http://marklogic.com/koop-config')
+    metadata.getPermissions().add('esri-connector-reader', Capability.READ)
+    metadata.getPermissions().add('esri-connector-writer', Capability.UPDATE)
+    docManager.writeAs(docUri, metadata, json.toString())
+
+    println 'Registered the following Koop config into ML:'
+    println 'uri: ' + docUri
+    println 'doc: ' + JsonOutput.prettyPrint(json.toString())
+  }
+}
+
+task runKoop(type: NodeTask, dependsOn: ['registerKoop']) {
   script = file('build/koop/server.js')
   execOverrides {
     it.workingDir = 'build/koop'
