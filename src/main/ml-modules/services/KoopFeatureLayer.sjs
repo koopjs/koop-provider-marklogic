@@ -104,7 +104,9 @@ function put(context, params, input) {
     xdmp.documentInsert(uri, model, { collections : xdmp.documentGetCollections(uri) });
 
     var response = {
-      featureLayerUrl: generateFeatureLayerUri(serviceName, layerId)
+      featureLayerUrl: getFeatureLayerUrl(serviceName, layerId),
+      featureServiceUrl: getFeatureServiceUrl(serviceName),
+      layerId: layerId
     };
 
     return response;
@@ -169,7 +171,7 @@ function getKoopConfig() {
   return cts.doc(koopConfigUri).toObject();
 }
 
-function generateFeatureLayerUri(serviceName, layerId) {
+function getFeatureServiceUrl(serviceName) {
   let config = getKoopConfig()
   return fn.concat(
     config.ssl ? 'https' : 'http',
@@ -179,7 +181,14 @@ function generateFeatureLayerUri(serviceName, layerId) {
     config.port,
     '/marklogic/',
     serviceName,
-    '/FeatureServer/',
+    '/FeatureServer'
+  );
+}
+
+function getFeatureLayerUrl(serviceName, layerId) {
+  return fn.concat(
+    getFeatureServiceUrl(serviceName),
+    '/',
     layerId
   );
 }
