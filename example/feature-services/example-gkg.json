@@ -8,7 +8,8 @@
     "Articles": {
       "options": "example-gkg-options",
       "geometryType": "Point",
-      "geoConstraint": "points",
+      "geoConstraint": "Location",
+      "values": "points",
       "docTransform": "example-gkg-transform",
       "schema": "GDeltGKG",
       "view": "Article"
