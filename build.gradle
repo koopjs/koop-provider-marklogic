@@ -350,6 +350,32 @@ task installExampleServices(type: Copy, dependsOn: []) {
 }
 installExampleServices.finalizedBy installServices
 
+task deployExampleRestModules(dependsOn: ['deployExampleQueryOptions', 'deployExampleTransforms'])
+
+task deployExampleQueryOptions(type : com.marklogic.gradle.task.MarkLogicTask, dependsOn: []) {
+  doLast {
+    def client = newClient()
+    def manager = client.newServerConfigManager().newQueryOptionsManager()
+    def file = new File('example/ml-modules/options/example-gkg-options.xml')
+    manager.writeOptions(
+      'example-gkg-options',
+      new com.marklogic.client.io.FileHandle().with(file)
+    )
+  }
+}
+
+task deployExampleTransforms(type : com.marklogic.gradle.task.MarkLogicTask, dependsOn: []) {
+  doLast {
+    def client = newClient()
+    def manager = client.newServerConfigManager().newTransformExtensionsManager()
+    def file = new File('example/ml-modules/transforms/example-gkg-transform.xqy')
+    manager.writeXQueryTransform(
+      'example-gkg-transform',
+      new com.marklogic.client.io.FileHandle().with(file)
+    )
+  }
+}
+
 task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
   classpath = configurations.mlcp
   command = "IMPORT"
