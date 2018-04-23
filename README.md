@@ -248,3 +248,53 @@ or
 https://<host>:<port>/marklogic/GDeltGKG/FeatureServer
 ```
 
+## Using the Connector with ArcGIS Pro
+
+MarkLogic is developing an ArcGIS Pro add-in that allows ArcGIS Pro users to directly query a MarkLogic database and save their searches as feature layers.
+
+There are additional setup requirements in order for the add-in to work properly with the connector.
+
+### Search Profiles
+
+Add a `search` section to a feature service descriptor in order to make the feature service available to the add-in and expose one or more search profiles.  Each profile requires a Search Options and a REST transform to be used by the add-in when performing queries and viewing documents.
+
+An example:
+
+```json
+"search": {
+    "Articles": {   // search profile's name
+        "options": "example-gkg-options",           // search options
+        "geometryType": "Point",                    // geometry type
+        "geoConstraint": "Location",                // geospatial constraint in the search options
+        "values": "points",                         // values name in the search options
+        "docTransform": "example-gkg-transform",    // transform used when viewing documents
+        "schema": "GDeltGKG",                       // TDE schema
+        "view": "Article"                           // TDE view
+    }
+}
+```
+
+These can also be found in the Example's feature service descriptors.
+
+### Protecting Layers
+
+The add-in allows users to replace the configuration of a feature layer with their own search parameters.  To prevent a feature layer from being overwritten, you can add a `readOnly` attribute to the feature layer's descriptor and set it to `true`.
+
+### Koop Server Registration
+
+The MarkLogic server needs to be aware of the Koop service when supplying feature layer addresses to the add-in.  Add a `koopHost` property to your gradle properties file and specify the external host name of Koop.
+
+For example:
+```
+koopHost=koop.mydomain.com
+```
+
+The MarkLogic server will use the value in `mlHost` if this property is not supplied.
+
+### Additional Setup for Example
+
+The Example environment contains a corresponding Search Options and REST transform to make it accessible to the add-in.  To install these into MarkLogic, run the following gradle command:
+
+```
+./gradlew deployExampleRestModules
+```
