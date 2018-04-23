@@ -5,12 +5,6 @@
   <!-- Limit all searches to this additional query -->
   <additional-query>
     <cts:and-query xmlns:cts="http://marklogic.com/cts">
-      <cts:path-geospatial-query >
-        <cts:path-expression>//geometry[type = "Point"]//array-node("coordinates")</cts:path-expression>
-        <cts:path-expression>//geometry[type = "MultiPoint"]//array-node("coordinates")</cts:path-expression>
-        <cts:region xsi:type="cts:box" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">[-85, -180, 85, 180]</cts:region>
-        <cts:option>coordinate-system=wgs84</cts:option>
-      </cts:path-geospatial-query>
       <cts:collection-query>
         <cts:uri>example-gkg</cts:uri>
       </cts:collection-query>
@@ -193,14 +187,9 @@
 <!-- <path-index>//geometry[type = "MultiPoint"]//array-node("coordinates")</path-index> -->
       <geo-option>boundaries-included</geo-option>
       <geo-option>score-function=reciprocal</geo-option>
-      <heatmap s="-90" w="-180" n="90" e="180" latdivs="4" londivs="4"/>
+      <geo-option>coordinate-system=wgs84</geo-option>
     </geo-path>
   </constraint>
-
-  <extract-document-data selected="include">
-    <extract-path>//geometry</extract-path>
-    <extract-path>/content/properties</extract-path>
-  </extract-document-data>
 
   <values name="points">
     <geo-path>
