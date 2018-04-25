@@ -4,6 +4,18 @@
     "description" : "GDelt GKG data. Georesolution values are 1=country, 2=US State / non-US ADM1, 3=city/landmark."
   },
 
+  "search": {
+    "Articles": {
+      "options": "example-gkg-options",
+      "geometryType": "Point",
+      "geoConstraint": "Location",
+      "values": "points",
+      "docTransform": "example-gkg-transform",
+      "schema": "GDeltGKG",
+      "view": "Article"
+    }
+  },
+
   "layers" : [
     {
       "id": 0,
@@ -29,7 +41,8 @@
           "property" : ["geores"], "value" : [ 1 ],
           "options" : ["lang=en"], "weight" : 0
         }
-      }
+      },
+      "readOnly": true
     },
     {
       "id": 1,
@@ -55,7 +68,8 @@
           "property" : ["geores"], "value" : [ 2 ],
           "options" : ["lang=en"], "weight" : 0
         }
-      }
+      },
+      "readOnly": true
     },
     {
       "id": 2,
@@ -81,7 +95,8 @@
           "property" : ["geores"], "value" : [ 3 ],
           "options" : ["lang=en"], "weight" : 0
         }
-      }
+      },
+      "readOnly": true
     },
     {
       "id": 3,
@@ -107,7 +122,8 @@
           "property" : ["geores"], "value" : [ 4 ],
           "options" : ["lang=en"], "weight" : 0
         }
-      }
+      },
+      "readOnly": true
     }
   ]
 }
