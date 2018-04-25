@@ -4,12 +4,12 @@ var geojson = require('/MarkLogic/geospatial/geojson.xqy');
 
 function transform(content, context)
 {
-  const geojson = content.value;
+  const feature = content.value;
 
   const envelope = {
     envelope : {
-      feature : geojson,
-      ctsRegion : geojson.parseGeojson(geojson.root.geometry)
+      feature : feature,
+      ctsRegion : geojson.parseGeojson(feature.root.geometry)
     }
   };
 
