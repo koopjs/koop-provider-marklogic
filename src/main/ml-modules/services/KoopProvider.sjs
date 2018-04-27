@@ -255,7 +255,10 @@ function query(req) {
   } else {
 
     console.log("getting objects");
-    geojson.features = Array.from(getObjects(req));
+    const objects = getObjects(req);
+    geojson.features = objects.result;
+
+    console.log("limitExceeded flag :" +objects.limitExceeded);
 
     // we chould only get this once in the process but do this for now to test
     const serviceId = req.params.id;
@@ -277,6 +280,8 @@ function query(req) {
         return outFields[f.name];
       });
     }
+
+    geojson.metadata.limitExceeded = objects.limitExceeded;
 
     geojson.metadata.idField = layerModel.metadata.idField;
     geojson.metadata.displayField = layerModel.metadata.displayField;
@@ -677,7 +682,7 @@ function getObjects(req) {
   console.log("limit: " + limit);
   const bindParams = {
     "offset" : offset,
-    "limit" : limit
+    "limit" : ((limit != Number.MAX_SAFE_INTEGER) ? (limit+1) : Number.MAX_SAFE_INTEGER),
   };
 
   const columnNames = [];
@@ -707,8 +712,15 @@ function getObjects(req) {
   pipeline = pipeline
     .select(getSelectDef(outFields, columnDefs, returnGeometry));
 
-  return pipeline.result(null, bindParams);
-}
+  const opticResult = Array.from(pipeline.result(null, bindParams))
+  const opticResultCount = opticResult.length
+
+  if(opticResultCount >= (limit+1) ){
+    return {result: opticResult.slice(0,-1), limitExceeded : true}
+  }
+  else {
+    return {result: opticResult , limitExceeded : false}
+  }}
 
 // returns a Sequence of aggregated results
 function aggregate(req) {
