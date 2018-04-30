@@ -712,14 +712,15 @@ function getObjects(req) {
   pipeline = pipeline
     .select(getSelectDef(outFields, columnDefs, returnGeometry));
 
-  const opticResult = Array.from(pipeline.result(null, bindParams))
-  const opticResultCount = opticResult.length
+  const opticResult = pipeline.result(null, bindParams)
+  const opticResultCount = Array.from(opticResult).length
 
   if(opticResultCount >= (limit+1) ){
-    return {result: opticResult.slice(0,-1), limitExceeded : true}
+    return {result:  Array.from(fn.subsequence(opticResult, 1, (opticResultCount - 1))),
+            limitExceeded : true}
   }
   else {
-    return {result: opticResult , limitExceeded : false}
+    return {result: Array.from(opticResult) , limitExceeded : false}
   }}
 
 // returns a Sequence of aggregated results
