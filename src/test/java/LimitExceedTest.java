@@ -23,6 +23,7 @@ public class LimitExceedTest extends AbstractFeatureServiceTest{
             .statusCode(200)
             .log().ifValidationFails()
             .body("exceededTransferLimit", is(true))
+            .body("features.size()", is(5000))
         ;
     }
 
@@ -42,6 +43,7 @@ public class LimitExceedTest extends AbstractFeatureServiceTest{
             .statusCode(200)
             .log().ifValidationFails()
             .body("exceededTransferLimit", is(false))
+            .body("features.size()", is(3557))
         ;
     }   
 
@@ -61,7 +63,28 @@ public class LimitExceedTest extends AbstractFeatureServiceTest{
             .statusCode(200)
             .log().ifValidationFails()
             .body("exceededTransferLimit", is(true))
+            .body("features.size()", is(3500))
         ;
-    }                            
+    } 
+
+    @Test
+    public void testGkgLimitExceed4() {
+
+        String path = request2path("gkgExceededTransferLimit4.json");
+
+        RestAssured
+        .given()
+        .when()
+            .log().uri()
+            .get(path)
+
+        .then()
+            .log().ifError()
+            .statusCode(200)
+            .log().ifValidationFails()
+            .body("exceededTransferLimit", is(true))
+            .body("features.size()", is(5))
+        ;
+    }                                       
 }
 
