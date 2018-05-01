@@ -1,0 +1,10 @@
+{
+    "params" : {
+      "id" : "GDeltGKG",
+      "layer" : 1,
+      "method": "query"
+    },
+    "query" : {
+      "where": "1=1"
+      }
+  }
