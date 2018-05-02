@@ -2,6 +2,7 @@
 
 const search = require('/MarkLogic/appservices/search/search.xqy');
 const sut = require('/MarkLogic/rest-api/lib/search-util.xqy');
+const ast = require('/MarkLogic/appservices/search/ast.xqy');
 
 
 const koopConfigUri = '/koop/config.json';
@@ -91,8 +92,7 @@ function put(context, params, input) {
       params.view
     );
 
-    var query = cts.query(fn.head(xdmp.unquote(params.query)).root);
-    layer.boundingQuery = createBoundingQuery(query, params.qtext, params.searchOptions);
+    layer.boundingQuery = createBoundingQuery(params.query, params.qtext, params.searchOptions);
 
     if (layerId === model.layers.length) {
       model.layers.push(layer);
@@ -149,21 +149,26 @@ function createNewLayerObj(id, name, desc, geometryType, schema, view) {
   };
 }
 
-function createBoundingQuery(ctsQuery, qtext, searchOptions) {
-  var query = ctsQuery;
+function createBoundingQuery(structuredQueryJson, qtext, searchOptions) {
+  var queries = [];
 
-  if (qtext && searchOptions) {
-    var options = sut.options({ options: searchOptions });
-    var searchQuery = search.parse(qtext, options, 'cts:query');
-    if (searchQuery) {
-      query = cts.andQuery([
-        ctsQuery,
-        searchQuery
-      ]);
+  var options = sut.options({ options: searchOptions });
+
+  if (qtext && options) {
+    var query = search.parse(qtext, options, 'cts:query');
+    if (query) {
+      queries.push(query);
     }
   }
+  
+  if (structuredQueryJson && options) {
+    var sQuery = sut.searchFromJson(xdmp.toJSON(structuredQueryJson)).xpath('search:query');
+    var ctsQuery = ast.toQuery(sQuery, options);
+    queries.push(ctsQuery.query);
+  }
 
-  return xdmp.toJSON(query).toObject();
+  var fullQuery = cts.andQuery(queries);
+  return xdmp.toJSON(fullQuery).toObject();
 }
 
 function getKoopConfig() {
