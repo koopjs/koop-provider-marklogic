@@ -182,19 +182,27 @@
   <!-- This will extract the latitude and longitude from the search. -->
   <constraint name="Location">
     <geo-path>
-      <path-index>//geometry[type = "Point"]//array-node("coordinates")</path-index>
+      <path-index>//geometry[type="Point"]//array-node("coordinates")</path-index>
 <!-- having two path-index elements should be supported but thows an error...may be a bug -->
 <!-- <path-index>//geometry[type = "MultiPoint"]//array-node("coordinates")</path-index> -->
       <geo-option>boundaries-included</geo-option>
       <geo-option>score-function=reciprocal</geo-option>
-      <geo-option>coordinate-system=wgs84</geo-option>
+      <geo-option>type=long-lat-point</geo-option>
     </geo-path>
   </constraint>
 
   <values name="points">
     <geo-path>
-      <path-index>//geometry[type = "Point"]//array-node("coordinates")</path-index>
+      <path-index>//geometry[type="Point"]//array-node("coordinates")</path-index>
+      <geo-option>boundaries-included</geo-option>
+      <geo-option>score-function=reciprocal</geo-option>
+      <geo-option>type=long-lat-point</geo-option>
     </geo-path>
   </values>
+
+  <extract-document-data selected="include">
+    <extract-path>//geometry</extract-path>
+  </extract-document-data>
+
 
 </options>
