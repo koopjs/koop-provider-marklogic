@@ -389,7 +389,7 @@ function parseWhere(query) {
 
   const where = query.where;
   let whereQuery = null;
-  if (!where || where === "1=1" || where === "1 = 1" || where === "") {
+  if (!where || where === "1=1" || where === "") {
     whereQuery = cts.trueQuery();
   } else {
     whereQuery = sql2optic.where(where);
@@ -673,11 +673,11 @@ function getObjects(req) {
       limit = Number(query.resultRecordCount)
     }
     else if ( query.returnIdsOnly ) {
-      limit = Number.MAX_SAFE_INTEGER
+      limit = Number.MAX_SAFE_INTEGER 
     }
     else {
       limit = MAX_RECORD_COUNT
-    }
+    }  
 
   console.log("limit: " + limit);
   const bindParams = {
