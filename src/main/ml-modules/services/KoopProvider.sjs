@@ -136,10 +136,16 @@ function generateServiceDescriptor(serviceName) {
     const schema = getSchema(layerModel, serviceName);
     const viewDef = tde.getView(schema, layerModel.view);
     viewDef.view.columns.map((c) => {
-      layer.metadata.fields.push({
+      const field = {
         name : c.column.name,
         type : getFieldType(c.column.scalarType)
-      });
+      };
+
+      if (field.type === "String") {
+        field.length = 1024;
+      }
+
+      layer.metadata.fields.push(field);
     });
 
     desc.layers.push(layer);
@@ -673,11 +679,11 @@ function getObjects(req) {
       limit = Number(query.resultRecordCount)
     }
     else if ( query.returnIdsOnly ) {
-      limit = Number.MAX_SAFE_INTEGER 
+      limit = Number.MAX_SAFE_INTEGER
     }
     else {
       limit = MAX_RECORD_COUNT
-    }  
+    }
 
   console.log("limit: " + limit);
   const bindParams = {
