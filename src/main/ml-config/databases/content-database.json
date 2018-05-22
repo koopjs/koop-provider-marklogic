@@ -3,14 +3,14 @@
   "schema-database": "%%SCHEMAS_DATABASE%%",
   "geospatial-path-index": [
     {
-      "path-expression": "\/\/geometry[type = \"MultiPoint\"]\/\/array-node(\"coordinates\")",
+      "path-expression": "geometry[type='Point']\/array-node('coordinates')",
       "coordinate-system": "wgs84",
       "point-format": "long-lat-point",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
-      "path-expression": "\/\/geometry[type = \"Point\"]\/\/array-node(\"coordinates\")",
+      "path-expression" : "geometry[type='MultiPoint']\/array-node('coordinates')\/array-node('coordinates')",
       "coordinate-system": "wgs84",
       "point-format": "long-lat-point",
       "range-value-positions": false,

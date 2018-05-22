@@ -8,6 +8,7 @@ const op = require('/MarkLogic/optic');
 const geojson = require('/MarkLogic/geospatial/geojson.xqy');
 const sql2optic = require('/ext/sql/sql2optic.sjs');
 const geostats = require("/ext/geo/geostats.js");
+const geoextractor = require('/ext/geo/extractor.sjs');
 
 const MAX_RECORD_COUNT = 5000;
 
@@ -256,7 +257,7 @@ function query(req) {
 
     console.log("getting objects");
     geojson.features = Array.from(getObjects(req));
-
+    
     // we chould only get this once in the process but do this for now to test
     const serviceId = req.params.id;
     const layerModel = generateLayerDescriptor(serviceId, req.params.layer);
@@ -395,7 +396,7 @@ function parseWhere(query) {
   return whereQuery;
 }
 
-function parseGeometry(query) {
+function parseGeometry(query,layerModel) {
   // the koop provider code will convert the ESRI geometry objects into GeoJSON
   // in WGS84 and place it in the query.extension.geometry property
   let geoQuery = null;
@@ -424,11 +425,7 @@ function parseGeometry(query) {
     // on the spatialRel parameter
     const pointOptions = [ "type=long-lat-point" ];
 
-    const pointQuery = cts.pathGeospatialQuery(
-      pointPaths,
-      regions,
-      pointOptions
-    )
+    const pointQuery = cts.andQuery(geoextractor.getPointQuery(regions,layerModel))
 
     const regionPaths = [
       cts.geospatialRegionPathReference('/envelope/ctsRegion')
@@ -623,7 +620,7 @@ function getObjects(req) {
 
   const query = req.query;
   const orderByFields = parseOrderByFields(query);
-  const geoQuery = parseGeometry(query);
+  const geoQuery = parseGeometry(query,layerModel);
   const whereQuery = parseWhere(query);
 
   let outFields = null;
@@ -705,7 +702,11 @@ function getObjects(req) {
   // TODO: see if there is any benefit to pushing the column select earlier in the pipeline
   // transform the rows into GeoJSON
   pipeline = pipeline
-    .select(getSelectDef(outFields, columnDefs, returnGeometry));
+    .select(getSelectDef(outFields, columnDefs, returnGeometry, layerModel))
+
+  if (layerModel.geometry.format != "geojson"){
+    pipeline = pipeline.map(geoextractor.getMapper(layerModel))
+  }
 
   return pipeline.result(null, bindParams);
 }
@@ -723,7 +724,7 @@ function aggregate(req) {
   const groupByFields = parseGroupByFields(query);
   const orderByFields = parseOrderByFields(query);
 
-  const geoQuery = parseGeometry(query);
+  const geoQuery = parseGeometry(query,layerModel);
 
   const boundingQueries = [ geoQuery ];
 
@@ -771,7 +772,23 @@ function getAggregateFieldNames(aggregateDefs) {
   });
 };
 
-function getSelectDef(outFields, columnDefs, returnGeometry = false) {
+function getSelectDef(outFields, columnDefs, returnGeometry,layerModel) {
+  console.log("==============getSelectDef=================")
+  console.log("")
+  if(layerModel.geometry.format == "custom")
+    {
+      const defs = geoextractor.getSelectors(layerModel)
+
+      defs.unshift(op.as(
+      "properties",
+      op.jsonObject(getPropDefs(outFields, columnDefs))
+      ))
+  
+      defs.unshift(op.as("type", "Feature"))
+  
+      return defs;
+    }
+  else {
   const defs = [
     op.as("type", "Feature")
   ];
@@ -782,15 +799,15 @@ function getSelectDef(outFields, columnDefs, returnGeometry = false) {
       op.jsonObject(getPropDefs(outFields, columnDefs))
     )
   );
-
-  // only include this if returnGeometry is true or outFields is *
+  
   if (returnGeometry || outFields[0] === "*") {
-    defs.push(
-      op.as("geometry", op.xpath("doc", "//geometry"))
-    )
+    const result = (layerModel.geometry.format == "geojson") ? op.as("geometry", op.xpath("doc", "//geometry")) : geoextractor.getSelectors(layerModel);
+    //console.log("result : " +result);
+    defs.push(result); 
   }
 
   return defs;
+  }
 }
 
 function getPropDefs(outFields, columnDefs) {

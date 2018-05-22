@@ -376,6 +376,19 @@ task deployExampleTransforms(type : com.marklogic.gradle.task.MarkLogicTask, dep
   }
 }
 
+task loadGeoLocationData(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  port = mlAppConfig.restPort
+  database = mlAppConfig.contentDatabaseName
+  input_file_path = "example/data/GeoLocation"
+  input_compressed = "true"
+  output_collections = "example-geo"
+  output_permissions = "rest-reader,read,rest-writer,update"
+  output_uri_replace = ".*/example/data/,'/'"
+}
+
+
 task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
   classpath = configurations.mlcp
   command = "IMPORT"
