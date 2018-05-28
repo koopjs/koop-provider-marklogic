@@ -425,7 +425,7 @@ function parseGeometry(query,layerModel) {
     // on the spatialRel parameter
     const pointOptions = [ "type=long-lat-point" ];
 
-    const pointQuery = cts.andQuery(geoextractor.getPointQuery(regions,layerModel))
+    const pointQuery = cts.orQuery(geoextractor.getPointQuery(regions,layerModel))
 
     const regionPaths = [
       cts.geospatialRegionPathReference('/envelope/ctsRegion')
@@ -774,10 +774,13 @@ function getAggregateFieldNames(aggregateDefs) {
 
 function getSelectDef(outFields, columnDefs, returnGeometry,layerModel) {
   console.log("==============getSelectDef=================")
-  console.log("")
   if(layerModel.geometry.format == "custom")
     {
-      const defs = geoextractor.getSelectors(layerModel)
+      let defs = [];
+      
+      if (returnGeometry || outFields[0] === "*") {
+        defs = geoextractor.getSelectors(layerModel)
+      }
 
       defs.unshift(op.as(
       "properties",
@@ -802,7 +805,6 @@ function getSelectDef(outFields, columnDefs, returnGeometry,layerModel) {
   
   if (returnGeometry || outFields[0] === "*") {
     const result = (layerModel.geometry.format == "geojson") ? op.as("geometry", op.xpath("doc", "//geometry")) : geoextractor.getSelectors(layerModel);
-    //console.log("result : " +result);
     defs.push(result); 
   }
 

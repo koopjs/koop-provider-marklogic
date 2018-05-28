@@ -80,8 +80,8 @@ function getPointQuery(regions,layerModel)
                           {
                             const pointFormat = elementChildArray[i].pointFormat
                             const coordinateSystem = elementChildArray[i].coordinateSystem
-                            const parentNamespace  = elementChildArray[i].parentNamespace;
-                            const childNamespace = elementChildArray[i].childNamespace;
+                            const parentNamespace  = elementChildArray[i].parentNamespaceUri;
+                            const childNamespace = elementChildArray[i].namespaceUri;
 
                             const pointOptions = [ "type=" +pointFormat , "coordinate-system=" +coordinateSystem ]
                             const parentLocalname = fn.QName(parentNamespace ,elementChildArray[i].parentLocalname)
@@ -165,6 +165,7 @@ function GMLExtractor(layer) {
       coordinates : []
     }
     
+    if (result.geometry) {
     const extracted = result.geometry.toObject();
     const lonLat = (extracted.pointFormat === "long-lat-point");
     
@@ -176,9 +177,10 @@ function GMLExtractor(layer) {
           } else {
             resultGeometry.coordinates.push([ Number(parts[1]), Number(parts[0])]);
           }
-    }
-                     
+      }
+    
     result.geometry = resultGeometry;
+    }
     return result;
 }
 }
@@ -198,6 +200,7 @@ function KMLExtractor(layer) {
       coordinates : []
     }
     
+    if (result.geometry) {
     const extracted = result.geometry.toObject();
     let points = extracted.points;
     
@@ -207,6 +210,7 @@ function KMLExtractor(layer) {
     }
                      
     result.geometry = resultGeometry;
+    }
     return result;
 }
 }
@@ -226,6 +230,7 @@ function RSSExtractor(layer) {
       coordinates : []
     }
     
+    if (result.geometry) {
     const extracted = result.geometry.toObject();
     let points = extracted.points;
     
@@ -235,6 +240,7 @@ function RSSExtractor(layer) {
     }
                      
     result.geometry = resultGeometry;
+    }
     return result;
 }
 }
@@ -255,7 +261,8 @@ function McgmExtractor(layer) {
       type : "MultiPoint",
       coordinates : []
     }
-    
+        if (result.geometry) {
+
         let pointsObj = result.geometry.toObject();    
 
         let lats = pointsObj.lats;
@@ -271,7 +278,7 @@ function McgmExtractor(layer) {
         });  
     
         result.geometry = resultGeometry;
-
+      }
     return result;
   }
 }
@@ -302,6 +309,7 @@ function AnyExtractor(layer) {
       coordinates : []
     }
     
+    if (result.geometry) {
     const extracted = result.geometry.toObject();
 
     let pointsObj = extracted.points;    
@@ -334,6 +342,7 @@ function AnyExtractor(layer) {
       }
      }                       
     result.geometry = resultGeometry;
+    }
     return result;
 }
 }
@@ -425,7 +434,8 @@ function CustomExtractor(layer) {
       type : "MultiPoint",
       coordinates : []
     }
-   
+  
+  if (result.geometry) {
     for (const geometry of result.geometry) {
       const extracted = geometry.toObject();
 
@@ -464,6 +474,7 @@ function CustomExtractor(layer) {
       }
     }
     result.geometry = resultGeometry;
+    }
     return result;
   }
 }

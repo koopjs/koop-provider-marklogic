@@ -15,7 +15,21 @@
       "point-format": "long-lat-point",
       "range-value-positions": false,
       "invalid-values": "reject"
-    }
+    },
+    {
+      "path-expression" : "//location/item/Point",
+      "coordinate-system": "wgs84",
+      "point-format": "point",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "path-expression" : "//location/item/coords",
+      "coordinate-system": "wgs84",
+      "point-format": "point",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    }    
   ],
   "geospatial-region-path-index": [
     {
@@ -24,6 +38,93 @@
       "units": "miles",
       "geohash-precision": 2,
       "invalid-values": "reject"
+    }
+  ],
+  "geospatial-element-child-index" : [
+    {
+      "parent-namespace-uri" : "http://www.opengis.net/gml/3.2",
+      "parent-localname" : "Point",
+      "namespace-uri" : "http://www.opengis.net/gml/3.2",
+      "localname" : "pos",
+      "coordinate-system" : "wgs84",
+      "point-format" : "point",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "parent-namespace-uri" : "http://www.opengis.net/kml/2.2",
+      "parent-localname" : "Point",
+      "namespace-uri" : "http://www.opengis.net/kml/2.2",
+      "localname" : "coordinates",
+      "coordinate-system" : "wgs84",
+      "point-format" : "long-lat-point",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "parent-namespace-uri" : "http://www.marklogic.com/element-child",
+      "parent-localname" : "point",
+      "namespace-uri" : "",
+      "localname" : "coords",
+      "coordinate-system" : "wgs84",
+      "point-format" : "point",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    }    
+  ],
+  "geospatial-element-index" : [
+    {
+      "namespace-uri" : "http://www.georss.org/georss",
+      "localname" : "point",
+      "coordinate-system" : "wgs84",
+      "point-format" : "point",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "namespace-uri" : "http://www.marklogic.com/element",
+      "localname" : "coords",
+      "coordinate-system" : "wgs84",
+      "point-format" : "point",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    }    
+  ],
+  "geospatial-element-attribute-pair-index" : [
+    {
+      "parent-namespace-uri" : "",
+      "parent-localname" : "Dot",
+      "latitude-namespace-uri" : "",
+      "latitude-localname" : "Latitude",
+      "longitude-namespace-uri" : "",
+      "longitude-localname" : "Longitude",
+      "coordinate-system" : "wgs84",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "parent-namespace-uri" : "http://www.marklogic.com/element-attribute",
+      "parent-localname" : "point",
+      "latitude-namespace-uri" : "",
+      "latitude-localname" : "latitude",
+      "longitude-namespace-uri" : "",
+      "longitude-localname" : "longitude",
+      "coordinate-system" : "wgs84",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    }
+  ],
+  "geospatial-element-pair-index" : [
+    {
+      "parent-namespace-uri" : "",
+      "parent-localname" : "point",
+      "latitude-namespace-uri" : "",
+      "latitude-localname" : "latitude",
+      "longitude-namespace-uri" : "",
+      "longitude-localname" : "longitude",
+      "coordinate-system" : "wgs84",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"      
     }
   ]
 }
