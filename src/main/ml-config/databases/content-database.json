@@ -1,6 +1,65 @@
 {
   "database-name" : "%%DATABASE%%",
   "schema-database": "%%SCHEMAS_DATABASE%%",
+  "stemmed-searches": "basic",
+  "range-element-index" : [
+    {
+      "scalar-type" : "date",
+      "namespace-uri" : "",
+      "localname" : "eventDate",
+      "collation" : null,
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "date",
+      "namespace-uri" : "",
+      "localname" : "publishDate",
+      "collation" : null,
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "sentiment",
+      "collation" : "http://marklogic.com/collation/",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "domain",
+      "collation" : "http://marklogic.com/collation/",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "urllangcode",
+      "collation" : "http://marklogic.com/collation/",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "themes",
+      "collation" : "http://marklogic.com/collation/",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "int",
+      "namespace-uri" : "",
+      "localname" : "geores",
+      "collation" : null,
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    }
+  ],
   "geospatial-path-index": [
     {
       "path-expression": "\/\/geometry[type = \"MultiPoint\"]\/\/array-node(\"coordinates\")",
