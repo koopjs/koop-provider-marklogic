@@ -53,6 +53,9 @@ function coerceQuery (params) {
   Object.keys(params).forEach(function (param) {
     if (params[param] === 'false') { params[param] = false; }
     else if (params[param] === 'true') { params[param] = true; }
+    else if (param === 'inSR') {
+      params[param] = (params[param].startsWith("{") ? JSON.parse(params[param]) : params[param]);
+    }
     else if (param === 'geometry') {
       params[param] = (params[param].startsWith("{") ? JSON.parse(params[param]) : params[param]);
     }
