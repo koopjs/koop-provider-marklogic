@@ -131,7 +131,7 @@ function createNewLayerObj(id, name, desc, geometryType, schema, view) {
     "name": name || 'New Layer',
     "description": desc || '',
     "geometryType": geometryType || 'Point',
-    "objectIdField": "OBJECTID",
+    "idField": "OBJECTID",
     "displayField": "url",
     "geometryPath": "\/geometry",
     "extent": {
