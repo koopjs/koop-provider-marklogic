@@ -84,15 +84,24 @@
   <annotation>Delta options here</annotation>
 
   <!-- Facet based on document collections, simple yet elegant -->
+<!--
   <constraint name="Source">
     <collection facet="true">
       <facet-option>frequency-order</facet-option>
       <facet-option>descending</facet-option>
     </collection>
-    <!-- optionally enable a prefix to see a specific subset of facets
-    <collection facet="true" prefix="data/" />
-    -->
   </constraint>
+-->
+<!--
+  <constraint name="Sentiment">
+    <range type="xs:string" facet="true">
+      <facet-option>limit=5</facet-option>
+      <facet-option>frequency-order</facet-option>
+      <facet-option>descending</facet-option>
+      <element ns="" name="sentiment" />
+    </range>
+  </constraint>
+-->
 
   <constraint name="GeoResolution">
     <range type="xs:int" facet="true">
@@ -114,6 +123,15 @@
       <facet-option>frequency-order</facet-option>
       <facet-option>descending</facet-option>
       <element ns="" name="urllangcode" />
+    </range>
+  </constraint>
+
+  <constraint name="Domain">
+    <range type="xs:string" facet="true">
+      <facet-option>limit=10</facet-option>
+      <facet-option>frequency-order</facet-option>
+      <facet-option>descending</facet-option>
+      <element ns="" name="domain" />
     </range>
   </constraint>
 

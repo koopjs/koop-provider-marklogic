@@ -192,7 +192,12 @@ if (! project.hasProperty("disconnected") || ! disconnected) {
     installConnector.mustRunAfter buildConnector
 }
 
-task installServices(dependsOn: ['loadFeatureServices', 'loadSchemas'])
+task installServices(dependsOn: [
+    'loadFeatureServices',
+    'loadSchemas',
+    'loadQueryOptions',
+    'loadQueryTransforms'
+])
 
 task buildPlugin(type: Exec) {
   doFirst {
@@ -206,7 +211,7 @@ task buildPlugin(type: Exec) {
   commandLine 'make'
 }
 
-task installPlugin(dependsOn: [], type: com.marklogic.gradle.task.MarkLogicTask) {
+task installPlugin(dependsOn: [ 'mlDeploy' ], type: com.marklogic.gradle.task.MarkLogicTask) {
   doLast {
     // load binary to the modules database
     def client = newClient()
@@ -320,61 +325,96 @@ task runKoop(type: NodeTask, dependsOn: ['registerKoop']) {
   }
 }
 
-task loadFeatureServices(type: com.marklogic.gradle.task.MlcpTask) {
-  classpath = configurations.mlcp
-  command = "IMPORT"
-  port = mlAppConfig.restPort
-  database = mlAppConfig.contentDatabaseName
-  input_file_path = "config/feature-services"
-  input_file_type = "documents"
-  output_collections = "http://marklogic.com/feature-services"
-  output_permissions = "rest-reader,read,rest-writer,update"
-  output_uri_replace = ".*/config/,'/'"
+task fsConfigCheck() {
+    doLast {
+        if (! project.hasProperty("fsConfig")) throw new InvalidUserDataException("The fsConfig property is not set")
+    }
 }
 
-task loadSchemas(type: com.marklogic.gradle.task.schemas.LoadSchemasTask, dependsOn: []) {
-  ext {
-    mlAppConfig {
-      schemasPath = 'config/templates'
+task loadFeatureServices(type: com.marklogic.gradle.task.MlcpTask, dependsOn: [ "fsConfigCheck" ]) {
+    doFirst {
+        classpath = configurations.mlcp
+        command = "IMPORT"
+        port = mlAppConfig.restPort
+        database = mlAppConfig.contentDatabaseName
+
+        input_file_path = "config/${fsConfig}/services"
+        input_file_type = "documents"
+        output_collections = "http://marklogic.com/feature-services"
+        output_permissions = "rest-reader,read,rest-writer,update"
+        output_uri_replace = ".*/config/,'/'"
     }
+
+    doLast {
+        println "Service descriptos loaded"
+    }
+}
+
+task loadSchemas(type: com.marklogic.gradle.task.schemas.LoadSchemasTask, dependsOn: ["fsConfigCheck"]) {
+    doFirst {
+        ext {
+            mlAppConfig {
+                schemasPath = "config/${fsConfig}/templates"
+            }
+        }
+    }
+
+    doLast {
+        println "Schemas loaded"
+    }
+}
+
+task loadQueryOptions(type : com.marklogic.gradle.task.MarkLogicTask, dependsOn: ["fsConfigCheck"]) {
+  doLast {
+    def client = newClient()
+    def manager = client.newServerConfigManager().newQueryOptionsManager()
+
+    def files = files(file("config/${fsConfig}/options").listFiles())
+    files.each { file ->
+        def optionsName = file.name.substring(0, file.name.lastIndexOf("."))
+        manager.writeOptions(
+            optionsName, new com.marklogic.client.io.FileHandle().with(file)
+        )
+        println "Loaded query options: ${optionsName}"
+    }
+
+    println "Query options loaded"
+  }
+}
+
+task loadQueryTransforms(type : com.marklogic.gradle.task.MarkLogicTask, dependsOn: ["fsConfigCheck"]) {
+  doLast {
+    def client = newClient()
+    def manager = client.newServerConfigManager().newTransformExtensionsManager()
+
+    def files = files(file("config/${fsConfig}/transforms").listFiles())
+    files.each { file ->
+        def transformName = file.name.substring(0, file.name.lastIndexOf("."))
+        manager.writeXQueryTransform(
+            transformName, new com.marklogic.client.io.FileHandle().with(file)
+        )
+        println "Loaded transform: ${transformName}"
+    }
+
+    println "Query transforms loaded"
   }
 }
 
 task installExampleServices(type: Copy, dependsOn: []) {
   from("example") {
-    include "feature-services/**"
+    include "services/**"
     include "templates/**"
+    include "options/**"
+    include "transforms/**"
   }
 
-  into "config"
+  into "config/example"
+
+  doLast {
+    project.ext.fsConfig = "example"
+  }
 }
 installExampleServices.finalizedBy installServices
-
-task deployExampleRestModules(dependsOn: ['deployExampleQueryOptions', 'deployExampleTransforms'])
-
-task deployExampleQueryOptions(type : com.marklogic.gradle.task.MarkLogicTask, dependsOn: []) {
-  doLast {
-    def client = newClient()
-    def manager = client.newServerConfigManager().newQueryOptionsManager()
-    def file = new File('example/ml-modules/options/example-gkg-options.xml')
-    manager.writeOptions(
-      'example-gkg-options',
-      new com.marklogic.client.io.FileHandle().with(file)
-    )
-  }
-}
-
-task deployExampleTransforms(type : com.marklogic.gradle.task.MarkLogicTask, dependsOn: []) {
-  doLast {
-    def client = newClient()
-    def manager = client.newServerConfigManager().newTransformExtensionsManager()
-    def file = new File('example/ml-modules/transforms/example-gkg-transform.xqy')
-    manager.writeXQueryTransform(
-      'example-gkg-transform',
-      new com.marklogic.client.io.FileHandle().with(file)
-    )
-  }
-}
 
 task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
   classpath = configurations.mlcp

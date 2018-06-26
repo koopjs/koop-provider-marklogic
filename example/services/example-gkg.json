@@ -1,6 +1,6 @@
 {
   "info" : {
-    "name" : "GDeltGKG",
+    "name" : "GDeltExample",
     "description" : "GDelt GKG data. Georesolution values are 1=country, 2=US State / non-US ADM1, 3=city/landmark."
   },
 
@@ -35,6 +35,7 @@
           "latestWkid" : 4326
         }
       },
+      "schema": "GDeltGKG",
       "view" : "Article",
       "boundingQuery" : {
         "jsonPropertyValueQuery" : {
@@ -62,6 +63,7 @@
           "latestWkid" : 4326
         }
       },
+      "schema": "GDeltGKG",
       "view" : "Article",
       "boundingQuery" : {
         "jsonPropertyValueQuery" : {
@@ -89,6 +91,7 @@
           "latestWkid" : 4326
         }
       },
+      "schema": "GDeltGKG",
       "view" : "Article",
       "boundingQuery" : {
         "jsonPropertyValueQuery" : {
@@ -116,6 +119,7 @@
           "latestWkid" : 4326
         }
       },
+      "schema": "GDeltGKG",
       "view" : "Region",
       "boundingQuery" : {
         "jsonPropertyValueQuery" : {
