@@ -112,15 +112,15 @@ The connector requires a _service descriptor_ document to be created for each ES
 
 Currently, the service descriptors live in the same database as the data that is being queried but that could change. They must be in the `http://marklogic.com/feature-services` collection for the connector to be able to find them.
 
-Service descriptors should be placed in the `config/feature-services` directory. They will be automically installed and placed into the required collection when you run the `./gradlew installServices` command.
+Service descriptors should be placed in the `config/<config name>/feature-services` directory. They will be automically installed and placed into the required collection when you run the `./gradlew -PfsConfig=<config name> installServices` command.
 
-See `example/feature-services/example-gkg.json` for an example service descriptor.
+See `example/services/example-gkg.json` for an example service descriptor.
 
 <a name="TDE-Templates"></a>
 ### TDE Templates
 The connector relies on MarkLogic TDE views to provide data to ESRI feature layers and tables. Follow the [MarkLogic documentation](https://docs.marklogic.com/guide/app-dev/TDE) and the GKG example provided `example/templates/example-gkg.tdex` to create TDE templates to build views for the data you want to expose.
 
-TDE templates should be placed in the `config/templates` directory. They will be automically installed when you run the `./gradlew installServices` command.
+TDE templates should be placed in the `config/<config name>/templates` directory. They will be automically installed when you run the `./gradlew -PfsConfig=<config name> installServices` command.
 
 ---
 <a name="Install-the-Connector"></a>
@@ -155,10 +155,11 @@ If you have an existing database setup and you would like to use the connector t
     ```
     Keep in mind that if these databases do not exist in your cluster, they will be created when the `installConnector` task is run. Also, if you specify the content database and no schemas database, the schemas database will be created an the content database will be changed to use the new schemas database.
 1) Run `./gradlew -PenvironmentName=myenv installConnector`
-1) Create one or more service descriptors as explained in the [Feature Service Descriptors](#Feature-Service-Descriptors) section and put them in the `config/feature-services` directory. Use the files in `example/feature-services/` as a starting point.
-1) Create one or more TDE templates as explained in the [TDE Templates](#TDE-Templates) section and put them in the `config/templates` directory. Use the files in `example/features-services/` as a starting point.
+1) Decide on a name for your configuration. Use that as the `<config name>` in the following steps. E.g. `example` is the config name for the example configuration.
+1) Create one or more service descriptors as explained in the [Feature Service Descriptors](#Feature-Service-Descriptors) section and put them in the `config/<config name>/services` directory. Use the files in `example/services/` as a starting point.
+1) Create one or more TDE templates as explained in the [TDE Templates](#TDE-Templates) section and put them in the `config/<config name>/templates` directory. Use the files in `example/templates/` as a starting point.
 Note: If you have existing views in your MarkLogic database, you may be able to leverage them rather than creating new ones. Be sure to read the [OBJECTIDs Limitation](#OBJECTIDs) though.
-1) Install the feature services `./gradlew -PenvironmentName=myenv installServices`
+1) Install the feature services `./gradlew -PfsConfig=<config name> -PenvironmentName=myenv installServices`
 1) See [Running the Connector](#Running-the-Connector) for how to start the Koop server
 
 <a name="Install-with-Example"></a>
@@ -177,9 +178,7 @@ If you would like to try out the connector using the included example, follow th
     koopSSLEnabled=false
     ```
 1) Run `./gradlew -PenvironmentName=example installConnector`
-1) Copy the example feature service descriptor from `example/feature-services/example-gkg.json` to the `config/feature-services` directory
-1) Copy the example TDE template from `example/templates/example-gkg.tdex` to the `config/templates` directory
-1) Install the feature services `./gradlew -PenvironmentName=example installServices`
+1) Install the example feature service `./gradlew -PenvironmentName=example installExampleServices`
 1) Load the example data `./gradlew -PenvironmentName=example loadExampleData`
 1) You can test that the Koop provider service is working by doing the following
   ```
@@ -290,11 +289,3 @@ koopHost=koop.mydomain.com
 ```
 
 The MarkLogic server will use the value in `mlHost` if this property is not supplied.
-
-### Additional Setup for Example
-
-The Example environment contains a corresponding Search Options and REST transform to make it accessible to the add-in.  To install these into MarkLogic, run the following gradle command:
-
-```
-./gradlew deployExampleRestModules
-```
