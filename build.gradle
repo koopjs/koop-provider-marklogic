@@ -179,8 +179,6 @@ task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'configureKoop'])
   // make sure these folders exist so we can add service descriptors and templates to them
   doFirst {
     project.file('config').mkdirs()
-    project.file('config/feature-services').mkdirs()
-    project.file('config/templates').mkdirs()
   }
 }
 
