@@ -187,11 +187,11 @@ If you would like to try out the connector using the included example, follow th
   This gets all the fields from the first 5 records from the features in layer 0 in the example service.
 1) See [Running the Connector](#Running-the-Connector) for how to start the Koop server
 1) You can test the feature service by access the feature service URL from a browser
-* See the top-level service descriptor: `http://<host>/marklogic/GDeltGKG/FeatureServer`
-* See the layer 0 descriptor: `http://<host>/marklogic/GDeltGKG/FeatureServer/0`
-* Query layer 0 for the first 5 features: `http://<host>/marklogic/GDeltGKG/FeatureServer/0/query?resultRecordCount=5`
-* Query layer 0 for the count of features: `http://<host>/marklogic/GDeltGKG/FeatureServer/0/query?returnCountOnly=true`
-* Query layer 0 for the count of features where the "domain" is "indiatimes.com": `http://<host>/marklogic/GDeltGKG/FeatureServer/0/query?returnCountOnly=true&where=domain='indiatimes.com'`
+* See the top-level service descriptor: `http://<host>/marklogic/GDeltExample/FeatureServer`
+* See the layer 0 descriptor: `http://<host>/marklogic/GDeltExample/FeatureServer/0`
+* Query layer 0 for the first 5 features: `http://<host>/marklogic/GDeltExample/FeatureServer/0/query?resultRecordCount=5`
+* Query layer 0 for the count of features: `http://<host>/marklogic/GDeltExample/FeatureServer/0/query?returnCountOnly=true`
+* Query layer 0 for the count of features where the "domain" is "indiatimes.com": `http://<host>/marklogic/GDeltExample/FeatureServer/0/query?returnCountOnly=true&where=domain='indiatimes.com'`
 
 <a name="Build-Disconnected-Archive"></a>
 ### Build an Archive to Run in Disconnected Mode
