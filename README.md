@@ -240,11 +240,11 @@ The service name is set via the `info.name` property in the service descriptor.
 The example feature service will be available at the following URL:
 
 ```
-http://<host>:<port>/marklogic/GDeltGKG/FeatureServer
+http://<host>:<port>/marklogic/GDeltExample/FeatureServer
 ```
 or
 ```
-https://<host>:<port>/marklogic/GDeltGKG/FeatureServer
+https://<host>:<port>/marklogic/GDeltExample/FeatureServer
 ```
 
 ## Using the Connector with ArcGIS Pro
