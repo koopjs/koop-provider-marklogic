@@ -131,27 +131,53 @@ function generateServiceDescriptor(serviceName) {
     }
 
     // add the list of fields to the metadata
-    layer.metadata.fields = [];
-
-    const schema = getSchema(layerModel, serviceName);
-    const viewDef = tde.getView(schema, layerModel.view);
-    viewDef.view.columns.map((c) => {
-      const field = {
-        name : c.column.name,
-        type : getFieldType(c.column.scalarType)
-      };
-
-      if (field.type === "String") {
-        field.length = 1024;
-      }
-
-      layer.metadata.fields.push(field);
-    });
+    layer.metadata.fields = generateFieldDescriptors(layerModel, serviceName);
 
     desc.layers.push(layer);
   }
 
   return desc;
+}
+
+function generateFieldDescriptors(layerModel, serviceName) {
+  const fields = [];
+
+  const schema = getSchema(layerModel, serviceName);
+  const viewDef = tde.getView(schema, layerModel.view);
+
+  viewDef.view.columns.forEach((c) => {
+    const field = {
+      name : c.column.name,
+      type : getFieldType(c.column.scalarType)
+    };
+
+    if (field.type === "String") {
+      field.length = 1024;
+    }
+
+    fields.push(field);
+  });
+
+  if (layerModel.joins) {
+    layerModel.joins.forEach((dataSource) => {
+      if (dataSource.fields) {
+        Object.keys(dataSource.fields).forEach((c) => {
+          const field = {
+            name : c,
+            type : getFieldType(dataSource.fields[c].scalarType)
+          };
+
+          if (field.type === "String") {
+            field.length = 1024;
+          }
+
+          fields.push(field);
+        });
+      }
+    });
+  }
+
+  return fields;
 }
 
 function generateLayerDescriptor(serviceName, layerNumber) {
@@ -357,7 +383,7 @@ function queryClassificationValues(req) {
         break;
       case "esriClassifyQuantile":
         classValues = (new geostats(values)).getClassQuantile(def.breakCount);
-        break;
+        break;
       case "esriClassifyStandardDeviation":
         classValues = (new geostats(values)).getClassStdDeviation(def.standardDeviationInterval);
         break;
@@ -395,8 +421,9 @@ function parseWhere(query) {
 
   const where = query.where;
   let whereQuery = null;
-  if (!where || where === "1=1" || where === "") {
-    whereQuery = cts.trueQuery();
+  if (!where || where === "1=1" || where === "1 = 1" || where === "") {
+    //whereQuery = cts.trueQuery();
+    whereQuery = op.eq(1, 1)
   } else {
     whereQuery = sql2optic.where(where);
   }
@@ -635,7 +662,8 @@ function getObjects(req) {
   const query = req.query;
   const orderByFields = parseOrderByFields(query);
   const geoQuery = parseGeometry(query);
-  const whereQuery = parseWhere(query);
+
+  let whereQuery = parseWhere(query);
 
   let outFields = null;
   if (query.returnIdsOnly) {
@@ -645,6 +673,7 @@ function getObjects(req) {
   }
 
   const returnGeometry = (query.returnGeometry || outFields[0] === "*") ? true : false;
+  const geometrySource = layerModel.geometrySource;
 
   const boundingQueries = [ geoQuery ];
 
@@ -659,10 +688,16 @@ function getObjects(req) {
   if (ids) {
     // this assumes we are querying against the OBJECTID field as a number
     // should use a range index if we have one
-    const idsQuery = cts.jsonPropertyValueQuery("OBJECTID", ids.map(Number));
-    console.log("getting ids: " + ids);
+    //const idsQuery = cts.jsonPropertyValueQuery("OBJECTID", ids.map(Number));
+    //console.log("getting ids: " + ids);
 
-    boundingQueries.push(idsQuery);
+    //boundingQueries.push(idsQuery);
+    //const idsQuery = op.sqlCondition("OBJECTID IN (" + query.objectIds + ")");
+
+    const idExp = ids.map(value => op.eq(op.col("OBJECTID"), value));
+    const idsQuery = (idExp.length === 1) ? idExp[0] : op.or(...idExp);
+
+    whereQuery = op.and(whereQuery, idsQuery);
   }
 
   const boundingQuery = cts.andQuery(boundingQueries);
@@ -674,16 +709,16 @@ function getObjects(req) {
 
   // what if the number of ids passed in is more than the max?
 
-    let limit = 0;
-    if (query.resultRecordCount) {
-      limit = Number(query.resultRecordCount)
-    }
-    else if ( query.returnIdsOnly ) {
-      limit = Number.MAX_SAFE_INTEGER
-    }
-    else {
-      limit = MAX_RECORD_COUNT
-    }
+  let limit = 0;
+  if (query.resultRecordCount) {
+    limit = Number(query.resultRecordCount)
+  }
+  else if ( query.returnIdsOnly ) {
+    limit = Number.MAX_SAFE_INTEGER
+  }
+  else {
+    limit = MAX_RECORD_COUNT
+  }
 
   console.log("limit: " + limit);
   const bindParams = {
@@ -691,32 +726,40 @@ function getObjects(req) {
     "limit" : ((limit != Number.MAX_SAFE_INTEGER) ? (limit+1) : Number.MAX_SAFE_INTEGER),
   };
 
-  const columnNames = [];
-  const columnDefs = [];
+  const columnDefs = generateFieldDescriptors(layerModel, layerModel.schema);
 
-  const viewDef = tde.getView(layerModel.schema, layerModel.view);
-  viewDef.view.columns.map((c) => {
-    columnNames.push(c.column.name);
-    columnDefs.push(c.column);
-  });
+  let viewPlan = op.fromView(layerModel.schema, layerModel.view, null, "DocId");
 
-  let pipeline = op.fromView(layerModel.schema, layerModel.view, null, "DocId")
-    .where(boundingQuery)
+  let pipeline = viewPlan.where(boundingQuery);
+
+  if (layerModel.joins && layerModel.joins.length > 0) {
+    layerModel.joins.forEach((dataSource) => {
+      const dataSourcePlan = getPlanForDataSource(dataSource);
+      const joinOn = dataSource.joinOn;
+      pipeline = pipeline.joinInner(
+        dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
+      )
+    });
+  }
+
+  pipeline = pipeline
     .where(whereQuery)
     .orderBy(getOrderByDef(orderByFields))
     .offset(op.param("offset"))
     .limit(op.param("limit"))
 
-  // only join in the document if we need to get the geometry
+  // only join in the document if we need to get the geometry from the document
   if (returnGeometry) {
-    pipeline = pipeline
-      .joinDoc(op.col('doc'), op.fragmentIdCol('DocId'))
+    if (!geometrySource || geometrySource.xpath) {
+      pipeline = pipeline
+        .joinDoc(op.col('doc'), op.fragmentIdCol('DocId'))
+    }
   }
 
   // TODO: see if there is any benefit to pushing the column select earlier in the pipeline
   // transform the rows into GeoJSON
   pipeline = pipeline
-    .select(getSelectDef(outFields, columnDefs, returnGeometry));
+    .select(getSelectDef(outFields, columnDefs, returnGeometry, geometrySource));
 
   const opticResult = Array.from(pipeline.result(null, bindParams))
   const opticResultCount = opticResult.length
@@ -727,7 +770,16 @@ function getObjects(req) {
   }
   else {
     return {result: opticResult,limitExceeded : false}
-  }}
+  }
+}
+
+function getPlanForDataSource(dataSource) {
+  //console.log("Data source: " + JSON.stringify(dataSource));
+
+  if (dataSource.source === "sparql") {
+    return op.fromSPARQL(dataSource.query);
+  }
+}
 
 // returns a Sequence of aggregated results
 function aggregate(req) {
@@ -790,7 +842,7 @@ function getAggregateFieldNames(aggregateDefs) {
   });
 };
 
-function getSelectDef(outFields, columnDefs, returnGeometry = false) {
+function getSelectDef(outFields, columnDefs, returnGeometry = false, geometrySource) {
   const defs = [
     op.as("type", "Feature")
   ];
@@ -804,9 +856,29 @@ function getSelectDef(outFields, columnDefs, returnGeometry = false) {
 
   // only include this if returnGeometry is true or outFields is *
   if (returnGeometry || outFields[0] === "*") {
-    defs.push(
-      op.as("geometry", op.xpath("doc", "//geometry"))
-    )
+
+    //console.log("geometry source: " + JSON.stringify(geometrySource));
+
+    if (geometrySource && geometrySource.fields) {
+      // build the geomtery from fields in the row
+      defs.push(
+        op.as(
+          "geometry",
+          op.jsonObject([
+            op.prop("type", "Point"),
+            op.prop("coordinates", op.jsonArray([
+              op.jsonNumber(op.col(geometrySource.fields.lon)),
+              op.jsonNumber(op.col(geometrySource.fields.lat))
+            ]))
+          ])
+        )
+      )
+    } else {
+      // select from the document
+      defs.push(
+        op.as("geometry", op.xpath("doc", "//geometry"))
+      )
+    }
   }
 
   return defs;
@@ -820,7 +892,7 @@ function getPropDefs(outFields, columnDefs) {
     // we can't just leave it blank to select everything though because
     // we are selecting other parts of the docs
 
-    columnDefs.map((col) => {
+    columnDefs.forEach((col) => {
       props.push(
         op.prop(
           col.name,
@@ -831,7 +903,7 @@ function getPropDefs(outFields, columnDefs) {
       )
     });
   } else {
-    outFields.map((f) => {
+    outFields.forEach((f) => {
       const col = columnDefs.find((c) => { return c.name === f });
       props.push(
         op.prop(
