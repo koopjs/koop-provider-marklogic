@@ -383,7 +383,7 @@ function queryClassificationValues(req) {
         break;
       case "esriClassifyQuantile":
         classValues = (new geostats(values)).getClassQuantile(def.breakCount);
-        break;
+        break;
       case "esriClassifyStandardDeviation":
         classValues = (new geostats(values)).getClassStdDeviation(def.standardDeviationInterval);
         break;
