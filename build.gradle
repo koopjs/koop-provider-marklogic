@@ -208,6 +208,7 @@ task buildPlugin(type: Exec) {
   workingDir 'build/variancenativeplugin'
   commandLine 'make'
 }
+buildPlugin.onlyIf { !System.getProperty("os.name").toLowerCase().contains("windows") }
 
 task installPlugin(dependsOn: [ 'mlDeploy' ], type: com.marklogic.gradle.task.MarkLogicTask) {
   doLast {
@@ -238,6 +239,7 @@ task installPlugin(dependsOn: [ 'mlDeploy' ], type: com.marklogic.gradle.task.Ma
     println "Installed " + result + " native plugin(s)"
   }
 }
+installPlugin.onlyIf { !System.getProperty("os.name").toLowerCase().contains("windows") }
 
 node {
   // Base URL for fetching node distributions (change if you have a mirror).
