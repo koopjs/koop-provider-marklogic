@@ -54,10 +54,10 @@ function coerceQuery (params) {
     if (params[param] === 'false') { params[param] = false; }
     else if (params[param] === 'true') { params[param] = true; }
     else if (param === 'inSR') {
-      params[param] = (params[param].startsWith("{") ? JSON.parse(params[param]) : params[param]);
+      params[param] = (typeof params[param] === "string" && params[param].startsWith("{") ? JSON.parse(params[param]) : params[param]);
     }
     else if (param === 'geometry') {
-      params[param] = (params[param].startsWith("{") ? JSON.parse(params[param]) : params[param]);
+      params[param] = (typeof params[param] === "string" && params[param].startsWith("{") ? JSON.parse(params[param]) : params[param]);
     }
     else if (param === 'outStatistics') {
       params[param] = (typeof params[param] === "string") ? JSON.parse(params[param]) : params[param];
