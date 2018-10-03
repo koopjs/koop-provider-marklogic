@@ -166,23 +166,46 @@ function generateFieldDescriptors(layerModel, serviceName) {
     fields.push(field);
   });
 
-  if (layerModel.joins) {
-    layerModel.joins.forEach((dataSource) => {
-      if (dataSource.fields) {
-        Object.keys(dataSource.fields).forEach((c) => {
-          const field = {
-            name : c,
-            type : getFieldType(dataSource.fields[c].scalarType)
-          };
+  if (layerModel.dataSources === undefined) {
+    if (layerModel.joins) {
+      layerModel.joins.forEach((dataSource) => {
+        if (dataSource.fields) {
+          Object.keys(dataSource.fields).forEach((c) => {
+            const field = {
+              name: c,
+              type: getFieldType(dataSource.fields[c].scalarType)
+            };
 
-          if (field.type === "String") {
-            field.length = 1024;
-          }
+            if (field.type === "String") {
+              field.length = 1024;
+            }
 
-          fields.push(field);
-        });
-      }
-    });
+            fields.push(field);
+          });
+        }
+      });
+    }
+  } else {
+    if (layerModel.dataSources.length > 1) {
+      layerModel.dataSources.forEach((dataSource, index) => {
+        if (index < 1) return;  // skip first element since it is the primary source
+
+        if (dataSource.fields) {
+          Object.keys(dataSource.fields).forEach((c) => {
+            const field = {
+              name: c,
+              type: getFieldType(dataSource.fields[c].scalarType)
+            };
+
+            if (field.type === "String") {
+              field.length = 1024;
+            }
+
+            fields.push(field);
+          });
+        }
+      });
+    }
   }
 
   return fields;
@@ -737,9 +760,11 @@ function getObjects(req) {
   let pipeline;
   var columnDefs;
   if (layerModel.dataSources === undefined) {
-    columnDefs = generateFieldDescriptors(layerModel, layerModel.schema);
+    const schema = layerModel.schema;
+    const view = layerModel.view;
+    columnDefs = generateFieldDescriptors(layerModel, schema);
 
-    let viewPlan = op.fromView(layerModel.schema, layerModel.view, null, "DocId");
+    let viewPlan = op.fromView(schema, view, null, "DocId");
 
     pipeline = viewPlan.where(boundingQuery);
 
@@ -753,20 +778,20 @@ function getObjects(req) {
       });
     }
   } else {
-    for (var i in layerModel.dataSources) {
-      console.log("datasource #" + i);
-      console.log(layerModel.dataSources[i]);
-    }
     const primaryDataSource = layerModel.dataSources[0];
     if (primaryDataSource.source === "view") {
-      columnDefs = generateFieldDescriptors(layerModel, primaryDataSource.schema);
+      const schema = primaryDataSource.schema;
+      const view = primaryDataSource.view;
+      columnDefs = generateFieldDescriptors(layerModel, schema);
 
-      let viewPlan = op.fromView(primaryDataSource.schema, primaryDataSource.view, null, "DocId");
+      let viewPlan = op.fromView(schema, view, null, "DocId");
 
       pipeline = viewPlan.where(boundingQuery);
 
-      if (layerModel.joins && layerModel.joins.length > 0) {
-        layerModel.joins.forEach((dataSource) => {
+      if (layerModel.dataSources.length > 1) {
+        layerModel.dataSources.forEach((dataSource, index) => {
+          if (index < 1) return;  // skip first element since it is the primary source
+
           const dataSourcePlan = getPlanForDataSource(dataSource);
           const joinOn = dataSource.joinOn;
           pipeline = pipeline.joinInner(

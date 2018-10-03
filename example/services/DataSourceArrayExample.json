@@ -269,6 +269,18 @@
           "source" : "view",
           "schema": "GDeltGKG",
           "view" : "Article"
+        },
+        {
+          "source" : "sparql",
+          "query" : "select ?OBJECT_ID ?sparql_url WHERE { ?OBJECT_ID <http://marklogic.com/objectid> ?sparql_url . }",
+          "joinOn" : {
+            "left" : "OBJECTID",
+            "right" : "OBJECT_ID"
+          },
+          "fields" : {
+            "OBJECT_ID" : { "scalarType" : "long" },
+            "sparql_url" : { "scalarType" : "string" }
+          }
         }
       ],
       "boundingQuery" : {
