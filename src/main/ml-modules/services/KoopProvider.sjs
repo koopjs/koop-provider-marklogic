@@ -142,8 +142,16 @@ function generateServiceDescriptor(serviceName) {
 function generateFieldDescriptors(layerModel, serviceName) {
   const fields = [];
 
-  const schema = getSchema(layerModel, serviceName);
-  const viewDef = tde.getView(schema, layerModel.view);
+  var schema;
+  var view;
+  if (layerModel.view === undefined) {
+    schema = getSchema(layerModel.dataSources[0], serviceName);
+    view = layerModel.dataSources[0].view;
+  } else {
+    schema = getSchema(layerModel, serviceName);
+    view = layerModel.view;
+  }
+  const viewDef = tde.getView(schema, view);
 
   viewDef.view.columns.forEach((c) => {
     const field = {
@@ -408,7 +416,7 @@ function queryClassificationValues(req) {
 
 function valuesToRanges(values) {
   const ranges = Array(values.length - 1);
-  for (i = 0; i < ranges.length; i++) {
+  for (var i = 0; i < ranges.length; i++) {
     ranges[i] = [values[i], values[i + 1]];
   }
   return ranges;
@@ -726,20 +734,47 @@ function getObjects(req) {
     "limit" : ((limit != Number.MAX_SAFE_INTEGER) ? (limit+1) : Number.MAX_SAFE_INTEGER),
   };
 
-  const columnDefs = generateFieldDescriptors(layerModel, layerModel.schema);
+  let pipeline;
+  var columnDefs;
+  if (layerModel.dataSources === undefined) {
+    columnDefs = generateFieldDescriptors(layerModel, layerModel.schema);
 
-  let viewPlan = op.fromView(layerModel.schema, layerModel.view, null, "DocId");
+    let viewPlan = op.fromView(layerModel.schema, layerModel.view, null, "DocId");
 
-  let pipeline = viewPlan.where(boundingQuery);
+    pipeline = viewPlan.where(boundingQuery);
 
-  if (layerModel.joins && layerModel.joins.length > 0) {
-    layerModel.joins.forEach((dataSource) => {
-      const dataSourcePlan = getPlanForDataSource(dataSource);
-      const joinOn = dataSource.joinOn;
-      pipeline = pipeline.joinInner(
-        dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
-      )
-    });
+    if (layerModel.joins && layerModel.joins.length > 0) {
+      layerModel.joins.forEach((dataSource) => {
+        const dataSourcePlan = getPlanForDataSource(dataSource);
+        const joinOn = dataSource.joinOn;
+        pipeline = pipeline.joinInner(
+          dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
+        )
+      });
+    }
+  } else {
+    for (var i in layerModel.dataSources) {
+      console.log("datasource #" + i);
+      console.log(layerModel.dataSources[i]);
+    }
+    const primaryDataSource = layerModel.dataSources[0];
+    if (primaryDataSource.source === "view") {
+      columnDefs = generateFieldDescriptors(layerModel, primaryDataSource.schema);
+
+      let viewPlan = op.fromView(primaryDataSource.schema, primaryDataSource.view, null, "DocId");
+
+      pipeline = viewPlan.where(boundingQuery);
+
+      if (layerModel.joins && layerModel.joins.length > 0) {
+        layerModel.joins.forEach((dataSource) => {
+          const dataSourcePlan = getPlanForDataSource(dataSource);
+          const joinOn = dataSource.joinOn;
+          pipeline = pipeline.joinInner(
+            dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
+          )
+        });
+      }
+    }
   }
 
   pipeline = pipeline
