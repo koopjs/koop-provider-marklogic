@@ -7,20 +7,31 @@ import static org.hamcrest.Matchers.*;
 
 public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
     @Test
-    public void testDataSources() {
+    public void testDataSourceWithViewAsRoot() {
         String path = request2path("DataSourceArrayExampleService.json");
 
         RestAssured
                 .given()
                 .when()
-                .log().uri()
-                .get(path)
+                    .log().uri()
+                    .get(path)
 
                 .then()
-                .log().ifError()
-                .statusCode(200)
+                    .log().ifError()
+                    .statusCode(200)
+                    .log().ifValidationFails()
+
+                    .body("features.size()", is(5))
+
+                    .body("features[0].attributes.OBJECTID", is(1))
+                    .body("features[0].attributes.urlpubtimedate", is(1495605600000l))
+                    .body("features[0].attributes.urlpubdate", is(1495584000000l))
+                    .body("features[0].attributes.url", is("https://www.rtbf.be/info/monde/detail_le-suspect-de-manchester-un-etudiant-reserve-issu-d-un-quartier-modeste?id=9615589"))
+                    .body("features[0].attributes.name", is("United Kingdom"))
+                    .body("features[0].attributes.urltone", is(-3.41f))
+                    .body("features[0].attributes.domain", is("rtbf.be"))
+                    .body("features[0].attributes.urllangcode", is("fra"))
+                    .body("features[0].attributes.geores", is(1))
         ;
     }
 }
-
-
