@@ -6,7 +6,25 @@
     <collection>example-gkg</collection>
   </collections>
   <templates>
-    <template xmlns:tde="http://marklogic.com/xdmp/tde">
+
+	  <template xmlns="http://marklogic.com/xdmp/tde">
+		  <context>.</context>
+		  <triples>
+			  <triple>
+				  <subject>
+					  <val>xs:string(OBJECTID)</val>
+				  </subject>
+				  <predicate>
+					  <val>sem:iri("http://marklogic.com/objectid")</val>
+				  </predicate>
+				  <object>
+					  <val>xs:string(url)</val>
+				  </object>
+			  </triple>
+		  </triples>
+	  </template>
+
+	  <template xmlns:tde="http://marklogic.com/xdmp/tde">
       <context>.</context>
       <rows>
       	<row>
