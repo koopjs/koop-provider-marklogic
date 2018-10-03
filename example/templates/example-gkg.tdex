@@ -12,7 +12,7 @@
 		  <triples>
 			  <triple>
 				  <subject>
-					  <val>xs:string(OBJECTID)</val>
+					  <val>xs:long(OBJECTID)</val>
 				  </subject>
 				  <predicate>
 					  <val>sem:iri("http://marklogic.com/objectid")</val>
