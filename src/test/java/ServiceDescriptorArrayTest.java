@@ -34,4 +34,28 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
                     .body("features[0].attributes.geores", is(1))
         ;
     }
+
+    @Test
+    public void testDataSourceWithViewAsRootAndSparqlJoin() {
+        String path = request2path("DataSourceArrayViewPlusSparqlJoin.json");
+
+        RestAssured
+                .given()
+                .when()
+                .log().uri()
+                .get(path)
+
+                .then()
+                .log().ifError()
+                .statusCode(200)
+                .log().ifValidationFails()
+
+                .body("features.size()", is(5))
+
+                .body("features[0].attributes.OBJECTID", is(1))
+                .body("features[0].attributes.url", is("https://www.rtbf.be/info/monde/detail_le-suspect-de-manchester-un-etudiant-reserve-issu-d-un-quartier-modeste?id=9615589"))
+                .body("features[0].attributes.OBJECT_ID", is(1))
+                .body("features[0].attributes.sparql_url", is("https://www.rtbf.be/info/monde/detail_le-suspect-de-manchester-un-etudiant-reserve-issu-d-un-quartier-modeste?id=9615589"))
+        ;
+    }
 }
