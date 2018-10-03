@@ -1,6 +1,6 @@
 {
   "info" : {
-    "name" : "GDeltExample",
+    "name" : "GDeltGKG",
     "description" : "GDelt GKG data. Georesolution values are 1=country, 2=US State / non-US ADM1, 3=city/landmark."
   },
 
