@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.*;
 public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
     @Test
     public void testDataSources() {
-        String path = request2path("GDeltExampleService.json");
+        String path = request2path("DataSourceArrayExampleService.json");
 
         RestAssured
                 .given()
