@@ -15,7 +15,9 @@ function post(context, params, input) {
   // assume the input is the request that was sent to the koop provider getData() function
 
   try {
-    return getData(fn.head(xdmp.fromJSON(input)));
+    var results = getData(fn.head(xdmp.fromJSON(input)));
+    console.log(results);
+    return results;
   } catch (err) {
     console.trace(err);
 
@@ -145,26 +147,52 @@ function generateFieldDescriptors(layerModel, serviceName) {
   var schema;
   var view;
   if (layerModel.view === undefined) {
-    schema = getSchema(layerModel.dataSources[0], serviceName);
-    view = layerModel.dataSources[0].view;
+    const primaryDataSource = layerModel.dataSources[0];
+    if (primaryDataSource.source === "view") {
+      schema = getSchema(layerModel.dataSources[0], serviceName);
+      view = layerModel.dataSources[0].view;
+      const viewDef = tde.getView(schema, view);
+
+      viewDef.view.columns.forEach((c) => {
+        const field = {
+          name : c.column.name,
+          type : getFieldType(c.column.scalarType)
+        };
+
+        if (field.type === "String") {
+          field.length = 1024;
+        }
+
+        fields.push(field);
+      });
+    } else if (primaryDataSource.source === "sparql") {
+      for (var field in primaryDataSource.fields) {
+        if( primaryDataSource.fields.hasOwnProperty(field) ) {
+          if (field.type === "String") {
+            field.length = 1024;
+          }
+          fields.push(field);
+        }
+      };
+    }
   } else {
     schema = getSchema(layerModel, serviceName);
     view = layerModel.view;
+    const viewDef = tde.getView(schema, view);
+
+    viewDef.view.columns.forEach((c) => {
+      const field = {
+        name : c.column.name,
+        type : getFieldType(c.column.scalarType)
+      };
+
+      if (field.type === "String") {
+        field.length = 1024;
+      }
+
+      fields.push(field);
+    });
   }
-  const viewDef = tde.getView(schema, view);
-
-  viewDef.view.columns.forEach((c) => {
-    const field = {
-      name : c.column.name,
-      type : getFieldType(c.column.scalarType)
-    };
-
-    if (field.type === "String") {
-      field.length = 1024;
-    }
-
-    fields.push(field);
-  });
 
   if (layerModel.dataSources === undefined) {
     if (layerModel.joins) {
@@ -323,7 +351,7 @@ function query(req) {
 
     console.log("limitExceeded flag :" +objects.limitExceeded);
 
-    // we chould only get this once in the process but do this for now to test
+    // we should only get this once in the process but do this for now to test
     const serviceId = req.params.id;
     const layerModel = generateLayerDescriptor(serviceId, req.params.layer);
 
@@ -799,6 +827,24 @@ function getObjects(req) {
           )
         });
       }
+    } else if (primaryDataSource.source === "sparql") {
+      columnDefs = generateFieldDescriptors(layerModel, null);
+
+      let viewPlan = getPlanForDataSource(primaryDataSource);
+
+      pipeline = viewPlan.where(boundingQuery);
+
+      if (layerModel.dataSources.length > 1) {
+        layerModel.dataSources.forEach((dataSource, index) => {
+          if (index < 1) return;  // skip first element since it is the primary source
+
+          const dataSourcePlan = getPlanForDataSource(dataSource);
+          const joinOn = dataSource.joinOn;
+          pipeline = pipeline.joinInner(
+            dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
+          )
+        });
+      }
     }
   }
 
@@ -935,6 +981,7 @@ function getSelectDef(outFields, columnDefs, returnGeometry = false, geometrySou
       )
     } else {
       // select from the document
+      console.log("geometry - This is not properly getting the geometry");
       defs.push(
         op.as("geometry", op.xpath("doc", "//geometry"))
       )
@@ -953,11 +1000,17 @@ function getPropDefs(outFields, columnDefs) {
     // we are selecting other parts of the docs
 
     columnDefs.forEach((col) => {
+      var colName;
+      if (col.name === undefined) {
+        colName = col;
+      } else {
+        colName = col.name;
+      }
       props.push(
         op.prop(
-          col.name,
+          colName,
           op.case(
-            op.when(op.isDefined(op.col(col.name)), op.col(col.name)), op.jsonNull()
+            op.when(op.isDefined(op.col(colName)), op.col(colName)), op.jsonNull()
           )
         )
       )
