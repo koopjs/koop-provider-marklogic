@@ -1,7 +1,7 @@
 {
   "params" : {
     "id" : "DataSourceArrayExample",
-    "layer" : 7,
+    "layer" : 9,
     "method" : "query"
   },
   "query" : {
