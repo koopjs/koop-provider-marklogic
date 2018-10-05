@@ -15,9 +15,7 @@ function post(context, params, input) {
   // assume the input is the request that was sent to the koop provider getData() function
 
   try {
-    var results = getData(fn.head(xdmp.fromJSON(input)));
-    console.log(results);
-    return results;
+    return getData(fn.head(xdmp.fromJSON(input)));
   } catch (err) {
     console.trace(err);
 
@@ -168,10 +166,14 @@ function generateFieldDescriptors(layerModel, serviceName) {
     } else if (primaryDataSource.source === "sparql") {
       for (var field in primaryDataSource.fields) {
         if( primaryDataSource.fields.hasOwnProperty(field) ) {
-          if (field.type === "String") {
-            field.length = 1024;
+          const fieldDescriptor = {
+            name : field,
+            type : getFieldType(primaryDataSource.fields[field].scalarType)
+          };
+          if (fieldDescriptor.type === "String") {
+            fieldDescriptor.length = 1024;
           }
-          fields.push(field);
+          fields.push(fieldDescriptor);
         }
       };
     }

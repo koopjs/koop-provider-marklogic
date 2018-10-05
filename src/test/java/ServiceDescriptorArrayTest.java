@@ -76,8 +76,9 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
 
                 .body("features.size()", is(5))
 
-                .body("features[0].attributes.OBJECT_ID", is(1))
+                .body("features[0].attributes.OBJECTID", is(0))
                 .body("features[0].attributes.sparql_url", is("https://www.rtbf.be/info/monde/detail_le-suspect-de-manchester-un-etudiant-reserve-issu-d-un-quartier-modeste?id=9615589"))
+                .body("features[0].attributes.DocId", is("/gkg_geojson/gkg_geojson_2017_05_24T02_26_02.zip/gkg_geojson_2017_05_24T02_26_02/0.json"))
         ;
     }
 }
