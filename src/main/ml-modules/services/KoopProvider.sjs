@@ -796,17 +796,7 @@ function getObjects(req) {
 
     let viewPlan = op.fromView(schema, view, null, "DocId");
 
-    pipeline = viewPlan.where(boundingQuery);
-
-    if (layerModel.joins && layerModel.joins.length > 0) {
-      layerModel.joins.forEach((dataSource) => {
-        const dataSourcePlan = getPlanForDataSource(dataSource);
-        const joinOn = dataSource.joinOn;
-        pipeline = pipeline.joinInner(
-          dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
-        )
-      });
-    }
+    pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
   } else {
     const primaryDataSource = layerModel.dataSources[0];
     if (primaryDataSource.source === "view") {
@@ -815,38 +805,12 @@ function getObjects(req) {
       columnDefs = generateFieldDescriptors(layerModel, schema);
 
       let viewPlan = op.fromView(schema, view, null, "DocId");
-
-      pipeline = viewPlan.where(boundingQuery);
-
-      if (layerModel.dataSources.length > 1) {
-        layerModel.dataSources.forEach((dataSource, index) => {
-          if (index < 1) return;  // skip first element since it is the primary source
-
-          const dataSourcePlan = getPlanForDataSource(dataSource);
-          const joinOn = dataSource.joinOn;
-          pipeline = pipeline.joinInner(
-            dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
-          )
-        });
-      }
+      pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
     } else if (primaryDataSource.source === "sparql") {
       columnDefs = generateFieldDescriptors(layerModel, null);
 
       let viewPlan = getPlanForDataSource(primaryDataSource);
-
-      pipeline = viewPlan.where(boundingQuery);
-
-      if (layerModel.dataSources.length > 1) {
-        layerModel.dataSources.forEach((dataSource, index) => {
-          if (index < 1) return;  // skip first element since it is the primary source
-
-          const dataSourcePlan = getPlanForDataSource(dataSource);
-          const joinOn = dataSource.joinOn;
-          pipeline = pipeline.joinInner(
-            dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
-          )
-        });
-      }
+      pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
     }
   }
 
@@ -879,6 +843,23 @@ function getObjects(req) {
   else {
     return {result: opticResult,limitExceeded : false}
   }
+}
+
+function initializePipeline(viewPlan, boundingQuery, layerModel) {
+  let pipeline = viewPlan.where(boundingQuery);
+
+  if (layerModel.dataSources.length > 1) {
+    layerModel.dataSources.forEach((dataSource, index) => {
+      if (index < 1) return;  // skip first element since it is the primary source
+
+      const dataSourcePlan = getPlanForDataSource(dataSource);
+      const joinOn = dataSource.joinOn;
+      pipeline = pipeline.joinInner(
+        dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
+      )
+    });
+  }
+  return pipeline;
 }
 
 function getPlanForDataSource(dataSource) {
