@@ -6,7 +6,7 @@
   },
   "query" : {
     "resultRecordCount" : 5,
-    "orderByFields": "OBJECTID ASC",
-    "returnGeometry" : false
+    "orderByFields": "DocId ASC",
+    "returnGeometry" : true
   }
 }

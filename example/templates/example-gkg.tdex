@@ -21,6 +21,17 @@
 					  <val>xs:string(url)</val>
 				  </object>
 			  </triple>
+			  <triple>
+				  <subject>
+					  <val>xs:long(OBJECTID)</val>
+				  </subject>
+				  <predicate>
+					  <val>sem:iri("http://marklogic.com/uri")</val>
+				  </predicate>
+				  <object>
+					  <val>xs:string(xdmp:node-uri(.))</val>
+				  </object>
+			  </triple>
 		  </triples>
 	  </template>
 
