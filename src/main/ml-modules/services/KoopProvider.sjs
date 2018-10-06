@@ -140,106 +140,120 @@ function generateServiceDescriptor(serviceName) {
 }
 
 function generateFieldDescriptors(layerModel, serviceName) {
+  if (layerModel.view === undefined) {
+    return generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName);
+  } else {
+    return generateFieldDescriptorsFromViewAndJoins(layerModel, serviceName);
+  }
+}
+
+function generateFieldDescriptorsFromViewAndJoins(layerModel, serviceName) {
   const fields = [];
 
-  var schema;
-  var view;
-  if (layerModel.view === undefined) {
-    const primaryDataSource = layerModel.dataSources[0];
-    if (primaryDataSource.source === "view") {
-      schema = getSchema(layerModel.dataSources[0], serviceName);
-      view = layerModel.dataSources[0].view;
-      const viewDef = tde.getView(schema, view);
+  var schema = getSchema(layerModel, serviceName);
+  var view = layerModel.view;
+  const viewDef = tde.getView(schema, view);
+  generateFieldDescriptorsFromViewDef(viewDef, fields);
 
-      viewDef.view.columns.forEach((c) => {
-        const field = {
-          name : c.column.name,
-          type : getFieldType(c.column.scalarType)
-        };
-
-        if (field.type === "String") {
-          field.length = 1024;
-        }
-
-        fields.push(field);
-      });
-    } else if (primaryDataSource.source === "sparql") {
-      for (var field in primaryDataSource.fields) {
-        if( primaryDataSource.fields.hasOwnProperty(field) ) {
-          const fieldDescriptor = {
-            name : field,
-            type : getFieldType(primaryDataSource.fields[field].scalarType)
-          };
-          if (fieldDescriptor.type === "String") {
-            fieldDescriptor.length = 1024;
-          }
-          fields.push(fieldDescriptor);
-        }
-      };
-    }
-  } else {
-    schema = getSchema(layerModel, serviceName);
-    view = layerModel.view;
-    const viewDef = tde.getView(schema, view);
-
-    viewDef.view.columns.forEach((c) => {
-      const field = {
-        name : c.column.name,
-        type : getFieldType(c.column.scalarType)
-      };
-
-      if (field.type === "String") {
-        field.length = 1024;
-      }
-
-      fields.push(field);
-    });
-  }
-
-  if (layerModel.dataSources === undefined) {
-    if (layerModel.joins) {
-      layerModel.joins.forEach((dataSource) => {
-        if (dataSource.fields) {
-          Object.keys(dataSource.fields).forEach((c) => {
-            const field = {
-              name: c,
-              type: getFieldType(dataSource.fields[c].scalarType)
-            };
-
-            if (field.type === "String") {
-              field.length = 1024;
-            }
-
-            fields.push(field);
-          });
-        }
-      });
-    }
-  } else {
-    if (layerModel.dataSources.length > 1) {
-      layerModel.dataSources.forEach((dataSource, index) => {
-        if (index < 1) return;  // skip first element since it is the primary source
-
-        if (dataSource.fields) {
-          Object.keys(dataSource.fields).forEach((c) => {
-            const field = {
-              name: c,
-              type: getFieldType(dataSource.fields[c].scalarType)
-            };
-
-            if (field.type === "String") {
-              field.length = 1024;
-            }
-
-            fields.push(field);
-          });
-        }
-      });
-    }
+  if (layerModel.joins) {
+    generateJoinFieldDescriptorsFromViewAndJoins(layerModel, fields);
   }
 
   return fields;
 }
+
+function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
+  const fields = [];
+
+  var schema;
+  var view;
+  const primaryDataSource = layerModel.dataSources[0];
+  if (primaryDataSource.source === "view") {
+    schema = getSchema(layerModel.dataSources[0], serviceName);
+    view = layerModel.dataSources[0].view;
+    const viewDef = tde.getView(schema, view);
+    generateFieldDescriptorsFromViewDef(viewDef, fields);
+  } else if (primaryDataSource.source === "sparql") {
+    generateFieldDescriptorsFromSparql(primaryDataSource, fields);
+  }
+
+  if (layerModel.dataSources.length > 1) {
+    layerModel.dataSources.forEach((dataSource, index) => {
+      if (index < 1) return;  // skip first element since it is the primary source
+      if (dataSource.fields) {
+        generateJoinFieldDescriptorsFromDataSource(dataSource, fields);
+      }
+    });
+  }
+
+  return fields;
+}
+
+function generateJoinFieldDescriptorsFromViewAndJoins(layerModel, fields) {
+  layerModel.joins.forEach((dataSource) => {
+    if (dataSource.fields) {
+      Object.keys(dataSource.fields).forEach((field) => {
+        const fieldDescriptor = {
+          name: field,
+          type: getFieldType(dataSource.fields[field].scalarType)
+        };
+        if (fieldDescriptor.type === "String") {
+          fieldDescriptor.length = 1024;
+        }
+        fields.push(fieldDescriptor);
+      });
+    }
+  });
+}
+
+function generateFieldDescriptorsFromSparql(dataSource, fields) {
+  for (var field in dataSource.fields) {
+    if( dataSource.fields.hasOwnProperty(field) ) {
+      const fieldDescriptor = {
+        name : field,
+        type : getFieldType(dataSource.fields[field].scalarType)
+      };
+      if (fieldDescriptor.type === "String") {
+        fieldDescriptor.length = 1024;
+      }
+      fields.push(fieldDescriptor);
+    }
+  };
+}
+
+function generateJoinFieldDescriptorsFromDataSource(dataSource, fields) {
+  Object.keys(dataSource.fields).forEach((field) => {
+    const fieldDescriptor = {
+      name: field,
+      type: getFieldType(dataSource.fields[field].scalarType)
+    };
+    if (fieldDescriptor.type === "String") {
+      fieldDescriptor.length = 1024;
+    }
+    fields.push(fieldDescriptor);
+  });
+}
+
+function generateFieldDescriptorsFromViewDef(viewDef, fields) {
+  viewDef.view.columns.forEach((field) => {
+    const fieldDescriptor = {
+      name : field.column.name,
+      type : getFieldType(field.column.scalarType)
+    };
+    if (fieldDescriptor.type === "String") {
+      fieldDescriptor.length = 1024;
+    }
+    fields.push(fieldDescriptor);
+  });
+}
+
+
+
+
+
+
+
+
 
 function generateLayerDescriptor(serviceName, layerNumber) {
   console.log("generating layer descriptor for " + serviceName + ":" + layerNumber);
