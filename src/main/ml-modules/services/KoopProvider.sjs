@@ -136,6 +136,7 @@ function generateServiceDescriptor(serviceName) {
     desc.layers.push(layer);
   }
 
+  console.log("Finished");
   return desc;
 }
 
@@ -174,7 +175,7 @@ function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
     const viewDef = tde.getView(schema, view);
     generateFieldDescriptorsFromViewDef(viewDef, fields);
   } else if (primaryDataSource.source === "sparql") {
-    generateFieldDescriptorsFromSparql(primaryDataSource, fields);
+    generateJoinFieldDescriptorsFromDataSource(primaryDataSource, fields);
   }
 
   if (layerModel.dataSources.length > 1) {
@@ -191,69 +192,35 @@ function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
 
 function generateJoinFieldDescriptorsFromViewAndJoins(layerModel, fields) {
   layerModel.joins.forEach((dataSource) => {
-    if (dataSource.fields) {
-      Object.keys(dataSource.fields).forEach((field) => {
-        const fieldDescriptor = {
-          name: field,
-          type: getFieldType(dataSource.fields[field].scalarType)
-        };
-        if (fieldDescriptor.type === "String") {
-          fieldDescriptor.length = 1024;
-        }
-        fields.push(fieldDescriptor);
-      });
-    }
+    Object.keys(dataSource.fields).forEach((field) => {
+      createAndPushFieldDescriptor(field, dataSource.fields[field].scalarType, fields);
+    });
   });
-}
-
-function generateFieldDescriptorsFromSparql(dataSource, fields) {
-  for (var field in dataSource.fields) {
-    if( dataSource.fields.hasOwnProperty(field) ) {
-      const fieldDescriptor = {
-        name : field,
-        type : getFieldType(dataSource.fields[field].scalarType)
-      };
-      if (fieldDescriptor.type === "String") {
-        fieldDescriptor.length = 1024;
-      }
-      fields.push(fieldDescriptor);
-    }
-  };
 }
 
 function generateJoinFieldDescriptorsFromDataSource(dataSource, fields) {
   Object.keys(dataSource.fields).forEach((field) => {
-    const fieldDescriptor = {
-      name: field,
-      type: getFieldType(dataSource.fields[field].scalarType)
-    };
-    if (fieldDescriptor.type === "String") {
-      fieldDescriptor.length = 1024;
-    }
-    fields.push(fieldDescriptor);
+    createAndPushFieldDescriptor(field, dataSource.fields[field].scalarType, fields);
   });
 }
 
 function generateFieldDescriptorsFromViewDef(viewDef, fields) {
-  viewDef.view.columns.forEach((field) => {
-    const fieldDescriptor = {
-      name : field.column.name,
-      type : getFieldType(field.column.scalarType)
-    };
-    if (fieldDescriptor.type === "String") {
-      fieldDescriptor.length = 1024;
-    }
-    fields.push(fieldDescriptor);
+  Object.keys(viewDef.view.columns).forEach((column) => {
+    const field = viewDef.view.columns[column];
+    createAndPushFieldDescriptor(field.column.name, field.column.scalarType, fields);
   });
 }
 
-
-
-
-
-
-
-
+function createAndPushFieldDescriptor(fieldName, scalarType, fields) {
+  const fieldDescriptor = {
+    name : fieldName,
+    type : getFieldType(scalarType)
+  };
+  if (fieldDescriptor.type === "String") {
+    fieldDescriptor.length = 1024;
+  }
+  fields.push(fieldDescriptor);
+}
 
 function generateLayerDescriptor(serviceName, layerNumber) {
   console.log("generating layer descriptor for " + serviceName + ":" + layerNumber);
@@ -978,7 +945,6 @@ function getSelectDef(outFields, columnDefs, returnGeometry = false, geometrySou
       )
     } else {
       // select from the document
-      console.log("geometry - This is not properly getting the geometry");
       defs.push(
         op.as("geometry", op.xpath("doc", "//geometry"))
       )
