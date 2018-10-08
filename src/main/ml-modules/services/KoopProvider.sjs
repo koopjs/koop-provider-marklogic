@@ -835,24 +835,24 @@ function initializePipeline(viewPlan, boundingQuery, layerModel) {
   if (layerModel.dataSources && layerModel.dataSources.length > 1) {
     layerModel.dataSources.forEach((dataSource, index) => {
       if (index < 1) return;  // skip first element since it is the primary source
-
-      const dataSourcePlan = getPlanForDataSource(dataSource);
-      const joinOn = dataSource.joinOn;
-      pipeline = pipeline.joinInner(
-        dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
-      )
+      pipeline = addJoinToPipeline(dataSource, viewPlan, pipeline);
     });
   } else {
     if (layerModel.joins && layerModel.joins.length > 0) {
       layerModel.joins.forEach((dataSource) => {
-        const dataSourcePlan = getPlanForDataSource(dataSource);
-        const joinOn = dataSource.joinOn;
-        pipeline = pipeline.joinInner(
-          dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
-        )
+        pipeline = addJoinToPipeline(dataSource, viewPlan, pipeline);
       });
     }
   }
+  return pipeline;
+}
+
+function addJoinToPipeline(dataSource, viewPlan, pipeline) {
+  const dataSourcePlan = getPlanForDataSource(dataSource);
+  const joinOn = dataSource.joinOn;
+  pipeline = pipeline.joinInner(
+    dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
+  )
   return pipeline;
 }
 
