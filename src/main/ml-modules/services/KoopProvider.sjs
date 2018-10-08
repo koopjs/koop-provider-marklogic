@@ -136,7 +136,6 @@ function generateServiceDescriptor(serviceName) {
     desc.layers.push(layer);
   }
 
-  console.log("Finished");
   return desc;
 }
 
@@ -851,7 +850,7 @@ function addJoinToPipeline(dataSource, viewPlan, pipeline) {
   const dataSourcePlan = getPlanForDataSource(dataSource);
   const joinOn = dataSource.joinOn;
   pipeline = pipeline.joinInner(
-    dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
+    dataSourcePlan, op.on(op.col(joinOn.left), op.col(joinOn.right))
   )
   return pipeline;
 }
@@ -861,6 +860,10 @@ function getPlanForDataSource(dataSource) {
 
   if (dataSource.source === "sparql") {
     return op.fromSPARQL(dataSource.query);
+  } else if (dataSource.source === "view") {
+    return op.fromView(dataSource.schema, dataSource.view)
+  } else {
+    returnErrToClient(500, 'Error handling request', "dataSource objects must specify a valid source ('view' or 'sparql')");
   }
 }
 
