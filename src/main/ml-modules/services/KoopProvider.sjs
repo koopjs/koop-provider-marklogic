@@ -829,7 +829,7 @@ function getObjects(req) {
 function initializePipeline(viewPlan, boundingQuery, layerModel) {
   let pipeline = viewPlan.where(boundingQuery);
 
-  if (layerModel.dataSources.length > 1) {
+  if (layerModel.dataSources && layerModel.dataSources.length > 1) {
     layerModel.dataSources.forEach((dataSource, index) => {
       if (index < 1) return;  // skip first element since it is the primary source
 
