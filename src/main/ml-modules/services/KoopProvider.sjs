@@ -778,6 +778,9 @@ function getObjects(req) {
     let viewPlan = op.fromView(schema, view, null, "DocId");
 
     pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
+
+    // joins?
+
   } else {
     const primaryDataSource = layerModel.dataSources[0];
     if (primaryDataSource.source === "view") {
@@ -839,6 +842,16 @@ function initializePipeline(viewPlan, boundingQuery, layerModel) {
         dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
       )
     });
+  } else {
+    if (layerModel.joins && layerModel.joins.length > 0) {
+      layerModel.joins.forEach((dataSource) => {
+        const dataSourcePlan = getPlanForDataSource(dataSource);
+        const joinOn = dataSource.joinOn;
+        pipeline = pipeline.joinInner(
+          dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
+        )
+      });
+    }
   }
   return pipeline;
 }
