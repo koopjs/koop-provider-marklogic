@@ -182,6 +182,9 @@ function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
       if (index < 1) return;  // skip first element since it is the primary source
       if (dataSource.fields) {
         generateJoinFieldDescriptorsFromDataSource(dataSource, fields);
+      } else {
+        const viewDef = tde.getView(dataSource.schema, dataSource.view);
+        generateFieldDescriptorsFromViewDef(viewDef, fields);
       }
     });
   }

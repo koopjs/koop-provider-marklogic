@@ -155,11 +155,11 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
                 .body("features[0].attributes.urlpubtimedate", is(1495605600000l))
                 .body("features[0].attributes.urlpubdate", is(1495584000000l))
                 .body("features[0].attributes.url", is("https://www.rtbf.be/info/monde/detail_le-suspect-de-manchester-un-etudiant-reserve-issu-d-un-quartier-modeste?id=9615589"))
-                .body("features[0].attributes.name", is("United Kingdom"))
+                .body("features[0].attributes.name", is("Tripoli, Tarabulus, Libya"))
                 .body("features[0].attributes.urltone", is(-3.41f))
                 .body("features[0].attributes.domain", is("rtbf.be"))
                 .body("features[0].attributes.urllangcode", is("fra"))
-                .body("features[0].attributes.geores", is(1))
+                .body("features[0].attributes.geores", is(3))
         ;
     }
 }
