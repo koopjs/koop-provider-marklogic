@@ -321,6 +321,94 @@
         }
       ],
       "readOnly": true
+    },
+    {
+      "id": 9,
+      "name" : "GKG level 1",
+      "decription": "GDelt GKG article data at geores 1 (country)",
+      "geometryType": "Point",
+      "idField": "OBJECT_ID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "dataSources" : [
+        {
+          "source" : "sparql",
+          "query" : "select ?OBJECT_ID ?sparql_url ?DocId WHERE { ?OBJECT_ID <http://marklogic.com/objectid> ?sparql_url . ?OBJECT_ID <http://marklogic.com/uri> ?DocId }",
+          "fields" : {
+            "OBJECT_ID" : { "scalarType" : "long" },
+            "sparql_url" : { "scalarType" : "string" },
+            "DocId" : { "scalarType" : "string" }
+          }
+        },
+        {
+          "source": "view",
+          "schema": "GDeltGKG",
+          "view": "Article",
+          "fields": {
+            "OBJECTID": {
+              "scalarType": "string"
+            },
+            "url": {
+              "scalarType": "string"
+            }
+          },
+          "joinOn" : {
+            "left" : "OBJECT_ID",
+            "right" : "OBJECTID"
+          }
+        }
+      ],
+      "readOnly": true
+    },
+    {
+      "id": 10,
+      "name" : "GKG level 1",
+      "decription": "GDelt GKG article data at geores 1 (country)",
+      "geometryType": "Point",
+      "idField": "OBJECT_ID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "dataSources" : [
+        {
+          "source" : "sparql",
+          "query" : "select ?OBJECT_ID ?sparql_url ?DocId WHERE { ?OBJECT_ID <http://marklogic.com/objectid> ?sparql_url . ?OBJECT_ID <http://marklogic.com/uri> ?DocId }",
+          "fields" : {
+            "OBJECT_ID" : { "scalarType" : "long" },
+            "sparql_url" : { "scalarType" : "string" },
+            "DocId" : { "scalarType" : "string" }
+          }
+        },
+        {
+          "source" : "view",
+          "schema": "GDeltGKG",
+          "view" : "Article",
+          "joinOn" : {
+            "left" : "OBJECT_ID",
+            "right" : "OBJECTID"
+          }
+        }
+      ],
+      "readOnly": true
     }
   ]
 }

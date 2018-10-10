@@ -112,13 +112,13 @@ function generateServiceDescriptor(serviceName) {
   };
 
   // copy all the properties from the info section
-  for (var propName in model.info) {
+  for (let propName in model.info) {
     desc[propName] = model.info[propName];
   }
 
   desc.layers = [];
 
-  for (var layerModel of model.layers) {
+  for (let layerModel of model.layers) {
     const layer = {
       metadata: {
         maxRecordCount: MAX_RECORD_COUNT
@@ -126,7 +126,7 @@ function generateServiceDescriptor(serviceName) {
     };
 
     // copy all the properties from the layer model
-    for (var propName in layerModel) {
+    for (let propName in layerModel) {
       layer.metadata[propName] = layerModel[propName];
     }
 
@@ -150,13 +150,13 @@ function generateFieldDescriptors(layerModel, serviceName) {
 function generateFieldDescriptorsFromViewAndJoins(layerModel, serviceName) {
   const fields = [];
 
-  var schema = getSchema(layerModel, serviceName);
-  var view = layerModel.view;
+  const schema = getSchema(layerModel, serviceName);
+  const view = layerModel.view;
   const viewDef = tde.getView(schema, view);
-  generateFieldDescriptorsFromViewDef(viewDef, fields);
+  fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
 
   if (layerModel.joins) {
-    generateJoinFieldDescriptorsFromViewAndJoins(layerModel, fields);
+    fields.push(...generateJoinFieldDescriptorsFromViewAndJoins(layerModel));
   }
 
   return fields;
@@ -165,26 +165,24 @@ function generateFieldDescriptorsFromViewAndJoins(layerModel, serviceName) {
 function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
   const fields = [];
 
-  var schema;
-  var view;
   const primaryDataSource = layerModel.dataSources[0];
   if (primaryDataSource.source === "view") {
-    schema = getSchema(layerModel.dataSources[0], serviceName);
-    view = layerModel.dataSources[0].view;
+    const schema = getSchema(layerModel.dataSources[0], serviceName);
+    const view = layerModel.dataSources[0].view;
     const viewDef = tde.getView(schema, view);
-    generateFieldDescriptorsFromViewDef(viewDef, fields);
+    fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
   } else if (primaryDataSource.source === "sparql") {
-    generateJoinFieldDescriptorsFromDataSource(primaryDataSource, fields);
+    fields.push(...generateJoinFieldDescriptorsFromDataSource(primaryDataSource));
   }
 
   if (layerModel.dataSources.length > 1) {
     layerModel.dataSources.forEach((dataSource, index) => {
       if (index < 1) return;  // skip first element since it is the primary source
       if (dataSource.fields) {
-        generateJoinFieldDescriptorsFromDataSource(dataSource, fields);
+        fields.push(...generateJoinFieldDescriptorsFromDataSource(dataSource));
       } else {
         const viewDef = tde.getView(dataSource.schema, dataSource.view);
-        generateFieldDescriptorsFromViewDef(viewDef, fields);
+        fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
       }
     });
   }
@@ -192,28 +190,34 @@ function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
   return fields;
 }
 
-function generateJoinFieldDescriptorsFromViewAndJoins(layerModel, fields) {
+function generateJoinFieldDescriptorsFromViewAndJoins(layerModel) {
+  const fields = [];
   layerModel.joins.forEach((dataSource) => {
     Object.keys(dataSource.fields).forEach((field) => {
-      createAndPushFieldDescriptor(field, dataSource.fields[field].scalarType, fields);
+      fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType));
     });
   });
+  return fields;
 }
 
-function generateJoinFieldDescriptorsFromDataSource(dataSource, fields) {
+function generateJoinFieldDescriptorsFromDataSource(dataSource) {
+  const fields = [];
   Object.keys(dataSource.fields).forEach((field) => {
-    createAndPushFieldDescriptor(field, dataSource.fields[field].scalarType, fields);
+    fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType));
   });
+  return fields;
 }
 
-function generateFieldDescriptorsFromViewDef(viewDef, fields) {
+function generateFieldDescriptorsFromViewDef(viewDef) {
+  const fields = [];
   Object.keys(viewDef.view.columns).forEach((column) => {
     const field = viewDef.view.columns[column];
-    createAndPushFieldDescriptor(field.column.name, field.column.scalarType, fields);
+    fields.push(createFieldDescriptor(field.column.name, field.column.scalarType));
   });
+  return fields;
 }
 
-function createAndPushFieldDescriptor(fieldName, scalarType, fields) {
+function createFieldDescriptor(fieldName, scalarType) {
   const fieldDescriptor = {
     name : fieldName,
     type : getFieldType(scalarType)
@@ -221,7 +225,7 @@ function createAndPushFieldDescriptor(fieldName, scalarType, fields) {
   if (fieldDescriptor.type === "String") {
     fieldDescriptor.length = 1024;
   }
-  fields.push(fieldDescriptor);
+  return fieldDescriptor;
 }
 
 function generateLayerDescriptor(serviceName, layerNumber) {
@@ -452,7 +456,7 @@ function queryClassificationValues(req) {
 
 function valuesToRanges(values) {
   const ranges = Array(values.length - 1);
-  for (var i = 0; i < ranges.length; i++) {
+  for (let i = 0; i < ranges.length; i++) {
     ranges[i] = [values[i], values[i + 1]];
   }
   return ranges;
@@ -771,7 +775,7 @@ function getObjects(req) {
   };
 
   let pipeline;
-  var columnDefs;
+  let columnDefs;
   if (layerModel.dataSources === undefined) {
     const schema = layerModel.schema;
     const view = layerModel.view;
@@ -982,7 +986,7 @@ function getPropDefs(outFields, columnDefs) {
     // we are selecting other parts of the docs
 
     columnDefs.forEach((col) => {
-      var colName;
+      let colName;
       if (col.name === undefined) {
         colName = col;
       } else {
