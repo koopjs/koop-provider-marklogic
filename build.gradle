@@ -257,6 +257,11 @@ node {
 }
 
 task configureKoop(type: Copy, dependsOn: []) {
+  outputs.upToDateWhen { false }
+  def restPort = mlAppConfig.restPort.toString()
+  if (project.property('testEnvironment') == 'true') {
+    restPort = project.property("mlTestRestPort")
+  }
   from("src/koop/config") {
     include "**"
     filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
@@ -266,7 +271,7 @@ task configureKoop(type: Copy, dependsOn: []) {
       KOOP_SSL_CERT : project.property("koopSSLCert"),
       KOOP_SSL_KEY : project.property("koopSSLKey"),
       ML_HOST : mlAppConfig.host,
-      ML_PORT : mlAppConfig.restPort.toString(),
+      ML_PORT : restPort,
       ML_USER : mlAppConfig.restAdminUsername,
       ML_PASSWORD : mlAppConfig.restAdminPassword
     ])
@@ -332,11 +337,15 @@ task fsConfigCheck() {
 }
 
 task loadFeatureServices(type: com.marklogic.gradle.task.MlcpTask, dependsOn: [ "fsConfigCheck" ]) {
+    def targetDB = mlAppConfig.contentDatabaseName
+    if (project.property('testEnvironment') == 'true') {
+      targetDB = mlAppConfig.testContentDatabaseName
+    }
     doFirst {
         classpath = configurations.mlcp
         command = "IMPORT"
         port = mlAppConfig.restPort
-        database = mlAppConfig.contentDatabaseName
+        database = targetDB
 
         input_file_path = "config/${fsConfig}/services"
         input_file_type = "documents"
@@ -417,10 +426,15 @@ task installExampleServices(type: Copy, dependsOn: []) {
 installExampleServices.finalizedBy installServices
 
 task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
+  def targetDB = mlAppConfig.contentDatabaseName
+  if (project.property('testEnvironment') == 'true') {
+    targetDB = mlAppConfig.testContentDatabaseName
+  }
+
   classpath = configurations.mlcp
   command = "IMPORT"
   port = mlAppConfig.restPort
-  database = mlAppConfig.contentDatabaseName
+  database = targetDB
   input_file_path = "example/data/gkg_geojson"
   input_compressed = "true"
   output_collections = "example-gkg"
@@ -429,10 +443,15 @@ task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
 }
 
 task loadZipCodeBoundaryData(type: com.marklogic.gradle.task.MlcpTask) {
+  def targetDB = mlAppConfig.contentDatabaseName
+  if (project.property('testEnvironment') == 'true') {
+    targetDB = mlAppConfig.testContentDatabaseName
+  }
+
   classpath = configurations.mlcp
   command = "IMPORT"
   port = mlAppConfig.restPort
-  database = mlAppConfig.contentDatabaseName
+  database = targetDB
   input_file_path = "example/data/zipcodes"
   transform_module = "/ext/transform/wrap-geojson.sjs"
   input_compressed = "true"
