@@ -112,13 +112,13 @@ function generateServiceDescriptor(serviceName) {
   };
 
   // copy all the properties from the info section
-  for (var propName in model.info) {
+  for (let propName in model.info) {
     desc[propName] = model.info[propName];
   }
 
   desc.layers = [];
 
-  for (var layerModel of model.layers) {
+  for (let layerModel of model.layers) {
     const layer = {
       metadata: {
         maxRecordCount: MAX_RECORD_COUNT
@@ -126,7 +126,7 @@ function generateServiceDescriptor(serviceName) {
     };
 
     // copy all the properties from the layer model
-    for (var propName in layerModel) {
+    for (let propName in layerModel) {
       layer.metadata[propName] = layerModel[propName];
     }
 
@@ -140,44 +140,92 @@ function generateServiceDescriptor(serviceName) {
 }
 
 function generateFieldDescriptors(layerModel, serviceName) {
+  if (layerModel.view === undefined) {
+    return generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName);
+  } else {
+    return generateFieldDescriptorsFromViewAndJoins(layerModel, serviceName);
+  }
+}
+
+function generateFieldDescriptorsFromViewAndJoins(layerModel, serviceName) {
   const fields = [];
 
   const schema = getSchema(layerModel, serviceName);
-  const viewDef = tde.getView(schema, layerModel.view);
-
-  viewDef.view.columns.forEach((c) => {
-    const field = {
-      name : c.column.name,
-      type : getFieldType(c.column.scalarType)
-    };
-
-    if (field.type === "String") {
-      field.length = 1024;
-    }
-
-    fields.push(field);
-  });
+  const view = layerModel.view;
+  const viewDef = tde.getView(schema, view);
+  fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
 
   if (layerModel.joins) {
-    layerModel.joins.forEach((dataSource) => {
+    fields.push(...generateJoinFieldDescriptorsFromViewAndJoins(layerModel));
+  }
+
+  return fields;
+}
+
+function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
+  const fields = [];
+
+  const primaryDataSource = layerModel.dataSources[0];
+  if (primaryDataSource.source === "view") {
+    const schema = getSchema(layerModel.dataSources[0], serviceName);
+    const view = layerModel.dataSources[0].view;
+    const viewDef = tde.getView(schema, view);
+    fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
+  } else if (primaryDataSource.source === "sparql") {
+    fields.push(...generateJoinFieldDescriptorsFromDataSource(primaryDataSource));
+  }
+
+  if (layerModel.dataSources.length > 1) {
+    layerModel.dataSources.forEach((dataSource, index) => {
+      if (index < 1) return;  // skip first element since it is the primary source
       if (dataSource.fields) {
-        Object.keys(dataSource.fields).forEach((c) => {
-          const field = {
-            name : c,
-            type : getFieldType(dataSource.fields[c].scalarType)
-          };
-
-          if (field.type === "String") {
-            field.length = 1024;
-          }
-
-          fields.push(field);
-        });
+        fields.push(...generateJoinFieldDescriptorsFromDataSource(dataSource));
+      } else {
+        const viewDef = tde.getView(dataSource.schema, dataSource.view);
+        fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
       }
     });
   }
 
   return fields;
+}
+
+function generateJoinFieldDescriptorsFromViewAndJoins(layerModel) {
+  const fields = [];
+  layerModel.joins.forEach((dataSource) => {
+    Object.keys(dataSource.fields).forEach((field) => {
+      fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType));
+    });
+  });
+  return fields;
+}
+
+function generateJoinFieldDescriptorsFromDataSource(dataSource) {
+  const fields = [];
+  Object.keys(dataSource.fields).forEach((field) => {
+    fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType));
+  });
+  return fields;
+}
+
+function generateFieldDescriptorsFromViewDef(viewDef) {
+  const fields = [];
+  Object.keys(viewDef.view.columns).forEach((column) => {
+    const field = viewDef.view.columns[column];
+    fields.push(createFieldDescriptor(field.column.name, field.column.scalarType));
+  });
+  return fields;
+}
+
+function createFieldDescriptor(fieldName, scalarType) {
+  const fieldDescriptor = {
+    name : fieldName,
+    type : getFieldType(scalarType)
+  };
+  if (fieldDescriptor.type === "String") {
+    fieldDescriptor.length = 1024;
+  }
+  return fieldDescriptor;
 }
 
 function generateLayerDescriptor(serviceName, layerNumber) {
@@ -292,7 +340,7 @@ function query(req) {
 
     console.log("limitExceeded flag :" +objects.limitExceeded);
 
-    // we chould only get this once in the process but do this for now to test
+    // we should only get this once in the process but do this for now to test
     const serviceId = req.params.id;
     const layerModel = generateLayerDescriptor(serviceId, req.params.layer);
 
@@ -408,7 +456,7 @@ function queryClassificationValues(req) {
 
 function valuesToRanges(values) {
   const ranges = Array(values.length - 1);
-  for (i = 0; i < ranges.length; i++) {
+  for (let i = 0; i < ranges.length; i++) {
     ranges[i] = [values[i], values[i + 1]];
   }
   return ranges;
@@ -726,20 +774,34 @@ function getObjects(req) {
     "limit" : ((limit != Number.MAX_SAFE_INTEGER) ? (limit+1) : Number.MAX_SAFE_INTEGER),
   };
 
-  const columnDefs = generateFieldDescriptors(layerModel, layerModel.schema);
+  let pipeline;
+  let columnDefs;
+  if (layerModel.dataSources === undefined) {
+    const schema = layerModel.schema;
+    const view = layerModel.view;
+    columnDefs = generateFieldDescriptors(layerModel, schema);
 
-  let viewPlan = op.fromView(layerModel.schema, layerModel.view, null, "DocId");
+    let viewPlan = op.fromView(schema, view, null, "DocId");
 
-  let pipeline = viewPlan.where(boundingQuery);
+    pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
 
-  if (layerModel.joins && layerModel.joins.length > 0) {
-    layerModel.joins.forEach((dataSource) => {
-      const dataSourcePlan = getPlanForDataSource(dataSource);
-      const joinOn = dataSource.joinOn;
-      pipeline = pipeline.joinInner(
-        dataSourcePlan, op.on(viewPlan.col(joinOn.left), op.col(joinOn.right))
-      )
-    });
+    // joins?
+
+  } else {
+    const primaryDataSource = layerModel.dataSources[0];
+    if (primaryDataSource.source === "view") {
+      const schema = primaryDataSource.schema;
+      const view = primaryDataSource.view;
+      columnDefs = generateFieldDescriptors(layerModel, schema);
+
+      let viewPlan = op.fromView(schema, view, null, "DocId");
+      pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
+    } else if (primaryDataSource.source === "sparql") {
+      columnDefs = generateFieldDescriptors(layerModel, null);
+
+      let viewPlan = getPlanForDataSource(primaryDataSource);
+      pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
+    }
   }
 
   pipeline = pipeline
@@ -773,11 +835,42 @@ function getObjects(req) {
   }
 }
 
+function initializePipeline(viewPlan, boundingQuery, layerModel) {
+  let pipeline = viewPlan.where(boundingQuery);
+
+  if (layerModel.dataSources && layerModel.dataSources.length > 1) {
+    layerModel.dataSources.forEach((dataSource, index) => {
+      if (index < 1) return;  // skip first element since it is the primary source
+      pipeline = addJoinToPipeline(dataSource, viewPlan, pipeline);
+    });
+  } else {
+    if (layerModel.joins && layerModel.joins.length > 0) {
+      layerModel.joins.forEach((dataSource) => {
+        pipeline = addJoinToPipeline(dataSource, viewPlan, pipeline);
+      });
+    }
+  }
+  return pipeline;
+}
+
+function addJoinToPipeline(dataSource, viewPlan, pipeline) {
+  const dataSourcePlan = getPlanForDataSource(dataSource);
+  const joinOn = dataSource.joinOn;
+  pipeline = pipeline.joinInner(
+    dataSourcePlan, op.on(op.col(joinOn.left), op.col(joinOn.right))
+  )
+  return pipeline;
+}
+
 function getPlanForDataSource(dataSource) {
   //console.log("Data source: " + JSON.stringify(dataSource));
 
   if (dataSource.source === "sparql") {
     return op.fromSPARQL(dataSource.query);
+  } else if (dataSource.source === "view") {
+    return op.fromView(dataSource.schema, dataSource.view)
+  } else {
+    returnErrToClient(500, 'Error handling request', "dataSource objects must specify a valid source ('view' or 'sparql')");
   }
 }
 
@@ -893,11 +986,17 @@ function getPropDefs(outFields, columnDefs) {
     // we are selecting other parts of the docs
 
     columnDefs.forEach((col) => {
+      let colName;
+      if (col.name === undefined) {
+        colName = col;
+      } else {
+        colName = col.name;
+      }
       props.push(
         op.prop(
-          col.name,
+          colName,
           op.case(
-            op.when(op.isDefined(op.col(col.name)), op.col(col.name)), op.jsonNull()
+            op.when(op.isDefined(op.col(colName)), op.col(colName)), op.jsonNull()
           )
         )
       )

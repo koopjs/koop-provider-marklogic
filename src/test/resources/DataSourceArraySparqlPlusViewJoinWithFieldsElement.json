@@ -1,0 +1,11 @@
+{
+  "params" : {
+    "id" : "DataSourceArrayExample",
+    "layer" : 9,
+    "method" : "query"
+  },
+  "query" : {
+    "resultRecordCount" : 5,
+    "orderByFields": "OBJECTID ASC"
+  }
+}
