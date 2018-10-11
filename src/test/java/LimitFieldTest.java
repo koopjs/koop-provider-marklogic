@@ -32,18 +32,9 @@ public class LimitFieldTest extends AbstractFeatureServiceTest{
             .body("fields.size()", is(3))
             .body("fields[0].name", is("OBJECTID"))
             .body("fields[0].type", is("esriFieldTypeOID"))
-            .body("fields[0].alias", is("OBJECTID"))
-            .body("fields[0].length", IsNull.nullValue())
-            .body("fields[0].editable", is(false))
-            .body("fields[0].nullable", is(true))
-            .body("fields[0].domain", IsNull.nullValue())
             .body("fields[2].name", is("domain"))
             .body("fields[2].type", is("esriFieldTypeString"))
             .body("fields[2].alias", is("domain"))
-            .body("fields[2].length", IsNull.nullValue())
-            .body("fields[2].editable", is(false))
-            .body("fields[2].nullable", is(true))
-            .body("fields[2].domain", IsNull.nullValue())
 
             .body("features.size()", is(20))
 
@@ -58,8 +49,6 @@ public class LimitFieldTest extends AbstractFeatureServiceTest{
             .body("features[19].attributes.domain", is("candianews.gr"))
             .body("features[19].geometry.x", is(22))
             .body("features[19].geometry.y", is(39))
-
-            .body("exceededTransferLimit", is(false))
         ;
     }
 
@@ -118,7 +107,7 @@ public class LimitFieldTest extends AbstractFeatureServiceTest{
             .log().ifValidationFails()
             .body("objectIds.size()", is(7000))
         ;
-    }    
+    }
 
     @Test
     public void testGkgLimitResultRecordCount3() {
@@ -154,65 +143,8 @@ public class LimitFieldTest extends AbstractFeatureServiceTest{
             .log().ifError()
             .statusCode(200)
             .log().ifValidationFails()
-            .body("objectIds.size()", is(38509))
+            .body("objectIds.size()", is(10))
         ;
-    }     
-
-    @Test
-    public void testGkgLimitReturnIdsOnly1() {
-
-        String path = request2path("gkgLimitReturnIdsOnly1.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
-            .body("objectIds.size()", is(3557))
-        ;
-    }          
-
-    @Test
-    public void testGkgLimitReturnIdsOnly2() {
-
-        String path = request2path("gkgLimitReturnIdsOnly2.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
-            .body("objectIds.size()", is(25035))
-        ;
-    }         
-
-    @Test
-    public void testGkgLimitReturnIdsOnly3() {
-
-        String path = request2path("gkgLimitReturnIdsOnly3.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
-            .body("objectIds.size()", is(9))
-        ;
-    }                    
+    }
 }
 

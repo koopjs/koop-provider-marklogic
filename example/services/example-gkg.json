@@ -43,7 +43,12 @@
           "options" : ["lang=en"], "weight" : 0
         }
       },
-      "readOnly": true
+      "readOnly": true,
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84"
+      }
     },
     {
       "id": 1,
@@ -71,7 +76,12 @@
           "options" : ["lang=en"], "weight" : 0
         }
       },
-      "readOnly": true
+      "readOnly": true,
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84"
+      }
     },
     {
       "id": 2,
@@ -99,7 +109,12 @@
           "options" : ["lang=en"], "weight" : 0
         }
       },
-      "readOnly": true
+      "readOnly": true,
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84"
+      }
     },
     {
       "id": 3,
@@ -127,7 +142,12 @@
           "options" : ["lang=en"], "weight" : 0
         }
       },
-      "readOnly": true
+      "readOnly": true,
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84"
+      }
     }
   ]
 }

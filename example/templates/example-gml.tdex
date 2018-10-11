@@ -1,0 +1,56 @@
+<template xmlns="http://marklogic.com/xdmp/tde">
+   <description>Example template for GeoGML documents</description>
+   <context>//prop</context>
+   <collections>
+      <collection>example-geo</collection>
+   </collections>
+   <templates>
+      <template xmlns:tde="http://marklogic.com/xdmp/tde">
+         <context>.</context>
+         <rows>
+            <row>
+               <schema-name>GeoLocation</schema-name>
+               <view-name>GeoGML</view-name>
+               <view-layout>sparse</view-layout>
+               <columns>
+                  <column>
+                     <name>ID</name>
+                     <scalar-type>long</scalar-type>
+                     <val>id</val>
+                  </column>
+				  <column>
+                     <name>format</name>
+                     <scalar-type>string</scalar-type>
+                     <val>type</val>
+                     <nullable>true</nullable>
+                  </column>
+                  <column>
+                     <name>category</name>
+                     <scalar-type>string</scalar-type>
+                     <val>category</val>
+                     <nullable>true</nullable>
+                  </column>
+                  <column>
+                     <name>name</name>
+                     <scalar-type>string</scalar-type>
+                     <val>name</val>
+                  </column>
+                  <column>
+                     <name>population</name>
+                     <scalar-type>decimal</scalar-type>
+                     <val>population</val>
+                     <nullable>true</nullable>
+                  </column>
+                  <column>
+                     <name>Elevation</name>
+                     <scalar-type>decimal</scalar-type>
+                     <val>Elevation</val>
+                     <nullable>true</nullable>
+                  </column>
+               </columns>
+            </row>
+         </rows>
+      </template>
+   </templates>
+</template>
+

@@ -30,13 +30,7 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
                 .body("fieldAliases.average_urltone", is("average_urltone"))
 
                 .body("fields.size()", is(2))
-                .body("fields[0].name", is("domain"))
-                .body("fields[0].type", is("esriFieldTypeString"))
-                .body("fields[0].alias", is("domain"))
-                .body("fields[0].length", is(128))
-                .body("fields[1].name", is("average_urltone"))
-                .body("fields[1].type", is("esriFieldTypeDouble"))
-                .body("fields[1].alias", is("average_urltone"))
+                .body("fields.name", hasItems("domain", "average_urltone"))
 
                 .body("features.size()", is(2455))
                 .body("features[0].attributes.domain", is("newsbeast.gr"))
@@ -76,10 +70,7 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
                 .body("fieldAliases.maximum_urltone", is("maximum_urltone"))
 
                 .body("fields.size()", is(4))
-                .body("fields[0].name", is("domain"))
-                .body("fields[0].type", is("esriFieldTypeString"))
-                .body("fields[0].alias", is("domain"))
-                .body("fields[0].length", is(128))
+                .body("fields.name", hasItems("domain", "maximum_urltone", "average_urltone", "minimum_urltone"))
 
                 .body("features.size()", is(2455))
                 .body("features[0].attributes.domain", is("newsbeast.gr"))
@@ -119,20 +110,14 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
 
                 .body("fields.size()", is(6))
                 .body("fields.name", hasItems("count_urltone", "min_urltone", "max_urltone", "avg_urltone", "stddev_urltone", "var_urltone"))
-                .body("fields[0].name", is("count_urltone"))
-                .body("fields[0].type", is("esriFieldTypeInteger"))
-                .body("fields[0].alias", is("count_urltone"))
-                .body("fields[5].name", is("var_urltone"))
-                .body("fields[5].type", is("esriFieldTypeDouble"))
-                .body("fields[5].alias", is("var_urltone"))
 
                 .body("features.size()", is(1))
                 .body("features[0].attributes.count_urltone", is(38765))
                 .body("features[0].attributes.min_urltone", is(-21.77f))
                 .body("features[0].attributes.max_urltone", is(16.23f))
                 .body("features[0].attributes.avg_urltone", is(-1.1373726299497f))
-                .body("features[0].attributes.stddev_urltone", is(3.63348765118955f))
-                .body("features[0].attributes.var_urltone", is(13.2022325113469f))
+                .body("features[0].attributes.stddev_urltone", is(3.6335345176664f))
+                .body("features[0].attributes.var_urltone", is(13.2025730910732f))
             ;
     }
 }

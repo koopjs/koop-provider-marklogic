@@ -43,6 +43,11 @@
           "options" : ["lang=en"], "weight" : 0
         }
       },
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84"
+      },
       "readOnly": true
     },
     {

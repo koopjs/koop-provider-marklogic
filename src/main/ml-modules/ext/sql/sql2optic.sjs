@@ -162,7 +162,17 @@ function functionExpression(expr) {
 function convertSqlDatePicture(pic) {
   // this is not a complete mapping
 
-  var newPic = pic;
+  let newPic = pic;
+
+  // years
+  if (newPic.includes("YYYY")) {
+    newPic = newPic.replace("YYYY", "yyyy");
+  }
+
+  // days
+  if (newPic.includes("DD")) {
+    newPic = newPic.replace("DD", "dd");
+  }
 
   // hours
   if (newPic.includes("HH24")) {

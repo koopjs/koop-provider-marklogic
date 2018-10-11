@@ -244,6 +244,7 @@ installPlugin.onlyIf { !System.getProperty("os.name").toLowerCase().contains("wi
 node {
   // Base URL for fetching node distributions (change if you have a mirror).
   distBaseUrl = 'https://nodejs.org/dist'
+  version = '8.11.4'
 
   // If true, it will download node using above parameters.
   // If false, it will try to use globally installed node.
@@ -321,8 +322,13 @@ task runKoop(type: NodeTask, dependsOn: ['registerKoop']) {
   script = file('build/koop/server.js')
   execOverrides {
     it.workingDir = 'build/koop'
+
     //it.standardOutput = new FileOutputStream('logs/my.log')
   }
+
+  environment = [
+    'NODE_ENV': 'dev'
+  ]
 }
 
 task fsConfigCheck() {
@@ -411,7 +417,7 @@ task installExampleServices(type: Copy, dependsOn: []) {
   into "config/example"
 
   doLast {
-    project.ext.fsConfig = "example"
+    project.ext.set("fsConfig", "example")
   }
 }
 installExampleServices.finalizedBy installServices
@@ -439,6 +445,18 @@ task loadZipCodeBoundaryData(type: com.marklogic.gradle.task.MlcpTask) {
   batch_size = 1
   transaction_size = 1
   output_collections = "zipcodes"
+  output_permissions = "rest-reader,read,rest-writer,update"
+  output_uri_replace = ".*/example/data/,'/'"
+}
+
+task loadGeoLocationData(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  port = mlAppConfig.restPort
+  database = mlAppConfig.contentDatabaseName
+  input_file_path = "example/data/GeoLocation"
+  input_compressed = "true"
+  output_collections = "example-geo"
   output_permissions = "rest-reader,read,rest-writer,update"
   output_uri_replace = ".*/example/data/,'/'"
 }

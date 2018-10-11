@@ -5,6 +5,7 @@
       "method" : "query"
     },
     "query" : {
-      "returnIdsOnly" : true
+      "returnIdsOnly" : true,
+      "resultRecordCount" : 10
     }
   }

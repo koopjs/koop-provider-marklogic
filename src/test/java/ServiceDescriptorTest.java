@@ -42,7 +42,7 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .body("initialExtent.ymax", is(90))
                 .body("initialExtent.spatialReference.wkid", is(4326))
                 .body("initialExtent.spatialReference.latestWkid", is(4326))
-                
+
                 .body("fullExtent.xmin", is(-180))
                 .body("fullExtent.ymin", is(-90))
                 .body("fullExtent.xmax", is(180))
@@ -94,10 +94,10 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .body("extent.ymax", is(90))
                 .body("extent.spatialReference.wkid", is(4326))
                 .body("extent.spatialReference.latestWkid", is(4326))
-                           
+
                 .body("fields.size()", is(9))
-                .body("fields.name", hasItems("OBJECTID", "urlpubtimedate", "urlpubdate", "url", "name", "urltone", "domain", "urllangcode", "geores"))                
-                .body("hasStaticData", is(true))
+                .body("fields.name", hasItems("OBJECTID", "urlpubtimedate", "urlpubdate", "url", "name", "urltone", "domain", "urllangcode", "geores"))
+                .body("hasStaticData", is(false))
             ;
 
       // we should probably add more validation here or just add new tests if there are
