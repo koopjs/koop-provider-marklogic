@@ -417,7 +417,7 @@ task installExampleServices(type: Copy, dependsOn: []) {
   into "config/example"
 
   doLast {
-    project.ext.fsConfig = "example"
+    project.ext.set("fsConfig", "example")
   }
 }
 installExampleServices.finalizedBy installServices
@@ -445,6 +445,18 @@ task loadZipCodeBoundaryData(type: com.marklogic.gradle.task.MlcpTask) {
   batch_size = 1
   transaction_size = 1
   output_collections = "zipcodes"
+  output_permissions = "rest-reader,read,rest-writer,update"
+  output_uri_replace = ".*/example/data/,'/'"
+}
+
+task loadGeoLocationData(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  port = mlAppConfig.restPort
+  database = mlAppConfig.contentDatabaseName
+  input_file_path = "example/data/GeoLocation"
+  input_compressed = "true"
+  output_collections = "example-geo"
   output_permissions = "rest-reader,read,rest-writer,update"
   output_uri_replace = ".*/example/data/,'/'"
 }

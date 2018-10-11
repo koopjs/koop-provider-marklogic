@@ -8,6 +8,7 @@ const op = require('/MarkLogic/optic');
 const geojson = require('/MarkLogic/geospatial/geojson.xqy');
 const sql2optic = require('/ext/sql/sql2optic.sjs');
 const geostats = require("/ext/geo/geostats.js");
+const geoextractor = require('/ext/geo/extractor.sjs');
 
 const MAX_RECORD_COUNT = 5000;
 
@@ -17,6 +18,7 @@ function post(context, params, input) {
   try {
     return getData(fn.head(xdmp.fromJSON(input)));
   } catch (err) {
+    console.log(err.stack);
     console.trace(err);
 
     returnErrToClient(500, 'Error handling request', err.toString());
@@ -88,6 +90,15 @@ function getLayerModel(serviceName, layerId) {
   if (layer) {
     // default the schema to the service id if not specified
     layer.schema = layer.schema || serviceName;
+
+    // default the geometry to GeoJSON
+    if (!layer.geometry) {
+      layer.geometry = {
+        type : "Point",
+        format : "geojson",
+        coordinateSystem : "wgs84"
+      };
+    }
 
     return layer;
   } else {
@@ -481,7 +492,7 @@ function parseWhere(query) {
   return whereQuery;
 }
 
-function parseGeometry(query) {
+function parseGeometry(query, layerModel) {
   // the koop provider code will convert the ESRI geometry objects into GeoJSON
   // in WGS84 and place it in the query.extension.geometry property
   let geoQuery = null;
@@ -499,22 +510,9 @@ function parseGeometry(query) {
 
     const operation = parseRegionOperation(query);
 
-    const pointPaths = [
-      '//geometry[type = "MultiPoint"]//array-node("coordinates")',
-      '//geometry[type = "Point"]//array-node("coordinates")'
-    ];
-
-    // "type=long-lat-point" is needed for GeoJSON because GeoJSON uses longitude-first
-    // coordinate order while the default in MarkLogic is latitude-first
-    // may need to use the "boundaries-included" or "boundaries-excluded" options depending
-    // on the spatialRel parameter
-    const pointOptions = [ "type=long-lat-point" ];
-
-    const pointQuery = cts.pathGeospatialQuery(
-      pointPaths,
-      regions,
-      pointOptions
-    )
+    const pointQuery = cts.orQuery(
+      geoextractor.getPointQuery(regions, layerModel)
+    );
 
     const regionPaths = [
       cts.geospatialRegionPathReference('/envelope/ctsRegion')
@@ -531,8 +529,6 @@ function parseGeometry(query) {
     )
 
     geoQuery = cts.orQuery([ pointQuery, regionQuery ]);
-    // there seem to be some issues with region queries so leave that off for now
-    //geoQuery = cts.orQuery([ pointQuery ]);
   } else {
     // just match everything
     geoQuery = cts.trueQuery();
@@ -709,7 +705,7 @@ function getObjects(req) {
 
   const query = req.query;
   const orderByFields = parseOrderByFields(query);
-  const geoQuery = parseGeometry(query);
+  const geoQuery = parseGeometry(query, layerModel);
 
   let whereQuery = parseWhere(query);
 
@@ -821,7 +817,12 @@ function getObjects(req) {
   // TODO: see if there is any benefit to pushing the column select earlier in the pipeline
   // transform the rows into GeoJSON
   pipeline = pipeline
-    .select(getSelectDef(outFields, columnDefs, returnGeometry, geometrySource));
+    .select(getSelectDef(outFields, columnDefs, returnGeometry, layerModel));
+
+  // if we don't have a "geometry" property, assume it is GeoJSON so no extractor needed
+  if (layerModel.geometry && layerModel.geometry.format != "geojson") {
+    pipeline = pipeline.map(geoextractor.getMapper(layerModel))
+  }
 
   const opticResult = Array.from(pipeline.result(null, bindParams))
   const opticResultCount = opticResult.length
@@ -887,7 +888,7 @@ function aggregate(req) {
   const groupByFields = parseGroupByFields(query);
   const orderByFields = parseOrderByFields(query);
 
-  const geoQuery = parseGeometry(query);
+  const geoQuery = parseGeometry(query, layerModel);
 
   const boundingQueries = [ geoQuery ];
 
@@ -935,17 +936,17 @@ function getAggregateFieldNames(aggregateDefs) {
   });
 };
 
-function getSelectDef(outFields, columnDefs, returnGeometry = false, geometrySource) {
-  const defs = [
-    op.as("type", "Feature")
-  ];
+function getSelectDef(outFields, columnDefs, returnGeometry = false, layerModel) {
+  const geometrySource = layerModel.geometrySource;
 
-  defs.push(
+  // start with a GeoJSON feature with properties
+  const defs = [
+    op.as("type", "Feature"),
     op.as(
       "properties",
       op.jsonObject(getPropDefs(outFields, columnDefs))
     )
-  );
+  ];
 
   // only include this if returnGeometry is true or outFields is *
   if (returnGeometry || outFields[0] === "*") {
@@ -968,9 +969,12 @@ function getSelectDef(outFields, columnDefs, returnGeometry = false, geometrySou
       )
     } else {
       // select from the document
-      defs.push(
-        op.as("geometry", op.xpath("doc", "//geometry"))
-      )
+
+      if (!layerModel.geometry || layerModel.geometry.format == "geojson") {
+        defs.push(op.as("geometry", op.xpath("doc", "//geometry")));
+      } else {
+        defs.push(geoextractor.getSelector(layerModel));
+      }
     }
   }
 

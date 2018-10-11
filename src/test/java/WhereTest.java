@@ -86,23 +86,6 @@ public class WhereTest extends AbstractFeatureServiceTest{
 
                 .body("spatialReference.wkid", is(4326))
 
-                .body("fields.size()", is(9))
-                .body("fields.name", hasItems("OBJECTID", "urlpubtimedate", "urlpubdate", "url", "name", "urltone", "domain", "urllangcode", "geores"))
-                .body("fields[0].name", is("OBJECTID"))
-                .body("fields[0].type", is("esriFieldTypeOID"))
-                .body("fields[0].alias", is("OBJECTID"))
-                .body("fields[0].length", IsNull.nullValue())
-                .body("fields[0].editable", is(false))
-                .body("fields[0].nullable", is(true))
-                .body("fields[0].domain", IsNull.nullValue())
-                .body("fields[8].name", is("geores"))
-                .body("fields[8].type", is("esriFieldTypeInteger"))
-                .body("fields[8].alias", is("geores"))
-                .body("fields[8].length", IsNull.nullValue())
-                .body("fields[8].editable", is(false))
-                .body("fields[8].nullable", is(true))
-                .body("fields[8].domain", IsNull.nullValue())
-
                 .body("features.size()", is(2))
                 .body("features[1].attributes.OBJECTID", is(56576))
                 .body("features[1].attributes.urlpubtimedate", is(1495636200000L))
@@ -164,33 +147,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
             .log().ifError()
             .statusCode(200)
             .log().ifValidationFails()
-            .body("objectIdFieldName", is("OBJECTID"))
-            .body("globalIdFieldName", is(""))
-            .body("hasZ", is(false))
-            .body("hasM", is(false))
-
-            .body("spatialReference.wkid", is(4326))
-
-            .body("fields.size()", is(2))
-            .body("fields.name", hasItems("OBJECTID", "urlpubtimedate"))
-            .body("fields[0].name", is("urlpubtimedate"))
-            .body("fields[0].type", is("esriFieldTypeDate"))
-            .body("fields[0].alias", is("urlpubtimedate"))
-            .body("fields[0].length", IsNull.nullValue())
-            .body("fields[0].editable", is(false))
-            .body("fields[0].nullable", is(true))
-            .body("fields[0].domain", IsNull.nullValue())
-            .body("fields[1].name", is("OBJECTID"))
-            .body("fields[1].type", is("esriFieldTypeOID"))
-            .body("fields[1].alias", is("ID"))
-            .body("fields[1].length", IsNull.nullValue())
-            .body("fields[1].editable", is(false))
-            .body("fields[1].nullable", is(false))
-            .body("fields[1].domain", IsNull.nullValue())
-
-            .body("features.size()", is(2000))
-
-            .body("exceededTransferLimit", is(true))
+            .body("count", is(5427))
         ;
     }
 

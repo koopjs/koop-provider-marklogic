@@ -1,4 +1,5 @@
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasItems;
 
 import org.junit.Test;
 
@@ -26,13 +27,8 @@ public class GroupByTest extends AbstractFeatureServiceTest{
                 .body("fieldAliases.domain_count", is("domain_count"))
 
                 .body("fields.size()", is(2))
-                .body("fields[0].name", is("domain"))
-                .body("fields[0].type", is("esriFieldTypeString"))
-                .body("fields[0].alias", is("domain"))
-                .body("fields[0].length", is(128))
-                .body("fields[1].name", is("domain_count"))
-                .body("fields[1].type", is("esriFieldTypeInteger"))
-                .body("fields[1].alias", is("domain_count"))
+                .body("fields.name", hasItems("domain", "domain_count"))
+                .body("fields.type", hasItems("esriFieldTypeString", "esriFieldTypeInteger"))
 
                 .body("features.size()", is(2455))
                 .body("features[0].attributes.domain", is("fax.al"))
@@ -99,7 +95,7 @@ public class GroupByTest extends AbstractFeatureServiceTest{
             ;
     }
 
-    
+
     @Test
     public void testGroupByWithFilter() {
 
@@ -120,5 +116,5 @@ public class GroupByTest extends AbstractFeatureServiceTest{
                 .body("features.attributes.find { it.domain == '9news.com.au' }.objectid_count", is(14))
             ;
     }
-    
+
 }
