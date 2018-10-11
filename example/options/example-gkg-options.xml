@@ -197,6 +197,12 @@
   </suggestion-source>
   -->
 
+  <default-suggestion-source>
+    <range type="xs:string">
+      <element ns="" name="domain" />
+    </range>
+  </default-suggestion-source>
+
   <!-- This will extract the latitude and longitude from the search. -->
   <constraint name="Location">
     <geo-path>

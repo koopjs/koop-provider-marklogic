@@ -244,6 +244,7 @@ installPlugin.onlyIf { !System.getProperty("os.name").toLowerCase().contains("wi
 node {
   // Base URL for fetching node distributions (change if you have a mirror).
   distBaseUrl = 'https://nodejs.org/dist'
+  version = '8.11.4'
 
   // If true, it will download node using above parameters.
   // If false, it will try to use globally installed node.
@@ -321,8 +322,13 @@ task runKoop(type: NodeTask, dependsOn: ['registerKoop']) {
   script = file('build/koop/server.js')
   execOverrides {
     it.workingDir = 'build/koop'
+
     //it.standardOutput = new FileOutputStream('logs/my.log')
   }
+
+  environment = [
+    'NODE_ENV': 'dev'
+  ]
 }
 
 task fsConfigCheck() {
