@@ -9,17 +9,15 @@ public class AliasTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testFieldAlias() {
-        String path = "/marklogic/{service}/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}& orderByFields={orderByFields}&returnGeometry={returnGeometry}";
+        String path = "/marklogic/{service}/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
                 RestAssured
                 .given()
-                  .pathParam("GDeltGKG")
+                  .pathParam("service", "GDeltGKG")
                   .pathParam("layer", 4)
                   .pathParam("resultRecordCount", 5)
-                  .pathParam("orderByFields", "name ASC")
+                  .pathParam("orderByFields", "name&nbspASC")
                   .pathParam("returnGeometry", true)
 
-        RestAssured
-                .given()
                 .when()
                 .log().uri()
                 .get(path)
