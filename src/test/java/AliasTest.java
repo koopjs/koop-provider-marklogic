@@ -5,11 +5,11 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.is;
 
 
-public class ColumnMappingTest extends AbstractFeatureServiceTest {
+public class AliasTest extends AbstractFeatureServiceTest {
 
     @Test
-    public void testColumnMappingWithOutfields() {
-        String path = request2path("ColumnMapping.json");
+    public void testFieldAlias() {
+        String path = request2path("Alias.json");
 
         RestAssured
                 .given()
@@ -25,14 +25,16 @@ public class ColumnMappingTest extends AbstractFeatureServiceTest {
                 .body("features.size()", is(5))
 
                 .body("features[0].attributes.OBJECTID", is(20643))
+                .body("features[0].attributes.urlpubtimedate", is(1495616400000l))
+                .body("features[0].attributes.urlpubdate", is(1495584000000l))
                 .body("features[0].attributes.url", is("http://satnews.com/story.php?number=1191513746"))
-                .body("features[0].attributes.urlpubtimedate", is("2017-05-24T09:00:00Z"))
-                .body("features[0].attributes.urlpubdate", is("2017-05-24Z"))
                 .body("features[0].attributes.name", is("Aalborg, Nordjylland, Denmark"))
-                .body("features[0].attributes.urltone", IsNull.nullValue())
-                .body("features[0].attributes.domain", IsNull.nullValue())
-                .body("features[0].attributes.urllangcode", IsNull.nullValue())
-                .body("features[0].attributes.geores", IsNull.nullValue())
+
+                .body( "fields.find {it.name == 'OBJECTID'} .alias", is("OBJECTID"))
+                .body( "fields.find {it.name == 'urlpubtimedate'} .alias", is("pubtime"))
+                .body( "fields.find {it.name == 'urlpubdate'} .alias", is("pubdate"))
+                .body( "fields.find {it.name == 'url'} .alias", is("doc_url"))
+                .body( "fields.find {it.name == 'name'} .alias", is("Location"))
         ;
     }
 }
