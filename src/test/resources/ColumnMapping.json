@@ -1,0 +1,12 @@
+{
+  "params" : {
+    "id" : "GDeltGKG",
+    "layer" : 4,
+    "method" : "query"
+  },
+  "query" : {
+    "resultRecordCount" : 5,
+    "orderByFields": "name ASC",
+    "returnGeometry" : true
+  }
+}
