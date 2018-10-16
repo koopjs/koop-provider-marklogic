@@ -9,7 +9,14 @@ public class AliasTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testFieldAlias() {
-        String path = request2path("Alias.json");
+        String path = "/marklogic/{service}/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}& orderByFields={orderByFields}&returnGeometry={returnGeometry}";
+                RestAssured
+                .given()
+                  .pathParam("GDeltGKG")
+                  .pathParam("layer", 4)
+                  .pathParam("resultRecordCount", 5)
+                  .pathParam("orderByFields", "name ASC")
+                  .pathParam("returnGeometry", true)
 
         RestAssured
                 .given()
