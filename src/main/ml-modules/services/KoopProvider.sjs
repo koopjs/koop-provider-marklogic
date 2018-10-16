@@ -96,7 +96,8 @@ function getLayerModel(serviceName, layerId) {
       layer.geometry = {
         type : "Point",
         format : "geojson",
-        coordinateSystem : "wgs84"
+        coordinateSystem : "wgs84",
+        xpath : "//geometry"
       };
     }
 
@@ -510,23 +511,9 @@ function parseGeometry(query, layerModel) {
 
     const operation = parseRegionOperation(query);
 
-    const pointQuery = cts.orQuery(
-      geoextractor.getPointQuery(regions, layerModel)
-    );
+    const pointQuery = geoextractor.getPointQuery(regions, layerModel);
 
-    const regionPaths = [
-      cts.geospatialRegionPathReference('/envelope/ctsRegion')
-    ];
-
-    const regionOptions = [];
-
-    // assume all regions are placed in the /envelope/cts-region property
-    const regionQuery = cts.geospatialRegionQuery(
-      regionPaths,
-      operation,
-      regions,
-      regionOptions
-    )
+    const regionQuery = geoextractor.getRegionQuery(regions, operation, layerModel);
 
     geoQuery = cts.orQuery([ pointQuery, regionQuery ]);
   } else {
@@ -814,14 +801,15 @@ function getObjects(req) {
     }
   }
 
+  const extractor = geoextractor.getExtractor(layerModel);
+
   // TODO: see if there is any benefit to pushing the column select earlier in the pipeline
   // transform the rows into GeoJSON
   pipeline = pipeline
-    .select(getSelectDef(outFields, columnDefs, returnGeometry, layerModel));
+    .select(getSelectDef(outFields, columnDefs, returnGeometry, extractor));
 
-  // if we don't have a "geometry" property, assume it is GeoJSON so no extractor needed
-  if (layerModel.geometry && layerModel.geometry.format != "geojson") {
-    pipeline = pipeline.map(geoextractor.getMapper(layerModel))
+  if (returnGeometry && extractor.hasExtractFunction()) {
+    pipeline = pipeline.map(extractor.extract)
   }
 
   const opticResult = Array.from(pipeline.result(null, bindParams))
@@ -829,10 +817,15 @@ function getObjects(req) {
 
   if(opticResultCount >= (limit+1) ){
     opticResult.pop();
-    return {result: opticResult,limitExceeded : true}
-  }
-  else {
-    return {result: opticResult,limitExceeded : false}
+    return {
+      result : opticResult,
+      limitExceeded : true
+    }
+  } else {
+    return {
+      result : opticResult,
+      limitExceeded : false
+    }
   }
 }
 
@@ -936,9 +929,7 @@ function getAggregateFieldNames(aggregateDefs) {
   });
 };
 
-function getSelectDef(outFields, columnDefs, returnGeometry = false, layerModel) {
-  const geometrySource = layerModel.geometrySource;
-
+function getSelectDef(outFields, columnDefs, returnGeometry = false, geometryExtractor) {
   // start with a GeoJSON feature with properties
   const defs = [
     op.as("type", "Feature"),
@@ -953,29 +944,25 @@ function getSelectDef(outFields, columnDefs, returnGeometry = false, layerModel)
 
     //console.log("geometry source: " + JSON.stringify(geometrySource));
 
-    if (geometrySource && geometrySource.fields) {
-      // build the geomtery from fields in the row
-      defs.push(
-        op.as(
-          "geometry",
-          op.jsonObject([
-            op.prop("type", "Point"),
-            op.prop("coordinates", op.jsonArray([
-              op.jsonNumber(op.col(geometrySource.fields.lon)),
-              op.jsonNumber(op.col(geometrySource.fields.lat))
-            ]))
-          ])
-        )
-      )
-    } else {
+    // if (geometrySource && geometrySource.fields) {
+    //   // build the geomtery from fields in the row
+    //   defs.push(
+    //     op.as(
+    //       "geometry",
+    //       op.jsonObject([
+    //         op.prop("type", "Point"),
+    //         op.prop("coordinates", op.jsonArray([
+    //           op.jsonNumber(op.col(geometrySource.fields.lon)),
+    //           op.jsonNumber(op.col(geometrySource.fields.lat))
+    //         ]))
+    //       ])
+    //     )
+    //   )
+    // } else {
       // select from the document
-
-      if (!layerModel.geometry || layerModel.geometry.format == "geojson") {
-        defs.push(op.as("geometry", op.xpath("doc", "//geometry")));
-      } else {
-        defs.push(geoextractor.getSelector(layerModel));
-      }
-    }
+    //  defs.push(geoextractor.getSelector(layerModel));
+    //}
+    defs.push(geometryExtractor.getSelector());
   }
 
   return defs;
