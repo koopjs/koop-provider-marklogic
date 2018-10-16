@@ -180,7 +180,7 @@
               "pointFormat" : "point"
             }
           ]
-        }        
+        }
       }
     ,
     "boundingQuery" : {"elementValueQuery":{"element":["type"], "text":["custom"], "options":["lang=en"]}}
@@ -209,6 +209,143 @@
           "coordinateSystem" : "wgs84"
         },
       "boundingQuery" : {"elementValueQuery":{"element":["type"], "text":["any"], "options":["lang=en"]}}
+    },
+    {
+      "id": 6,
+      "name" : "WKT",
+      "decription": "Region data in WKT",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoWKT",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "wkt",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "xpath" : "/envelope/instance/boundary"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "name" : "WKT",
+      "decription": "Region data in WKT",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoWKT",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "wkt",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "column" : "boundary"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "name" : "GeoJSON 1",
+      "decription": "Region data in GeoJSON",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoJSON",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "xpath" : "/envelope/instance/boundary"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "name" : "GeoJSON 2",
+      "decription": "Region data in GeoJSON",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoJSON",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "column" : "boundary"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "name" : "GeoJSON 2",
+      "decription": "Region data in GeoJSON",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoJSON",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "format": "cts",
+          "xpath" : "/envelope/header/ctsRegion"
+        }
+      }
     }
+
   ]
 }

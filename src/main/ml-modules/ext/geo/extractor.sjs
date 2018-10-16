@@ -41,23 +41,23 @@ function getPointQuery(regions, layerModel)
     case "mcgm" : {
         const coordinateSystem = layerModel.geometry.coordinateSystem;
         const pointOptions = ["coordinate-system=" +coordinateSystem ]
-        var localQuery = cts.elementAttributePairGeospatialQuery(fn.QName("","Dot"), fn.QName("","Latitude"), fn.QName("","Longitude"), regions, pointOptions, 1)
+        const localQuery = cts.elementAttributePairGeospatialQuery(fn.QName("","Dot"), fn.QName("","Latitude"), fn.QName("","Longitude"), regions, pointOptions, 1)
         pointQueries.push(localQuery);
     } break;
     case "any" : {
         const coordinateSystem = layerModel.geometry.coordinateSystem;
         const pointOptions = ["coordinate-system=" +coordinateSystem ]
-        var localQuery = geo.geospatialQuery(regions,pointOptions);
+        const localQuery = geo.geospatialQuery(regions,pointOptions);
         pointQueries.push(localQuery);
     } break;
     case "custom" : {
         const indexes = layerModel.geometry.indexes;
-        for (var key in indexes) {
+        for (const key of Object.keys(indexes)) {
           switch (key) {
                 case "element" :
                     {
                           const elementArray = layerModel.geometry.indexes.element
-                          for(var i=0; i < elementArray.length ; i++)
+                          for(let i=0; i < elementArray.length ; i++)
                           {
                             const pointFormat = elementArray[i].pointFormat
                             const coordinateSystem = elementArray[i].coordinateSystem
@@ -65,7 +65,7 @@ function getPointQuery(regions, layerModel)
                             const pointOptions = [ "type=" +pointFormat , "coordinate-system=" +coordinateSystem ]
                             const elementLocalName = fn.QName(namespaceURI ,elementArray[i].localname)
 
-                            var localQuery = cts.elementGeospatialQuery(elementLocalName , regions, pointOptions)
+                            const localQuery = cts.elementGeospatialQuery(elementLocalName , regions, pointOptions)
                             pointQueries.push(localQuery);
                           }
                     }
@@ -73,7 +73,7 @@ function getPointQuery(regions, layerModel)
                 case "elementChild" :
                     {
                           const elementChildArray = layerModel.geometry.indexes.elementChild
-                          for(var i=0; i < elementChildArray.length ; i++)
+                          for(let i=0; i < elementChildArray.length ; i++)
                           {
                             const pointFormat = elementChildArray[i].pointFormat
                             const coordinateSystem = elementChildArray[i].coordinateSystem
@@ -83,7 +83,7 @@ function getPointQuery(regions, layerModel)
                             const pointOptions = [ "type=" +pointFormat , "coordinate-system=" +coordinateSystem ]
                             const parentLocalname = fn.QName(parentNamespace ,elementChildArray[i].parentLocalname)
                             const childElementName = fn.QName(childNamespace ,elementChildArray[i].localname)
-                            var localQuery = cts.elementChildGeospatialQuery(parentLocalname, childElementName, regions, pointOptions)
+                            const localQuery = cts.elementChildGeospatialQuery(parentLocalname, childElementName, regions, pointOptions)
                             pointQueries.push(localQuery);
                           }
                     }
@@ -91,7 +91,7 @@ function getPointQuery(regions, layerModel)
                 case "elementPair" :
                    {
                           const elementPairArray = layerModel.geometry.indexes.elementPair
-                          for(var i=0; i < elementPairArray.length ; i++)
+                          for(let i=0; i < elementPairArray.length ; i++)
                           {
                             const parentNamespaceUri = elementPairArray[i].parentNamespaceUri;
                             const parentLocalname = fn.QName(parentNamespaceUri,elementPairArray[i].parentLocalname);
@@ -102,7 +102,7 @@ function getPointQuery(regions, layerModel)
                             const coordinateSystem = elementPairArray[i].coordinateSystem;
                             const pointOptions = ["coordinate-system=" +coordinateSystem ];
 
-                            var localQuery = cts.elementPairGeospatialQuery(parentLocalname, latitudeLocalname, longitudeLocalname, regions, pointOptions)
+                            const localQuery = cts.elementPairGeospatialQuery(parentLocalname, latitudeLocalname, longitudeLocalname, regions, pointOptions)
                             pointQueries.push(localQuery);
                           }
                   }
@@ -110,7 +110,7 @@ function getPointQuery(regions, layerModel)
                 case "elementAttributePair" :
                   {
                         const elementAttributePairArray = layerModel.geometry.indexes.elementAttributePair
-                        for(var i=0; i < elementAttributePairArray.length ; i++)
+                        for(let i=0; i < elementAttributePairArray.length ; i++)
                         {
                             const parentNamespaceUri = elementAttributePairArray[i].parentNamespaceUri;
                             const parentLocalname = fn.QName(parentNamespaceUri,elementAttributePairArray[i].parentLocalname);
@@ -121,7 +121,7 @@ function getPointQuery(regions, layerModel)
                             const coordinateSystem = elementAttributePairArray[i].coordinateSystem;
                             const pointOptions = ["coordinate-system=" +coordinateSystem ];
 
-                            var localQuery = cts.elementAttributePairGeospatialQuery(parentLocalname, latitudeLocalname, longitudeLocalname, regions, pointOptions)
+                            const localQuery = cts.elementAttributePairGeospatialQuery(parentLocalname, latitudeLocalname, longitudeLocalname, regions, pointOptions)
                             pointQueries.push(localQuery);
                         }
                   }
@@ -129,13 +129,13 @@ function getPointQuery(regions, layerModel)
                 case "path" :
                   {
                         const pathArray = layerModel.geometry.indexes.path;
-                        for(var i=0; i < pathArray.length ; i++)
+                        for(let i=0; i < pathArray.length ; i++)
                         {
                             const pointPaths = pathArray[i].pathExpression;
                             const coordinateSystem = pathArray[i].coordinateSystem;
                             const pointFormat = pathArray[i].pointFormat;
                             const pointOptions = [ "type=" +pointFormat , "coordinate-system=" +coordinateSystem ]
-                            var localQuery = cts.pathGeospatialQuery(pointPaths,regions,pointOptions)
+                            const localQuery = cts.pathGeospatialQuery(pointPaths,regions,pointOptions)
                             pointQueries.push(localQuery);
                         }
                   }
@@ -144,7 +144,86 @@ function getPointQuery(regions, layerModel)
           }
       }
   }
-  return pointQueries;
+
+  return cts.orQuery(pointQueries);
+}
+
+function getRegionQuery(regions, operation, layerModel) {
+  const geometry = layerModel.geometry;
+  let regionPaths;
+
+  if (geometry.indexType && geometry.indexType === "region" && geometry.indexes) {
+    // get the path references from the indexes configured for the layer
+    // placeholder for this code
+    // the conditions will probably need to be updated
+  } else {
+    regionPaths = [
+      cts.geospatialRegionPathReference(
+        '/envelope/ctsRegion', ['coordinate-system=wgs84']
+      )
+    ];
+  }
+
+  const regionOptions = [];
+
+  return cts.geospatialRegionQuery(
+    regionPaths,
+    operation,
+    regions,
+    regionOptions
+  );
+}
+
+function CtsExtractor(layer) {
+  this.getSelector = function () {
+    return op.as("geometry", op.fn.string(op.xpath('doc', layer.geometry.source.xpath)));
+  }
+
+  this.hasExtractFunction = function () {
+    return true;
+  }
+
+  this.extract = function (result) {
+    result.geometry = geojson.toGeojson(result.geometry);
+    return result;
+  }
+}
+
+function GeoJsonExtractor(layer) {
+  this.getSelector = function () {
+    if (layer.geometry.source && layer.geometry.source.column) {
+      return op.as("geometry", op.call('http://marklogic.com/xdmp', 'unquote', op.col(layer.geometry.source.column)));
+    } else if (layer.geometry.source && layer.geometry.source.xpath) {
+      return op.as("geometry", op.xpath('doc', layer.geometry.source.xpath));
+    } else if (layer.geometry && layer.geometry.xpath) {
+      return op.as("geometry", op.xpath('doc', layer.geometry.xpath));
+    }
+  }
+
+  this.hasExtractFunction = function () {
+    return false;
+  }
+}
+
+function WKTExtractor(layer) {
+  this.getSelector = function () {
+    if (layer.geometry.source && layer.geometry.source.column) {
+      return op.as("geometry", op.col(layer.geometry.source.column));
+    } else if (layer.geometry.source && layer.geometry.source.xpath) {
+      return op.as("geometry", op.xpath('doc', layer.geometry.source.xpath));
+    } else if (layer.geometry && layer.geometry.xpath) {
+      return op.as("geometry", op.xpath('doc', layer.geometry.xpath));
+    }
+  }
+
+  this.hasExtractFunction = function () {
+    return true;
+  }
+
+  this.extract = function (result) {
+    result.geometry = geojson.toGeojson(geo.parseWkt(result.geometry));
+    return result;
+  }
 }
 
 function GMLExtractor(layer) {
@@ -154,6 +233,10 @@ function GMLExtractor(layer) {
             op.prop("coordinateSystem", layer.geometry.coordinateSystem),
             op.prop("points", op.jsonArray(op.xpath("doc", "//Q{http://www.opengis.net/gml/3.2}Point/Q{http://www.opengis.net/gml/3.2}pos/node()")))
           ]))
+  }
+
+  this.hasExtractFunction = function () {
+    return true;
   }
 
   this.extract = function (result) {
@@ -179,7 +262,7 @@ function GMLExtractor(layer) {
     result.geometry = resultGeometry;
     }
     return result;
-}
+  }
 }
 
 function KMLExtractor(layer) {
@@ -189,6 +272,10 @@ function KMLExtractor(layer) {
             op.prop("points", op.jsonArray(op.xpath("doc", "//Q{http://www.opengis.net/kml/2.2}Point/Q{http://www.opengis.net/kml/2.2}coordinates/node()")))
           ])
     return op.as('geometry', selector)
+  }
+
+  this.hasExtractFunction = function () {
+    return true;
   }
 
   this.extract = function (result) {
@@ -219,6 +306,10 @@ function RSSExtractor(layer) {
             op.prop("points", op.jsonArray(op.xpath("doc", "//item/Q{http://www.georss.org/georss}point/node()")))
           ])
     return op.as('geometry', selector)
+  }
+
+  this.hasExtractFunction = function () {
+    return true;
   }
 
   this.extract = function (result) {
@@ -252,6 +343,10 @@ function McgmExtractor(layer) {
                   op.prop('lats',op.map.entry("list", op.xpath("doc", "//Dot/@Latitude"))),
                   op.prop('lons',op.map.entry("list", op.xpath("doc", "//Dot/@Longitude")))
                    ]))}
+
+  this.hasExtractFunction = function () {
+    return true;
+  }
 
   this.extract = function (result) {
     const resultGeometry = {
@@ -298,6 +393,10 @@ function AnyExtractor(layer) {
                                            ]))
           ])
     return op.as('geometry', selector)
+  }
+
+  this.hasExtractFunction = function () {
+    return true;
   }
 
   this.extract = function (result) {
@@ -426,6 +525,10 @@ function CustomExtractor(layer) {
     return op.as('geometry', selectors);
   }
 
+  this.hasExtractFunction = function () {
+    return true;
+  }
+
   this.extract = function (result) {
     const resultGeometry = {
       type : "MultiPoint",
@@ -525,26 +628,38 @@ function getAttributePairLatXPath(index) {
 
 function getExtractFunction(layerModel)
 {
-    switch(layerModel.geometry.format) {
-    case "gml" : { return new GMLExtractor(layerModel) } break;
-    case "kml" : { return new KMLExtractor(layerModel) } break;
-    case "rss" : { return new RSSExtractor(layerModel) } break;
-    case "mcgm" : { return new McgmExtractor(layerModel) } break;
-    case "custom" : { return new CustomExtractor(layerModel) } break;
-    case "any" : { return new AnyExtractor(layerModel) } break;
-    }
+  let format = layerModel.geometry.format;
+  if (layerModel.geometry.source && layerModel.geometry.source.format) {
+    format = layerModel.geometry.source.format;
+  }
+
+  switch(format) {
+    case "geojson" : { return new GeoJsonExtractor(layerModel) } break;
+    case "wkt"     : { return new WKTExtractor(layerModel) }     break;
+    case "gml"     : { return new GMLExtractor(layerModel) }     break;
+    case "kml"     : { return new KMLExtractor(layerModel) }     break;
+    case "rss"     : { return new RSSExtractor(layerModel) }     break;
+    case "mcgm"    : { return new McgmExtractor(layerModel) }    break;
+    case "custom"  : { return new CustomExtractor(layerModel) }  break;
+    case "any"     : { return new AnyExtractor(layerModel) }     break;
+    case "cts"     : { return new CtsExtractor(layerModel) }     break;
+  }
 }
 
-function getSelector(layerModel)
-{
+function getExtractor(layerModel) {
+  return getExtractFunction(layerModel);
+}
+
+function getSelector(layerModel) {
   return getExtractFunction(layerModel).getSelector();
 }
 
-function getMapper(layerModel)
-{
+function getMapper(layerModel) {
   return getExtractFunction(layerModel).extract;
 }
 
 exports.getPointQuery = getPointQuery;
+exports.getRegionQuery = getRegionQuery;
+exports.getExtractor = getExtractor;
 exports.getSelector = getSelector;
 exports.getMapper = getMapper;

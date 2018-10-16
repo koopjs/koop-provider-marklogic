@@ -46,7 +46,8 @@
       "geometry" : {
         "type" : "Point",
         "format" : "geojson",
-        "coordinateSystem" : "wgs84"
+        "coordinateSystem" : "wgs84",
+        "xpath" : "//geometry"
       },
       "readOnly": true
     },
