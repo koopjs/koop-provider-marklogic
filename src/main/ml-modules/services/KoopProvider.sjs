@@ -165,7 +165,7 @@ function generateFieldDescriptorsFromViewAndJoins(layerModel, serviceName) {
   const schema = getSchema(layerModel, serviceName);
   const view = layerModel.view;
   const viewDef = tde.getView(schema, view);
-  fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
+  fields.push(...generateFieldDescriptorsFromViewDef(viewDef, layerModel));
 
   if (layerModel.joins) {
     fields.push(...generateJoinFieldDescriptorsFromViewAndJoins(layerModel));
@@ -179,10 +179,10 @@ function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
 
   const primaryDataSource = layerModel.dataSources[0];
   if (primaryDataSource.source === "view") {
-    const schema = getSchema(layerModel.dataSources[0], serviceName);
-    const view = layerModel.dataSources[0].view;
+    const schema = getSchema(primaryDataSource, serviceName);
+    const view = primaryDataSource.view;
     const viewDef = tde.getView(schema, view);
-    fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
+    fields.push(...generateFieldDescriptorsFromViewDef(viewDef, primaryDataSource));
   } else if (primaryDataSource.source === "sparql") {
     fields.push(...generateJoinFieldDescriptorsFromDataSource(primaryDataSource));
   }
@@ -194,7 +194,7 @@ function generateFieldDescriptorsFromDataSourcesArray(layerModel, serviceName) {
         fields.push(...generateJoinFieldDescriptorsFromDataSource(dataSource));
       } else {
         const viewDef = tde.getView(dataSource.schema, dataSource.view);
-        fields.push(...generateFieldDescriptorsFromViewDef(viewDef));
+        fields.push(...generateFieldDescriptorsFromViewDef(viewDef, dataSource));
       }
     });
   }
@@ -206,7 +206,7 @@ function generateJoinFieldDescriptorsFromViewAndJoins(layerModel) {
   const fields = [];
   layerModel.joins.forEach((dataSource) => {
     Object.keys(dataSource.fields).forEach((field) => {
-      fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType));
+      fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType, dataSource.fields[field].alias));
     });
   });
   return fields;
@@ -215,27 +215,38 @@ function generateJoinFieldDescriptorsFromViewAndJoins(layerModel) {
 function generateJoinFieldDescriptorsFromDataSource(dataSource) {
   const fields = [];
   Object.keys(dataSource.fields).forEach((field) => {
-    fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType));
+    fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType, dataSource.fields[field].alias));
   });
   return fields;
 }
 
-function generateFieldDescriptorsFromViewDef(viewDef) {
+function generateFieldDescriptorsFromViewDef(viewDef, dataSource) {
   const fields = [];
   Object.keys(viewDef.view.columns).forEach((column) => {
     const field = viewDef.view.columns[column];
-    fields.push(createFieldDescriptor(field.column.name, field.column.scalarType));
+    let alias = null;
+    if (dataSource.hasOwnProperty("fields")) {
+      if (dataSource.fields.hasOwnProperty(field.column.name)) {
+        if (dataSource.fields[field.column.name].hasOwnProperty("alias")) {
+          alias = dataSource.fields[field.column.name].alias;
+        }
+      }
+    }
+    fields.push(createFieldDescriptor(field.column.name, field.column.scalarType, alias));
   });
   return fields;
 }
 
-function createFieldDescriptor(fieldName, scalarType) {
+function createFieldDescriptor(fieldName, scalarType, alias) {
   const fieldDescriptor = {
     name : fieldName,
     type : getFieldType(scalarType)
   };
   if (fieldDescriptor.type === "String") {
     fieldDescriptor.length = 1024;
+  }
+  if (alias !== undefined) {
+    fieldDescriptor.alias = alias;
   }
   return fieldDescriptor;
 }

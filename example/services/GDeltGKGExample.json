@@ -134,6 +134,51 @@
         }
       },
       "readOnly": true
+    {
+      "id": 4,
+      "name" : "GKG level 1",
+      "decription": "GDelt GKG article data at geores 1 (country)",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "dataSources" : [
+        {
+          "source": "view",
+          "schema": "GDeltGKG",
+          "view": "Article",
+          "fields": {
+            "OBJECTID" : { "scalarType" : "string" },
+            "urlpubtimedate" : {
+              "scalarType" : "string",
+              "alias": "pubtime"
+            },
+            "urlpubdate" : {
+              "scalarType" : "string",
+              "alias": "pubdate"
+            },
+            "name": {
+              "scalarType": "string",
+              "alias": "Location"
+            },
+            "url": {
+              "scalarType": "string",
+              "alias": "doc_url"
+            }
+          }
+        }
+      ],
+      "readOnly": true
     }
   ]
 }
