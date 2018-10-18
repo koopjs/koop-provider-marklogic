@@ -185,6 +185,17 @@ Note: This will load TDE templates that define views used by the example feature
 * Query layer 0 for the count of features: `http://<host>:<port>/marklogic/GDeltExample/FeatureServer/0/query?returnCountOnly=true`
 * Query layer 0 for the count of features where the "domain" is "indiatimes.com": `http://<host>:<port>/marklogic/GDeltExample/FeatureServer/0/query?returnCountOnly=true&where=domain='indiatimes.com'`
 
+### Install or update services
+Once the connector is installed, you will want to create new services and deploy configuration updates. The service descriptors and supporting TDE templates live under the `config/<config name>` directory. If you add new services or templates or make updates to existing ones, use the `installServices` command to deploy them.
+```
+./gradlew -PenvironmentName=<environment name> -PfsConfig=<config name> installServices
+```
+
+If your environment and feature service configuration match one to one, you can add the `fsConfig` property to your `gradle-<environment name>.properties` file like is shown in `gradle-example-connector.properties`. You can then run `installServices` without the `fsConfig` property.
+```
+./gradlew -PenvironmentName=<environment name> installServices
+```
+
 <a name="Build-Disconnected-Archive"></a>
 ### Build an Archive to Run in Disconnected Mode
 There are times when you may need to install the connector from a machine that is not connected to the internet. To support this, the gradle build supports a number of tasks you can use to build an archive that has all the dependencies packaged up that you can install from.
