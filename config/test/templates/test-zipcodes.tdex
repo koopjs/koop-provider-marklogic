@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+"STATEFP10": "06"
+2010 Census state FIPS code
+
+"ZCTA5CE10": "91732"
+2010 Census 5-digit ZCTA code
+
+"GEOID10": "0691732"
+Block identifier; a concatenation of 2010 Census
+state FIPS code, county FIPS code, census tract code
+and tabulation block number.
+
+"CLASSFP10": "B5",
+2010 Census FIPS class code
+
+"MTFCC10": "G6350",
+MAF/TIGER feature class code
+https://www.census.gov/geo/reference/mtfcc.html
+
+"FUNCSTAT10": "S",
+2010 Census functional status
+
+"ALAND10": 11953508,
+2010 Census land area in square meters
+
+"AWATER10": 237965,
+2010 Census water area in square meters
+
+"INTPTLAT10": "+34.0734197",
+2010 Census latitude of the internal point
+
+"INTPTLON10": "-118.0153445",
+2010 Census longitude of the internal point
+
+"PARTFLG10": "N"
+Part Flag identifying if all or part of the 2010
+Census entity is within the file
+
+-->
+<template xmlns="http://marklogic.com/xdmp/tde">
+  <description>Example template for ZIP code GeoJSON documents</description>
+  <context>//properties</context>
+  <collections>
+    <collection>zipcodes</collection>
+  </collections>
+  <templates>
+    <template xmlns:tde="http://marklogic.com/xdmp/tde">
+      <context>.</context>
+      <rows>
+        <row>
+          <schema-name>Boundaries</schema-name>
+          <view-name>ZipCode</view-name>
+          <view-layout>sparse</view-layout>
+          <columns>
+            <column>
+              <name>OBJECTID</name>
+              <scalar-type>long</scalar-type>
+              <val>GEOID10</val>
+            </column>
+            <column>
+              <name>StateFIPSCode</name>
+              <scalar-type>string</scalar-type>
+              <val>STATEFP10</val>
+              <nullable>true</nullable>
+            </column>
+            <column>
+              <name>ZIPCode</name>
+              <scalar-type>string</scalar-type>
+              <val>ZCTA5CE10</val>
+              <nullable>true</nullable>
+            </column>
+            <column>
+              <name>LandArea</name>
+              <scalar-type>long</scalar-type>
+              <val>ALAND10</val>
+              <nullable>true</nullable>
+            </column>
+            <column>
+              <name>WaterArea</name>
+              <scalar-type>long</scalar-type>
+              <val>AWATER10</val>
+              <nullable>true</nullable>
+            </column>
+          </columns>
+        </row>
+      </rows>
+    </template>
+  </templates>
+</template>

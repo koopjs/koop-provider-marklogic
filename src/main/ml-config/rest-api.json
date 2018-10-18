@@ -6,7 +6,7 @@
     "modules-database" : "%%MODULES_DATABASE%%",
     "port" : %%PORT%%,
     "xdbc-enabled" : true,
-    "forests-per-host" : 3,
+    "forests-per-host" : 1,
     "error-format" : "json"
   }
 }

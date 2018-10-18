@@ -1,0 +1,5 @@
+{
+  "role-name" : "esri-connector-internal",
+  "description" : "Internal role used for amping",
+  "role" : [ "esri-connector-writer" ]
+}

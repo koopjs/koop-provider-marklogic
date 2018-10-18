@@ -1,0 +1,157 @@
+{
+  "info" : {
+    "name" : "GDeltExample",
+    "description" : "GDelt GKG data. Georesolution values are 1=country, 2=US State / non-US ADM1, 3=city/landmark."
+  },
+
+  "search": {
+    "Articles": {
+      "options": "example-gkg-options",
+      "geometryType": "Point",
+      "geoConstraint": "Location",
+      "values": "points",
+      "docTransform": "example-gkg-transform",
+      "schema": "GDeltGKG",
+      "view": "Article"
+    }
+  },
+
+  "layers" : [
+    {
+      "id": 0,
+      "name" : "GKG level 1",
+      "decription": "GDelt GKG article data at geores 1 (country)",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema": "GDeltGKG",
+      "view" : "Article",
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 1 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      },
+      "readOnly": true,
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "xpath" : "//geometry"
+      }
+    },
+    {
+      "id": 1,
+      "name" : "GKG level 2",
+      "decription": "GDelt GKG article data at geores 2 (US State / non-US ADM1)",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema": "GDeltGKG",
+      "view" : "Article",
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 2 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      },
+      "readOnly": true,
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "xpath" : "//geometry"
+      }
+    },
+    {
+      "id": 2,
+      "name" : "GKG level 3",
+      "decription": "GDelt GKG article data at geores 3 (city/landmark)",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema": "GDeltGKG",
+      "view" : "Article",
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 3 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      },
+      "readOnly": true,
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "xpath" : "//geometry"
+      }
+    },
+    {
+      "id": 3,
+      "name" : "GKG level 4",
+      "decription": "GDelt GKG article data at geores 4 (city/landmark)",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema": "GDeltGKG",
+      "view" : "Region",
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 4 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      },
+      "readOnly": true,
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "xpath" : "//geometry"
+      }
+    }
+  ]
+}

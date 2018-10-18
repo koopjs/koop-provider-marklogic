@@ -1,0 +1,351 @@
+{
+  "info" : {
+    "name" : "GeoLocation",
+    "description" : "Data in mix formats"
+  },
+
+  "layers" : [
+    {
+      "id": 0,
+      "name" : "GML",
+      "decription": "Points data in GML format",
+      "geometryType": "Point",
+      "idField": "ID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoGML",
+      "geometry" : {
+          "type" : "Point",
+          "format" : "gml",
+          "pointFormat" : "point",
+          "coordinateSystem" : "wgs84"
+          },
+      "boundingQuery" : {"elementValueQuery":{"element":["type"], "text":["gml"], "options":["lang=en"]}}
+
+    },
+    {
+      "id": 1,
+      "name" : "KML",
+      "decription": "Points data in KML format",
+      "geometryType": "Point",
+      "idField": "ID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoKML",
+      "geometry" : {
+          "type" : "Point",
+          "format" : "kml",
+          "coordinateSystem" : "wgs84"
+        },
+      "boundingQuery" : {"elementValueQuery":{"element":["type"], "text":["kml"], "options":["lang=en"]}}
+    },
+    {
+      "id": 2,
+      "name" : "RSS",
+      "decription": "Points data in GeoRSS format",
+      "geometryType": "Point",
+      "idField": "ID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoRSS",
+      "geometry" : {
+          "type" : "Point",
+          "format" : "rss",
+          "coordinateSystem" : "wgs84"
+          },
+      "boundingQuery" : {"elementValueQuery":{"element":["type"], "text":["rss"], "options":["lang=en"]}}
+    },
+    {
+      "id": 3,
+      "name" : "MCGM",
+      "decription": "Points data in MCGM format",
+      "geometryType": "Point",
+      "idField": "ID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoMCGM",
+      "geometry" : {
+          "type" : "Point",
+          "format" : "mcgm",
+          "coordinateSystem" : "wgs84"
+          },
+      "boundingQuery" : {"elementValueQuery":{"element":["type"], "text":["mcgm"], "options":["lang=en"]}}
+    },
+    {
+      "id": 4,
+      "name" : "Custom",
+      "decription": "Points data in Custom format",
+      "geometryType": "Point",
+      "idField": "ID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoCustom",
+      "geometry" : {
+        "format" : "custom",
+        "indexes" : {
+          "element" : [
+            {
+              "namespaceUri" : "http://www.marklogic.com/element",
+              "localname" : "coords",
+              "coordinateSystem" : "wgs84",
+              "pointFormat" : "point"
+            }
+          ],
+          "elementChild" : [
+            {
+              "parentNamespaceUri" : "http://www.marklogic.com/element-child",
+              "parentLocalname" : "point",
+              "namespaceUri" : "",
+              "localname" : "coords",
+              "coordinateSystem" : "wgs84",
+              "pointFormat" : "point"
+            }
+          ],
+          "elementPair" : [
+            {
+              "coordinateSystem" : "wgs84",
+              "parentNamespaceUi": "",
+              "parentLocalname": "point",
+              "latitudeNamespaceUri": "",
+              "latitudeLocalname": "latitude",
+              "longitudeNamespaceUri": "",
+              "longitudeLocalname": "longitude"
+            }
+          ],
+          "elementAttributePair" : [
+            {
+              "parentNamespaceUri" : "http://www.marklogic.com/element-attribute",
+              "parentLocalname" : "point",
+              "latitudeNamespaceUri" : "",
+              "latitudeLocalname" : "latitude",
+              "longitudeNamespaceUri" : "",
+              "longitudeLocalname" : "longitude",
+              "coordinateSystem" : "wgs84"
+            }
+          ],
+          "path" : [
+            {
+              "pathExpression" : "//location/item/Point",
+              "coordinateSystem" : "wgs84",
+              "pointFormat" : "point"
+            },
+          {
+              "pathExpression" : "//location/item/coords",
+              "coordinateSystem" : "wgs84",
+              "pointFormat" : "point"
+            }
+          ]
+        }
+      }
+    ,
+    "boundingQuery" : {"elementValueQuery":{"element":["type"], "text":["custom"], "options":["lang=en"]}}
+    },
+    {
+      "id": 5,
+      "name" : "Any",
+      "decription": "Points data in Any format (GML,KML,RSS)",
+      "geometryType": "Point",
+      "idField": "ID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoAny",
+      "geometry" : {
+          "type" : "Point",
+          "format" : "any",
+          "coordinateSystem" : "wgs84"
+        },
+      "boundingQuery" : {"elementValueQuery":{"element":["type"], "text":["any"], "options":["lang=en"]}}
+    },
+    {
+      "id": 6,
+      "name" : "WKT",
+      "decription": "Region data in WKT",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoWKT",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "wkt",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "xpath" : "/envelope/instance/boundary"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "name" : "WKT",
+      "decription": "Region data in WKT",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoWKT",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "wkt",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "column" : "boundary"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "name" : "GeoJSON 1",
+      "decription": "Region data in GeoJSON",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoJSON",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "xpath" : "/envelope/instance/boundary"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "name" : "GeoJSON 2",
+      "decription": "Region data in GeoJSON",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoJSON",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "column" : "boundary"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "name" : "GeoJSON 2",
+      "decription": "Region data in GeoJSON",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "extent" : {
+        "xmin" : -127.923437,
+        "ymin" : 17.068659,
+        "xmax" : -63.939062,
+        "ymax" : 51.242184,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema" : "GeoLocation",
+      "view" : "GeoJSON",
+      "geometry" : {
+        "type" : "Polygon",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "source" : {
+          "format": "cts",
+          "xpath" : "/envelope/header/ctsRegion"
+        }
+      }
+    }
+
+  ]
+}
