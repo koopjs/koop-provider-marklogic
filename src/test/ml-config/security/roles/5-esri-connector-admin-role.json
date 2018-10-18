@@ -1,0 +1,18 @@
+{
+  "role-name" : "esri-connector-admin",
+  "description" : "Non-admin administrator",
+  "role" : [ "rest-admin", "manage-admin", "esri-connector-writer" ],
+  "privilege" : [ {
+    "privilege-name" : "any-uri",
+    "action" : "http://marklogic.com/xdmp/privileges/any-uri",
+    "kind" : "execute"
+  }, {
+    "privilege-name" : "xdbc:insert-in",
+    "action" : "http://marklogic.com/xdmp/privileges/xdbc-insert-in",
+    "kind" : "execute"
+  }, {
+    "privilege-name" : "xdmp:eval-in",
+    "action" : "http://marklogic.com/xdmp/privileges/xdmp-eval-in",
+    "kind" : "execute"
+  } ]
+}

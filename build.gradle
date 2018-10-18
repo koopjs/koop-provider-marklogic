@@ -93,14 +93,16 @@ else {
 	]
 
         from "."
-        include "build.gradle", "gradle.properties", "gradle-example.properties", "gradlew", "gradlew.bat"
+        include "build.gradle", "gradle.properties", "gradle-example-app.properties", "gradle-example-connector.properties", "gradlew", "gradlew.bat"
         include "gradle/**"
         include "src/main/**"
         include "src/koop/**"
+        include "src/example/**"
         include "build/koop/**"
         include "build/variancenativeplugin/**"
         include "log/**"
-        include "example/**"
+        include "data/example/**"
+        include "config/example/**"
         into mlDeployerDir
     }
 
@@ -175,12 +177,7 @@ test {
   systemProperty "featureServer.password", mlPassword
 }
 
-task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'configureKoop']) {
-  // make sure these folders exist so we can add service descriptors and templates to them
-  doFirst {
-    project.file('config').mkdirs()
-  }
-}
+task installConnector(dependsOn: ['mlDeploy', 'installPlugin', 'configureKoop'])
 
 task buildConnector(dependsOn: ['buildPlugin', 'installKoop'])
 
@@ -257,23 +254,25 @@ node {
   npmWorkDir = file("${project.buildDir}/koop/npm")
 }
 
-task configureKoop(type: Copy, dependsOn: []) {
-  from("src/koop/config") {
-    include "**"
-    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-      KOOP_PORT : project.property("koopPort"),
-      KOOP_SSL_ENABLED : project.property("koopSSLEnabled"),
-      KOOP_SSL_PORT : project.property("koopSSLPort"),
-      KOOP_SSL_CERT : project.property("koopSSLCert"),
-      KOOP_SSL_KEY : project.property("koopSSLKey"),
-      ML_HOST : mlAppConfig.host,
-      ML_PORT : mlAppConfig.restPort.toString(),
-      ML_USER : mlAppConfig.restAdminUsername,
-      ML_PASSWORD : mlAppConfig.restAdminPassword
-    ])
-  }
+task configureKoop {
+    copy {
+        from("src/koop/config") {
+            include "**"
+            filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+                KOOP_PORT : project.property("koopPort"),
+                KOOP_SSL_ENABLED : project.property("koopSSLEnabled"),
+                KOOP_SSL_PORT : project.property("koopSSLPort"),
+                KOOP_SSL_CERT : project.property("koopSSLCert"),
+                KOOP_SSL_KEY : project.property("koopSSLKey"),
+                ML_HOST : mlAppConfig.host,
+                ML_PORT : mlAppConfig.restPort.toString(),
+                ML_USER : mlAppConfig.restAdminUsername,
+                ML_PASSWORD : mlAppConfig.restAdminPassword
+            ])
+        }
 
-  into "build/koop/config"
+        into "build/koop/config"
+    }
 }
 
 task installKoop(type: NpmTask, dependsOn: ['configureKoop']) {
@@ -352,7 +351,7 @@ task loadFeatureServices(type: com.marklogic.gradle.task.MlcpTask, dependsOn: [ 
     }
 
     doLast {
-        println "Service descriptos loaded"
+        println "Service descriptors loaded"
     }
 }
 
@@ -406,59 +405,66 @@ task loadQueryTransforms(type : com.marklogic.gradle.task.MarkLogicTask, depends
   }
 }
 
-task installExampleServices(type: Copy, dependsOn: []) {
-  from("example") {
-    include "services/**"
-    include "templates/**"
-    include "options/**"
-    include "transforms/**"
-  }
+task loadExampleData(dependsOn: [
+  "loadGDeltExampleData",
+  "loadZipCodeBoundaryExampleData"
+])
 
-  into "config/example"
-
-  doLast {
-    project.ext.set("fsConfig", "example")
-  }
-}
-installExampleServices.finalizedBy installServices
-
-task loadExampleData(type: com.marklogic.gradle.task.MlcpTask) {
+task loadGDeltExampleData(type: com.marklogic.gradle.task.MlcpTask) {
   classpath = configurations.mlcp
   command = "IMPORT"
   port = mlAppConfig.restPort
   database = mlAppConfig.contentDatabaseName
-  input_file_path = "example/data/gkg_geojson"
+  input_file_path = "data/example/gkg_geojson"
   input_compressed = "true"
   output_collections = "example-gkg"
   output_permissions = "rest-reader,read,rest-writer,update"
-  output_uri_replace = ".*/example/data/,'/'"
+  output_uri_replace = ".*/data/example/,'/'"
 }
 
-task loadZipCodeBoundaryData(type: com.marklogic.gradle.task.MlcpTask) {
+task loadZipCodeBoundaryExampleData(type: com.marklogic.gradle.task.MlcpTask) {
   classpath = configurations.mlcp
   command = "IMPORT"
   port = mlAppConfig.restPort
   database = mlAppConfig.contentDatabaseName
-  input_file_path = "example/data/zipcodes"
-  transform_module = "/ext/transform/wrap-geojson.sjs"
+  input_file_path = "data/example/zipcodes"
+  transform_module = "/transform/wrap-geojson.sjs"
   input_compressed = "true"
   batch_size = 1
   transaction_size = 1
-  output_collections = "zipcodes"
+  output_collections = "zipcodes,test-data"
   output_permissions = "rest-reader,read,rest-writer,update"
-  output_uri_replace = ".*/example/data/,'/'"
+  output_uri_replace = ".*/data/example/,'/'"
 }
 
-task loadGeoLocationData(type: com.marklogic.gradle.task.MlcpTask) {
+
+task loadTestData(dependsOn: [
+  "loadGDeltTestData",
+  "loadGeoLocationTestData"
+])
+
+task loadGDeltTestData(type: com.marklogic.gradle.task.MlcpTask) {
   classpath = configurations.mlcp
   command = "IMPORT"
   port = mlAppConfig.restPort
   database = mlAppConfig.contentDatabaseName
-  input_file_path = "example/data/GeoLocation"
+  input_file_path = "data/test/gkg_geojson"
   input_compressed = "true"
-  output_collections = "example-geo"
+  output_collections = "example-gkg,test-data"
   output_permissions = "rest-reader,read,rest-writer,update"
-  output_uri_replace = ".*/example/data/,'/'"
+  output_uri_replace = ".*/data/test/,'/'"
+}
+
+task loadGeoLocationTestData(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  port = mlAppConfig.restPort
+  database = mlAppConfig.contentDatabaseName
+  input_file_path = "data/test/GeoLocation"
+  input_compressed = "true"
+  output_collections = "example-geo,test-data"
+  output_permissions = "rest-reader,read,rest-writer,update"
+  output_uri_replace = ".*/data/test/,'/'"
 }
 
 import groovyx.net.http.HTTPBuilder
