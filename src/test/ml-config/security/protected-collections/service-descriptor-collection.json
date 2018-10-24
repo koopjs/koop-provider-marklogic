@@ -1,0 +1,9 @@
+{
+  "collection": "http://marklogic.com/feature-services",
+  "permission": [
+    {
+      "role-name": "esri-connector-writer",
+      "capability": "update"
+    }
+  ]
+}
