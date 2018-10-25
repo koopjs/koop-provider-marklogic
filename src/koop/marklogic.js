@@ -38,7 +38,7 @@ MarkLogic.prototype.getData = function getData (req, callback) {
 
     log.debug("provider request: ", providerRequest);
 
-    var mq = new MarkLogicQuery();
+    var mq = new MarkLogicQuery(req);
 	  mq.providerGetData(providerRequest)
 	    .then(data => {
 	      logResult(data);
