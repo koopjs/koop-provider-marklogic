@@ -9,7 +9,8 @@ const log = require('./logger');
 const marklogicSessions = [];
 
 function MarkLogicQuery(request) {
-  this.conn = config.marklogic.connection;
+  this.conn = JSON.parse(JSON.stringify(config.marklogic.connection));
+  console.log("config.marklogic.connection: " + JSON.stringify(config.marklogic.connection));
 
   const authorizationString = extractAndDecodeAuthorizationString(request);
   if (authorizationString !== undefined) {
