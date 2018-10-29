@@ -14,6 +14,13 @@ const MAX_RECORD_COUNT = 5000;
 
 function post(context, params, input) {
   // assume the input is the request that was sent to the koop provider getData() function
+  const authorizationHeader = xdmp.getRequestHeader("Authorization");
+  if (authorizationHeader) {
+    const encoded = fn.substringAfter(authorizationHeader, "Basic ");
+    const decoded = xdmp.base64Decode(encoded);
+    const creds = fn.substringBefore(decoded, ":");
+    console.log("User: " + JSON.stringify(creds));
+  }
 
   try {
     return getData(fn.head(xdmp.fromJSON(input)));

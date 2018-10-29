@@ -153,6 +153,15 @@ else {
     copyMlDeployerFiles.mustRunAfter deleteMlDeployer
 }
 
+def koopAuthenticationForwarding = "false"
+if (project.hasProperty("koopMlAuthenticationForwarding")) {
+    koopAuthenticationForwarding = project.property("koopMlAuthenticationForwarding")
+}
+def koopAuthenticationType = "DIGEST"
+if (project.hasProperty("koopMlAuthenticationType")) {
+    koopAuthenticationType = project.property("koopMlAuthenticationType")
+}
+
 ext {
   mlAppConfig {
     if (project.hasProperty("mlSchemasDatabaseName")) {
@@ -271,7 +280,9 @@ task configureKoop {
                         ML_HOST : mlAppConfig.host,
                         ML_PORT : mlAppConfig.restPort.toString(),
                         ML_USER : project.property("koopMlUsername"),
-                        ML_PASSWORD : project.property("koopMlPassword")
+                        ML_PASSWORD : project.property("koopMlPassword"),
+                        ML_AUTHENTICATION_TYPE : koopAuthenticationType,
+                        ML_AUTHENTICATION_FORWARDING : koopAuthenticationForwarding
                 ])
             }
 
@@ -520,7 +531,9 @@ task configureUnauthorizedKoop {
                         ML_HOST : mlAppConfig.host,
                         ML_PORT : mlAppConfig.restPort.toString(),
                         ML_USER : project.property("koopUnauthorizedMlUsername"),
-                        ML_PASSWORD : project.property("koopUnauthorizedMlPassword")
+                        ML_PASSWORD : project.property("koopUnauthorizedMlPassword"),
+                        ML_AUTHENTICATION_TYPE : koopAuthenticationType,
+                        ML_AUTHENTICATION_FORWARDING : koopAuthenticationForwarding
                 ])
             }
 

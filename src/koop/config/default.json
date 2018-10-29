@@ -16,7 +16,8 @@
       "port":     @ML_PORT@,
       "user":     "@ML_USER@",
       "password": "@ML_PASSWORD@",
-      "authType": "DIGEST"
-    }
+      "authType": "@ML_AUTHENTICATION_TYPE@"
+    },
+    "authenticationForwarding": @ML_AUTHENTICATION_FORWARDING@
   }
 }

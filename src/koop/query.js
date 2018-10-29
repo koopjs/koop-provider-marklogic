@@ -10,13 +10,14 @@ const marklogicSessions = [];
 
 function MarkLogicQuery(request) {
   this.conn = JSON.parse(JSON.stringify(config.marklogic.connection));
-  console.log("config.marklogic.connection: " + JSON.stringify(config.marklogic.connection));
 
-  const authorizationString = extractAndDecodeAuthorizationString(request);
-  if (authorizationString !== undefined) {
-    const authenticationTokens = authorizationString.split(":");
-    this.conn.user = authenticationTokens[0];
-    this.conn.password = authenticationTokens[1];
+  if (config.marklogic.authenticationForwarding) {
+    const authorizationString = extractAndDecodeAuthorizationString(request);
+    if (authorizationString !== undefined) {
+      const authenticationTokens = authorizationString.split(":");
+      this.conn.user = authenticationTokens[0];
+      this.conn.password = authenticationTokens[1];
+    }
   }
 
 
@@ -32,7 +33,7 @@ function MarkLogicQuery(request) {
     }
   }
 
-  console.log("marklogicSessions length: " + Object.keys(marklogicSessions));
+  console.log("marklogicSessions: " + Object.keys(marklogicSessions));
 }
 
 MarkLogicQuery.prototype.providerGetData = function providerGetData(request) {
