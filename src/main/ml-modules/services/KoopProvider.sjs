@@ -206,7 +206,9 @@ function generateJoinFieldDescriptorsFromViewAndJoins(layerModel) {
   const fields = [];
   layerModel.joins.forEach((dataSource) => {
     Object.keys(dataSource.fields).forEach((field) => {
-      fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType, dataSource.fields[field].alias));
+      if (layerModel.includeFields === undefined || layerModel.includeFields.includes(field.name)) {
+        fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType, dataSource.fields[field].alias));
+      }
     });
   });
   return fields;
@@ -215,7 +217,9 @@ function generateJoinFieldDescriptorsFromViewAndJoins(layerModel) {
 function generateJoinFieldDescriptorsFromDataSource(dataSource) {
   const fields = [];
   Object.keys(dataSource.fields).forEach((field) => {
-    fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType, dataSource.fields[field].alias));
+    if (dataSource.includeFields === undefined || dataSource.includeFields.includes(field.name)) {
+      fields.push(createFieldDescriptor(field, dataSource.fields[field].scalarType, dataSource.fields[field].alias, dataSource.includeFields));
+    }
   });
   return fields;
 }
@@ -224,20 +228,22 @@ function generateFieldDescriptorsFromViewDef(viewDef, dataSource) {
   const fields = [];
   Object.keys(viewDef.view.columns).forEach((column) => {
     const field = viewDef.view.columns[column];
-    let alias = null;
-    if (dataSource.hasOwnProperty("fields")) {
-      if (dataSource.fields.hasOwnProperty(field.column.name)) {
-        if (dataSource.fields[field.column.name].hasOwnProperty("alias")) {
-          alias = dataSource.fields[field.column.name].alias;
+    if (dataSource.includeFields === undefined || dataSource.includeFields.includes(field.column.name)) {
+      let alias = null;
+      if (dataSource.hasOwnProperty("fields")) {
+        if (dataSource.fields.hasOwnProperty(field.column.name)) {
+          if (dataSource.fields[field.column.name].hasOwnProperty("alias")) {
+            alias = dataSource.fields[field.column.name].alias;
+          }
         }
       }
+      fields.push(createFieldDescriptor(field.column.name, field.column.scalarType, alias, dataSource.includeFields));
     }
-    fields.push(createFieldDescriptor(field.column.name, field.column.scalarType, alias));
   });
   return fields;
 }
 
-function createFieldDescriptor(fieldName, scalarType, alias) {
+function createFieldDescriptor(fieldName, scalarType, alias, includeFields) {
   const fieldDescriptor = {
     name : fieldName,
     type : getFieldType(scalarType)

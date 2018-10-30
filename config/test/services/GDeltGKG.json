@@ -176,9 +176,33 @@
               "scalarType": "string",
               "alias": "doc_url"
             }
-          }
+          },
+          "includeFields": ["OBJECTID", "urlpubtimedate", "urlpubdate", "name", "url"]
         }
       ],
+      "readOnly": true
+    },
+    {
+      "id": 5,
+      "name" : "GKG level 4",
+      "decription": "GDelt GKG article data at geores 4 (city/landmark)",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema": "GDeltGKG",
+      "view" : "Article",
+      "includeFields": ["OBJECTID", "urlpubtimedate", "urlpubdate", "name", "url"],
       "readOnly": true
     }
   ]
