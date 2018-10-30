@@ -267,7 +267,6 @@ node {
 task configureKoop {
     outputs.upToDateWhen { false }
     doLast {
-        delete file("${buildDir}/koop/config/default.json")
         copy {
             from("src/koop/config") {
                 include "**"
@@ -515,10 +514,11 @@ task testExampleService(type: com.marklogic.gradle.task.MarkLogicTask) {
   }
 }
 
+// This task is used specifically for testing the roles assigned to the Service Descriptors.
+// We could do this in the test, but copying files with filtering is MUCH cleaner in Groovy.
 task configureUnauthorizedKoop {
     outputs.upToDateWhen { false }
     doLast {
-        delete file("${buildDir}/koop/config/default.json")
         copy {
             from("src/koop/config") {
                 include "**"
