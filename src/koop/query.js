@@ -6,8 +6,6 @@ const marklogic = require('marklogic');
 const config = require('config');
 const log = require('./logger');
 
-const marklogicSessions = [];
-
 function MarkLogicQuery(request) {
   this.conn = JSON.parse(JSON.stringify(config.marklogic.connection));
 
@@ -19,21 +17,6 @@ function MarkLogicQuery(request) {
       this.conn.password = authenticationTokens[1];
     }
   }
-
-
-  if (marklogicSessions[this.conn.user]) {
-    console.log("Found session");
-    this.db = marklogicSessions[this.conn.user].client;
-  } else {
-    console.log("No session");
-    this.db = marklogic.createDatabaseClient(this.conn);
-    marklogicSessions[this.conn.user] = {
-      client: this.db,
-      token: request.token
-    }
-  }
-
-  console.log("marklogicSessions: " + Object.keys(marklogicSessions));
 }
 
 MarkLogicQuery.prototype.providerGetData = function providerGetData(request) {
