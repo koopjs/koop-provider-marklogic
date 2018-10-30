@@ -17,6 +17,7 @@ function MarkLogicQuery(request) {
       this.conn.password = authenticationTokens[1];
     }
   }
+  this.db = marklogic.createDatabaseClient(this.conn);
 }
 
 MarkLogicQuery.prototype.providerGetData = function providerGetData(request) {
