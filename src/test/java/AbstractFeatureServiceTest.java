@@ -14,9 +14,10 @@ import static org.hamcrest.Matchers.*;
 
 public abstract class AbstractFeatureServiceTest {
 
+    static String port = System.getProperty("featureServer.port");
+
     @Before
     public void setupRestAssured() {
-        String port = System.getProperty("featureServer.port");
         if (port == null) {
             port = "9080";
         }

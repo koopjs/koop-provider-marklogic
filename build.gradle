@@ -84,6 +84,7 @@ else {
         testImplementation 'io.rest-assured:rest-assured:3.0.6'
         testImplementation 'io.rest-assured:json-path:3.0.6'
         testImplementation "com.googlecode.json-simple:json-simple:1.1.1"
+        testImplementation "org.gradle:gradle-tooling-api:2.1"
     }
 
     task copyProjectFiles(type: Copy, group: mlDeployerGroup) {
@@ -255,23 +256,26 @@ node {
 }
 
 task configureKoop {
-    copy {
-        from("src/koop/config") {
-            include "**"
-            filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-                KOOP_PORT : project.property("koopPort"),
-                KOOP_SSL_ENABLED : project.property("koopSSLEnabled"),
-                KOOP_SSL_PORT : project.property("koopSSLPort"),
-                KOOP_SSL_CERT : project.property("koopSSLCert"),
-                KOOP_SSL_KEY : project.property("koopSSLKey"),
-                ML_HOST : mlAppConfig.host,
-                ML_PORT : mlAppConfig.restPort.toString(),
-                ML_USER : mlAppConfig.restAdminUsername,
-                ML_PASSWORD : mlAppConfig.restAdminPassword
-            ])
-        }
+    outputs.upToDateWhen { false }
+    doLast {
+        copy {
+            from("src/koop/config") {
+                include "**"
+                filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+                        KOOP_PORT : project.property("koopPort"),
+                        KOOP_SSL_ENABLED : project.property("koopSSLEnabled"),
+                        KOOP_SSL_PORT : project.property("koopSSLPort"),
+                        KOOP_SSL_CERT : project.property("koopSSLCert"),
+                        KOOP_SSL_KEY : project.property("koopSSLKey"),
+                        ML_HOST : mlAppConfig.host,
+                        ML_PORT : mlAppConfig.restPort.toString(),
+                        ML_USER : project.property("koopMlUsername"),
+                        ML_PASSWORD : project.property("koopMlPassword")
+                ])
+            }
 
-        into "build/koop/config"
+            into "build/koop/config"
+        }
     }
 }
 
@@ -346,7 +350,7 @@ task loadFeatureServices(type: com.marklogic.gradle.task.MlcpTask, dependsOn: [ 
         input_file_path = "config/${fsConfig}/services"
         input_file_type = "documents"
         output_collections = "http://marklogic.com/feature-services"
-        output_permissions = "rest-reader,read,rest-writer,update"
+        output_permissions = project.property("serviceDescriptorPermissions")
         output_uri_replace = ".*/config/,'/'"
     }
 
@@ -499,3 +503,28 @@ task testExampleService(type: com.marklogic.gradle.task.MarkLogicTask) {
   }
 }
 
+// This task is used specifically for testing the roles assigned to the Service Descriptors.
+// We could do this in the test, but copying files with filtering is MUCH cleaner in Groovy.
+task configureUnauthorizedKoop {
+    outputs.upToDateWhen { false }
+    doLast {
+        copy {
+            from("src/koop/config") {
+                include "**"
+                filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+                        KOOP_PORT : project.property("koopUnauthorizedPort"),
+                        KOOP_SSL_ENABLED : project.property("koopSSLEnabled"),
+                        KOOP_SSL_PORT : project.property("koopSSLPort"),
+                        KOOP_SSL_CERT : project.property("koopSSLCert"),
+                        KOOP_SSL_KEY : project.property("koopSSLKey"),
+                        ML_HOST : mlAppConfig.host,
+                        ML_PORT : mlAppConfig.restPort.toString(),
+                        ML_USER : project.property("koopUnauthorizedMlUsername"),
+                        ML_PASSWORD : project.property("koopUnauthorizedMlPassword")
+                ])
+            }
+
+            into "build/koop/config"
+        }
+    }
+}
