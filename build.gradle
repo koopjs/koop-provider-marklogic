@@ -258,7 +258,6 @@ node {
 task configureKoop {
     outputs.upToDateWhen { false }
     doLast {
-        delete file("${buildDir}/koop/config/default.json")
         copy {
             from("src/koop/config") {
                 include "**"
@@ -509,7 +508,6 @@ task testExampleService(type: com.marklogic.gradle.task.MarkLogicTask) {
 task configureUnauthorizedKoop {
     outputs.upToDateWhen { false }
     doLast {
-        delete file("${buildDir}/koop/config/default.json")
         copy {
             from("src/koop/config") {
                 include "**"
