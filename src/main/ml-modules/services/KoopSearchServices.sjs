@@ -1,6 +1,7 @@
 'use strict';
 
 
+const koopConfigUri = '/koop/config.json';
 const collFeatureServices = 'http://marklogic.com/feature-services';
 
 function get(context, params) {
@@ -16,6 +17,25 @@ function get(context, params) {
   }
 }
 
+function getKoopConfig() {
+  // could be cached
+  return cts.doc(koopConfigUri).toObject();
+}
+
+function getFeatureServiceUrl(serviceName) {
+  let config = getKoopConfig()
+  return fn.concat(
+    config.ssl ? 'https' : 'http',
+    '://',
+    config.host,
+    ':',
+    config.port,
+    '/marklogic/',
+    serviceName,
+    '/FeatureServer'
+  );
+}
+
 function getSearchServices() {
   let serviceDocs = cts.search(cts.collectionQuery(collFeatureServices));
   let searchServices = [];
@@ -23,6 +43,7 @@ function getSearchServices() {
     for (var searchNode of serviceDoc.xpath('./search/*')) {
       var searchObj = searchNode.toObject();
       searchObj.serviceName = serviceDoc.xpath('./info/name').valueOf();
+      searchObj.serviceUrl = getFeatureServiceUrl(searchObj.serviceName);
       searchObj.name = searchNode.xpath('./fn:name()').valueOf();
       searchServices.push(searchObj);
     }
