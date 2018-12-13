@@ -1,0 +1,11 @@
+{
+  "params" : {
+    "id" : "DataSourceArrayExample",
+    "layer" : 11,
+    "method" : "query"
+  },
+  "query" : {
+    "groupByFieldsForStatistics": "domain",
+    "outStatistics": "[ {\"statisticType\":\"count\",\"onStatisticField\":\"OBJECTID\",\"outStatisticFieldName\":\"objectid_count\"} ]"
+  }
+}
