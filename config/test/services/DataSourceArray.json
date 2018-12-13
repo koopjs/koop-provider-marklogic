@@ -409,6 +409,52 @@
         }
       ],
       "readOnly": true
+    },
+    {
+      "id": 11,
+      "name" : "GKG level 4 Stats testing",
+      "decription": "GDelt GKG article data at geores 4 (city/landmark)",
+      "geometryType": "Polygon",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "dataSources" : [
+        {
+          "source" : "sparql",
+          "query" : "select ?OBJECT_ID ?sparql_url ?DocId WHERE { ?OBJECT_ID <http://marklogic.com/objectid> ?sparql_url . ?OBJECT_ID <http://marklogic.com/uri> ?DocId }",
+          "fields" : {
+            "OBJECT_ID" : { "scalarType" : "long" },
+            "sparql_url" : { "scalarType" : "string" },
+            "DocId" : { "scalarType" : "string" }
+          }
+        },
+        {
+          "source" : "view",
+          "schema": "GDeltGKG",
+          "view" : "Article",
+          "joinOn" : {
+            "left" : "OBJECT_ID",
+            "right" : "OBJECTID"
+          }
+        }
+      ],
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 4 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      },
+      "readOnly": true
     }
   ]
 }
