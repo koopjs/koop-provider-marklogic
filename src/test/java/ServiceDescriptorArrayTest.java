@@ -162,4 +162,34 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
                 .body("features[0].attributes.geores", is(3))
         ;
     }
+
+    @Test
+    public void testDataSourceWithSparqlAsRootAndViewJoinWithoutFieldsElementStats() {
+        String path = request2path("DataSourceArraySparqlPlusViewJoinWithoutFieldsElementStats.json");
+
+        RestAssured
+                .given()
+                .when()
+                .log().uri()
+                .get(path)
+
+                .then()
+                .log().ifError()
+                .statusCode(200)
+                .log().ifValidationFails()
+
+                .body("features.size()", is(2))
+                .body(
+                    "features.attributes.find { it.domain == '4-traders.com' }.objectid_count",
+                    is(8)
+                )
+                .body(
+                    "features.attributes.find { it.domain == 'bendigoadvertiser.com.au' }.objectid_count",
+                    is(1)
+                )
+        ;
+    }
+
+
+
 }

@@ -334,6 +334,7 @@ function query(req) {
     type : 'FeatureCollection',
     metadata : {
       name: req.params.id,
+      maxRecordCount: MAX_RECORD_COUNT
     },
     filtersApplied: {
       geometry: true, // true if a geometric filter has already been applied to the data
@@ -344,7 +345,7 @@ function query(req) {
   };
 
   if (req.query.returnCountOnly) {
-    console.log("getting count");
+    console.debug("getting count");
 
     req.query.outStatistics = [
       { outStatisticFieldName : "count", statisticType : "count" }
@@ -358,16 +359,16 @@ function query(req) {
     }
   } else if (req.query.outStatistics != null) {
 
-    console.log("running aggregation");
+    console.debug("running aggregation");
     geojson.statistics = Array.from(aggregate(req));
 
   } else {
 
-    console.log("getting objects");
+    console.debug("getting objects");
     const objects = getObjects(req);
     geojson.features = objects.result;
 
-    console.log("limitExceeded flag :" +objects.limitExceeded);
+    console.debug("limitExceeded flag :" + objects.limitExceeded);
 
     // we should only get this once in the process but do this for now to test
     const serviceId = req.params.id;
@@ -832,7 +833,7 @@ function getObjects(req) {
   const opticResult = Array.from(pipeline.result(null, bindParams))
   const opticResultCount = opticResult.length
 
-  if(opticResultCount >= (limit+1) ){
+  if(opticResultCount >= (limit + 1) ){
     opticResult.pop();
     return {
       result : opticResult,
@@ -926,7 +927,29 @@ function aggregate(req) {
     "limit" : limit
   };
 
-  let pipeline = op.fromView(layerModel.schema, layerModel.view)
+  let pipeline;
+  if (layerModel.dataSources === undefined) {
+    const schema = layerModel.schema;
+    const view = layerModel.view;
+
+    let viewPlan = op.fromView(schema, view, null, "DocId");
+
+    pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
+  } else {
+    const primaryDataSource = layerModel.dataSources[0];
+    if (primaryDataSource.source === "view") {
+      const schema = primaryDataSource.schema;
+      const view = primaryDataSource.view;
+
+      let viewPlan = op.fromView(schema, view, null, "DocId");
+      pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
+    } else if (primaryDataSource.source === "sparql") {
+      let viewPlan = getPlanForDataSource(primaryDataSource);
+      pipeline = initializePipeline(viewPlan, boundingQuery, layerModel)
+    }
+  }
+
+  pipeline = pipeline
     .where(boundingQuery)
     .where(whereQuery)
     .groupBy(
