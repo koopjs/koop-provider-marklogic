@@ -378,13 +378,15 @@ task loadQueryOptions(type : com.marklogic.gradle.task.MarkLogicTask, dependsOn:
     def client = newClient()
     def manager = client.newServerConfigManager().newQueryOptionsManager()
 
-    def files = files(file("config/${fsConfig}/options").listFiles())
-    files.each { file ->
-        def optionsName = file.name.substring(0, file.name.lastIndexOf("."))
-        manager.writeOptions(
-            optionsName, new com.marklogic.client.io.FileHandle().with(file)
-        )
-        println "Loaded query options: ${optionsName}"
+    if (file("config/${fsConfig}/options").exists()) {
+        def files = files(file("config/${fsConfig}/options").listFiles())
+        files.each { file ->
+            def optionsName = file.name.substring(0, file.name.lastIndexOf("."))
+            manager.writeOptions(
+                optionsName, new com.marklogic.client.io.FileHandle().with(file)
+            )
+            println "Loaded query options: ${optionsName}"
+        }
     }
 
     println "Query options loaded"
@@ -396,13 +398,15 @@ task loadQueryTransforms(type : com.marklogic.gradle.task.MarkLogicTask, depends
     def client = newClient()
     def manager = client.newServerConfigManager().newTransformExtensionsManager()
 
-    def files = files(file("config/${fsConfig}/transforms").listFiles())
-    files.each { file ->
-        def transformName = file.name.substring(0, file.name.lastIndexOf("."))
-        manager.writeXQueryTransform(
-            transformName, new com.marklogic.client.io.FileHandle().with(file)
-        )
-        println "Loaded transform: ${transformName}"
+    if (file("config/${fsConfig}/transforms").exists()) {
+        def files = files(file("config/${fsConfig}/transforms").listFiles())
+        files.each { file ->
+            def transformName = file.name.substring(0, file.name.lastIndexOf("."))
+            manager.writeXQueryTransform(
+                transformName, new com.marklogic.client.io.FileHandle().with(file)
+            )
+            println "Loaded transform: ${transformName}"
+        }
     }
 
     println "Query transforms loaded"
