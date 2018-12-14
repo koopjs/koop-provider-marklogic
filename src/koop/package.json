@@ -11,7 +11,8 @@
     "config": "^1.25.1",
     "winston": "^2.4.1",
     "express": "^4.15.3",
-    "koop": "^3.5.4",
+    "koop": "3.10.1",
+    "featureserver": "2.16.2",
     "marklogic": "^2.0.2"
   },
   "author": "MarkLogic",
