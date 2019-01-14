@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+  marklogic:
+    image: marklogiccommunity/marklogic:9.0-8
+    volumes:
+      - type: volume
+        source: marklogic
+        target: /data
+    ports:
+      - "8000-8002:8000-8002/tcp"
+      - "8095:8095/tcp"
+    expose:
+      - "7997"
+      - "7998"
+      - "7999"
+
+  gradle:
+    image: gradle:alpine
+    depends_on:
+      - "marklogic"
+    volumes:
+      - type: bind
+        source: ./
+        target: /usr/src/app
+    working_dir: /usr/src/app
+    command: "gradle -PmlHost=marklogic mlInit mlInstallAdmin mlDeploy --info"
+
+
+volumes:
+  marklogic:
