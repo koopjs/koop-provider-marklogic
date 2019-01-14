@@ -3,3 +3,4 @@ build/
 *~
 .DS_Store
 gradle-local.properties
+node_modules/

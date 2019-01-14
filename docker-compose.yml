@@ -15,6 +15,11 @@ services:
       - "7998"
       - "7999"
 
+  koop:
+    image: marklogiccommunity/koop:1.0.0
+    ports:
+      - "9003:9003/tcp"
+
   gradle:
     image: gradle:alpine
     depends_on:
@@ -24,8 +29,7 @@ services:
         source: ./
         target: /usr/src/app
     working_dir: /usr/src/app
-    command: "gradle -PmlHost=marklogic mlInit mlInstallAdmin mlDeploy --info"
-
+    command: "gradle -PmlHost=marklogic -PenvironmentName=example-app mlInit mlInstallAdmin mlDeploy loadExampleData --info"
 
 volumes:
   marklogic:
