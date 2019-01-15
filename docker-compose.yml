@@ -18,7 +18,7 @@ services:
   feature-server:
     image: marklogiccommunity/feature-server:1.0.0-beta.4
     ports:
-      - "9003:9003/tcp"
+      - "8099:8099/tcp"
 
   gradle:
     image: gradle:alpine
