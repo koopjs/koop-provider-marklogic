@@ -9,5 +9,6 @@ COPY package.json ./
 RUN npm install
 COPY . .
 
-EXPOSE 9003
+EXPOSE 8099
+ENV NODE_ENV=docker
 CMD [ "node", "server.js" ]

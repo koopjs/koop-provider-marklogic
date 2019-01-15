@@ -1,0 +1,22 @@
+{
+  "logger" : {
+    "level" : "info"
+  },
+  "port" : 8099,
+  "ssl": {
+    "enabled" : false,
+    "port" : 443,
+    "cert" : "ssl/cert",
+    "key" : "ssl/pem"
+  },
+
+  "marklogic": {
+    "connection": {
+      "host":     "marklogic",
+      "port":     8095,
+      "user":     "admin",
+      "password": "admin",
+      "authType": "DIGEST"
+    }
+  }
+}

@@ -12,3 +12,6 @@ via the instructions in the top-level README.md:
 ``` npm install ```
 ``` node server.js ```
 
+## Creating Docker Image
+
+    docker build -t marklogiccommunity/feature-server:<version> .

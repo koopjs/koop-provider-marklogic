@@ -15,8 +15,8 @@ services:
       - "7998"
       - "7999"
 
-  koop:
-    image: marklogiccommunity/koop:1.0.0
+  feature-server:
+    image: marklogiccommunity/feature-server:1.0.0-beta.4
     ports:
       - "9003:9003/tcp"
 
