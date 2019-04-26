@@ -1,11 +1,19 @@
-# MarkLogic Esri Connector
-The MarkLogic Esri Connector is a configurable component that allows documents in MarkLogic to be queried and exposed as Esri _features_ through one or more Esri _Feature Services_.
-
-For those who don't want to read all the details below, skip right to the [installation instructions](#Install-the-Connector).
+# Koop Provider MarkLogic 
+The Koop Provider MarkLogic enables communication with several Esri applications. The provider is a configurable component that allows documents in MarkLogic to be queried and exposed as Esri _features_ through one or more Esri _Feature Services_.
 
 ---
+## Quick Start
+1. Configure gradle.properties 
+2. Install Koop Setting `gradle installKoop`
+3. Start Koop `gradle runKoop`
+
 ## Architecture
-The connector has two primary components: 1) A [Koop](http://koopjs.github.io/) __provider plugin__ and 2) A MarkLogic __REST resource extension__. The Koop provider plugin runs inside a Node.js Express server and makes calls out to the MarkLogic REST resource extension to service queries.
+The connector has two primary components: 
+
+1. A [Koop](http://koopjs.github.io/) provider plugin
+2. A MarkLogic REST resource extension.
+
+The Koop provider plugin runs inside a Node.js Express server and makes calls out to the MarkLogic REST resource extension to service queries.
 
 ### MarkLogic Koop Provider Plugin
 [Koop](http://koopjs.github.io/) parses incoming feature service requests and hands them off to the MarkLogic Koop provider plugin via the defined plugin API function and request object. The plugin is a "pass though" plugin so almost all of the logic is implemented in the REST resource extension running in MarkLogic.
@@ -61,20 +69,15 @@ The connector currently supports connecting to MarkLogic as a single user. Addit
 The project uses [gradle properties plugin](https://github.com/stevesaliman/gradle-properties-plugin) to manage properties for different environments. Create a `gradle-<environment>.properties` file in the base project directory to specify your environment settings.
 
 The following properties can be overriden:
+
 ```
 mlAppName=<the name of the connector>
 
 mlHost=<host>
 mlRestPort=<port>
-mlUsername=<username>
-mlPassword=<password>
+koopMlUsername=<username>
+koopMlPassword=<password>
 
-# The name of the database that the connector should run queries against
-mlContentDatabaseName=<database name>
-
-# The name of the schemas database to install TDE templates to
-# The connector requires your database to have an associated schemas database
-mlSchemasDatabaseName=<schemas database name>
 
 # Koop server setttings
 # Port the feature service will service HTTP requests on
@@ -91,145 +94,27 @@ koopSSLKey=<path to the certificate public key file>
 
 To configure an environment other than **local**, create a ```gradel-<env>.properties``` file and add the ```-PenvironmentName=<env>``` argument when running gradle.
 
-See the `gradle-example-connector.properties` file for a typical customized property file.
-
-<a name="Feature-Service-Descriptors"></a>
-### Feature Service Descriptors
-The connector requires a _service descriptor_ document to be created for each ESRI feature service that you want to expose. Service descriptors allow you to define information about service and all of the layers that are available through that service.
-
-Currently, the service descriptors live in the same database as the data that is being queried but that could change. They must be in the `http://marklogic.com/feature-services` collection for the connector to be able to find them.
-
-Service descriptors should be placed in the `config/<config name>/services` directory. They will be automically installed and placed into the required collection when you run the `./gradlew -PenvironmentName=<env name> -PfsConfig=<config name> installServices` command.
-
-See `config/example/services/example-gkg.json` for an example service descriptor.
-
-<a name="TDE-Templates"></a>
-### TDE Templates
-The connector relies on MarkLogic TDE views to provide data to ESRI feature layers and tables. Follow the [MarkLogic documentation](https://docs.marklogic.com/guide/app-dev/TDE) and the GKG example provided `example/templates/example-gkg.tdex` to create TDE templates to build views for the data you want to expose.
-
-TDE templates should be placed in the `config/<config name>/templates` directory. They will be automically installed when you run the `./gradlew -PenvironmentName=<env name> -PfsConfig=<config name> installServices` command.
 
 ---
-<a name="Install-the-Connector"></a>
 ## Install the Connector
 Installing the connector will create a new MarkLogic app server and modules database, install the server-side MarkLogic code, load the example feature service descriptors into the content database, load the example TDE templates into the schemas database, copy the Koop code to `build/koop` and do an `npm install` to install the required Koop dependencies.
 
 The project uses the "gradle wrapper" so the `gradlew` or `gradlew.bat` files should be used to run gradle commands.
 
 ### _Prerequisites_
-1) MarkLogic 9.0-3.1 or later
-1) gcc to build the variance native plugin
-1) The install script uses https://github.com/srs/gradle-node-plugin to manage the installation and execution of node.js for Koop. If node/npm is not already installed, the plugin will download the most recent version for you. If you already have node/npm installed locally, the plugin will use it. If you want to control what version of node/npm is used, see https://github.com/srs/gradle-node-plugin/blob/master/docs/node.md#configuring-the-plugin for details on how to configure the _npmVersion_ and other properties of the gradle node plugin in your `build.gradle` file.
-1) Connection to the internet - If you need to install the connector on a machine that is not connected to the internet, see [Build an Archive to Run in Disconnected Mode](#Build-Disconnected-Archive)
+1. MarkLogic 9.0-9 or later
+2. The install script uses https://github.com/srs/gradle-node-plugin to manage the installation and execution of node.js for Koop. If node/npm is not already installed, the plugin will download the most recent version for you. If you already have node/npm installed locally, the plugin will use it. If you want to control what version of node/npm is used, see https://github.com/srs/gradle-node-plugin/blob/master/docs/node.md#configuring-the-plugin for details on how to configure the _npmVersion_ and other properties of the gradle node plugin in your `build.gradle` file.
+3. Connection to the internet - If you need to install the connector on a machine that is not connected to the internet, see [Build an Archive to Run in Disconnected Mode](#Build-Disconnected-Archive)
+4. Deployed project with the [MarkLogic Geo Data Services](https://github.com/prestonmcgowan/marklogic-geo-data-services) capability.
 
-> Note: The native plugin is a C++ program required to support standard deviation and variance aggregation calls for the feature service. gcc is used to build the plugin and then it is installed to MarkLogic via the management API. Because of this _the connector build must run on a machine that is the same platform that the MarkLogic cluster is running on_. If the build is run on a Windows machine, the build and install of the native plugin will be skipped.
-
-<a name="Install-to-Existing"></a>
-### Install for an Existing Database
-If you have an existing database setup and you would like to use the connector to expose feature services for your data, use the following steps. In these instructions, the content database is called `MyContentDatabase`, the schemas database is called `MySchemasDatabase` and the environment name is `myenv`. Change these to fit your environment.
->WARNING: Install will add TDE templates and geospatial index settings that may trigger a redindex of an existing database if the redindexer is enabled. It is highly recommended that you install the connector and configure the required TDE templates on a small test dataset, verify the functionality and then move to your larger environment with a larger database.
-
-1) Create the `gradle-myenv-connector.properties` and set the MarkLogic port you would like to install the backend service on, your MarkLogic host name, username and password and what port you want the Koop server to run on.
-    ```
-    mlHost=localhost
-    mlRestPort=8095
-    mlUsername=admin
-    mlPassword=admin
-    mlContentDatabaseName=MyContentDatabase
-    mlSchemasDatabaseName=MySchemasDatabase
-    koopPort=9080
-    koopSSLEnabled=false
-    ```
-    Keep in mind that if these databases do not exist in your cluster, they will be created when the `installConnector` task is run. Also, if you specify the content database and no schemas database, the schemas database will be created an the content database will be changed to use the new schemas database.
-1) Run `./gradlew -PenvironmentName=myenv installConnector`
-1) Decide on a name for your configuration. Use that as the `<config name>` in the following steps. E.g. `example` is the config name for the example configuration.
-1) Create one or more service descriptors as explained in the [Feature Service Descriptors](#Feature-Service-Descriptors) section and put them in the `config/<config name>/services` directory. Use the files in `config/example/services/` as a starting point.
-1) Create one or more TDE templates as explained in the [TDE Templates](#TDE-Templates) section and put them in the `config/<config name>/templates` directory. Use the files in `config/example/templates/` as a starting point.
-Note: If you have existing views in your MarkLogic database, you may be able to leverage them rather than creating new ones. Be sure to read the [OBJECTIDs Limitation](#OBJECTIDs) though.
-1) Install the feature services `./gradlew -PfsConfig=<config name> -PenvironmentName=myenv installServices`
-1) See [Running the Connector](#Running-the-Connector) for how to start the Koop server
-
-<a name="Install-with-Example"></a>
-### Install the Example as a New Database
-If you would like to try out the connector using the included example database, follow these steps to install to the `example` database configuration. This will create an app server, modules database, and content and schemas databases called `esri-example-app-content` and `esri-example-app-schemas` respectively.
-> NOTE: The connector project uses ml-gradle so, technically, you could use the connector project to configure databases or other MarkLogic cluster configuration items but it is preferable to manage your overall MarkLogic configuration in a separate ml-gradle (or other tool) project. 
-1) Edit the `gradle-example-app.properties` and set the MarkLogic port you would like to install the backend service on, your MarkLogic host name, username and password and what port you want the Koop server to run on.
-    ```
-    mlAppName=esri-example-app
-    mlHost=localhost
-    mlRestPort=8095
-    mlUsername=admin
-    mlPassword=admin
-    koopPort=9080
-    koopSSLEnabled=false
-    ```
-
-__Install the example database__
-1) Run `./gradlew -PenvironmentName=example-app mlDeploy` to install the example database
-1) Load the example data `./gradlew -PenvironmentName=example-app loadExampleData`
-
-__Install the connector against the example database__
-1) Run `./gradlew -PenvironmentName=example-connector installConnector`
-1) Install the example feature services `./gradlew -PenvironmentName=example-connector installServices`
-Note: This will load TDE templates that define views used by the example feature services. This causes a reindex so check to see that the reindex is complete using the MarkLogic database status admin UI before moving on.
-1) You can test that the Koop provider service is working by doing the following
-  ```
-  ./gradlew -PenvironmentName=example-connector testExampleService
-  ```
-  This gets all the fields from the first 5 records from the features in layer 0 in the example service.
-1) Next, start Koop. See [Running the Connector](#Running-the-Connector) for directions for starting the Koop server
-1) Test the feature service by accessing the feature service URL from a browser
-* See the top-level service descriptor: `http://<host>:<port>/marklogic/GDeltExample/FeatureServer`
-* See the layer 0 descriptor: `http://<host>:<port>/marklogic/GDeltExample/FeatureServer/0`
-* Query layer 0 for the first 5 features: `http://<host>:<port>/marklogic/GDeltExample/FeatureServer/0/query?resultRecordCount=5`
-* Query layer 0 for the count of features: `http://<host>:<port>/marklogic/GDeltExample/FeatureServer/0/query?returnCountOnly=true`
-* Query layer 0 for the count of features where the "domain" is "indiatimes.com": `http://<host>:<port>/marklogic/GDeltExample/FeatureServer/0/query?returnCountOnly=true&where=domain='indiatimes.com'`
-
-### Install or update services
-Once the connector is installed, you will want to create new services and deploy configuration updates. The service descriptors and supporting TDE templates live under the `config/<config name>` directory. If you add new services or templates or make updates to existing ones, use the `installServices` command to deploy them.
-```
-./gradlew -PenvironmentName=<environment name> -PfsConfig=<config name> installServices
-```
-
-If your environment and feature service configuration match one to one, you can add the `fsConfig` property to your `gradle-<environment name>.properties` file like is shown in `gradle-example-connector.properties`. You can then run `installServices` without the `fsConfig` property.
-```
-./gradlew -PenvironmentName=<environment name> installServices
-```
-
-<a name="Build-Disconnected-Archive"></a>
-### Build an Archive to Run in Disconnected Mode
-There are times when you may need to install the connector from a machine that is not connected to the internet. To support this, the gradle build supports a number of tasks you can use to build an archive that has all the dependencies packaged up that you can install from.
-
-> Note: You must build the deployer archive from a machine running the same OS as where you will run the install and the connector from. I.E. if you will be running the connector from a Linux machine, you will need to execute these steps on a Linux machine. 
-
-1) From a machine that has internet connectivity and is the same platform that you will be installing to, run `./gradlew buildMlDeployer`
-1) If successful, the `buildMlDeployer` task will have created the `build/MarkLogic-Esri-Connector.zip` zip file. The archive contains all of the dependencies needed to install and run the connector, including the node.js binaries and modules for the platform it was built on. The gradle properties in that zip file are set so installs from the archive will run in "disconnected" mode.
-1) Copy `MarkLogic-Esri-Connector.zip` to the machine you want to install on (presumably one that does not have internet connectivity)
-1) `unzip MarkLogic-Esri-Connector.zip`
-1) `cd MarkLogic-Esri-Connector`
-1) Follow the instructions to either [install to an existing database](#Install-to-Existing) or [install with the example](#Install-with-Example)
-
-<a name="Running-the-Connector"></a>
 ## Running the Connector
-The connector uses Koop as the client-facing HTTP/S service. Koop runs in a Node.js Express server and the MarkLogic Koop provider and Koop server Javascript code are placed in the `build/koop` directory.
+The connector uses Koop as the client-facing HTTP/S service. Koop runs in a Node.js Express server.
 
-Koop gets its settings from the `build/koop/config/default.json` file which is configured according to the Koop properties set in `gradle.properties` and `gradle-<env>.properties`. By default, Koop will listen for HTTP requests on port 80 and HTTPS requests on port 443 as this is the only configuration we could get ESRI Insights to work with. Running on these ports often requires sudo privileges though so you may have to prefix all of these calls with "sudo". If you are not using ESRI Insights though, you can likely just disable SSL and run Koop on a port other than 80. See `gradle-example-connector.properties` for how to do that.
+Koop gets its settings from the `build/koop/config/default.json` file which is configured according to the Koop properties set in `gradle.properties` or `gradle-<env>.properties`. By default, Koop will listen for HTTP requests on port 80 and HTTPS requests on port 443 as this is the only configuration we could get ESRI Insights to work with. Running on these ports often requires sudo privileges though so you may have to prefix all of these calls with "sudo". If you are not using ESRI Insights though, you can likely just disable SSL and run Koop on a port other than 80. See `gradle-example-connector.properties` for how to do that.
 
-To start Koop using an environment configuration, use the following gradle command:
-```
-./gradlew -PenvironmentName=<env> runKoop
-```
+1. __Copy the settings for the Koop Provider MarkLogic__ `gradle installKoop`
 
-Use this to start the example configuration
-```
-./gradlew -PenvironmentName=example-connector runKoop
-```
-
-Alternatively, you can start the Koop server directly using your own install of Node.js.
-```
-cd build/koop
-node server.js
-```
+2. __Start Koop__ `gradle runKoop`
 
 ## Accessing Feature Services
 
