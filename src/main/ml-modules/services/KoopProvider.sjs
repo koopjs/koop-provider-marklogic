@@ -704,6 +704,37 @@ function parseGroupByFields(query) {
   return fields;
 }
 
+/**
+ * Builds an optic where clause for the time bounds given
+ * the the layer model and req.
+ * @param {object} layerModel - the layer description json data
+ * @param {object} req - the request parameters passed into the service (json)
+ * @return {booleanExpression} result of optic expressions, input to op.where
+*/
+function getTimeBoundingWhereQuery(layerModel, req) {
+  let startTimeField = layerModel.timeInfo.startTimeField
+  let endTimeField = layerModel.timeInfo.endTimeField
+  let timeRange = req.query.time.split(",")
+  let startTime = new Date(parseInt(timeRange[0]))
+  let endTime = new Date(parseInt(timeRange[1]))
+
+  //Assume dates in ML documents are in UTC for now.
+  //Currently only handling startDate bounds.
+
+  //TODO implement bounds for start AND end time
+
+  //TODO get time zone info from layerModel.timeInfo.timeReference.timeZone
+  //  and convert time to TZ setting
+  //https://developers.arcgis.com/javascript/3/jsapi/timeinfo.html
+  let utcStartTime = new Date(Date.UTC(startTime.getFullYear(), startTime.getMonth(), startTime.getDate()))
+  let utcEndTime = new Date(Date.UTC(endTime.getFullYear(), endTime.getMonth(), endTime.getDate()))
+
+  return op.and(
+    op.ge(op.viewCol(layerModel.view, startTimeField), utcStartTime.toISOString()),
+    op.lt(op.viewCol(layerModel.view, startTimeField), utcEndTime.toISOString())
+  )
+}
+
 // returns a Sequence of documents
 function getObjects(req) {
   const layerModel = getLayerModel(req.params.id, req.params.layer);
@@ -747,6 +778,11 @@ function getObjects(req) {
     const idsQuery = (idExp.length === 1) ? idExp[0] : op.or(...idExp);
 
     whereQuery = op.and(whereQuery, idsQuery);
+  }
+
+  // Initial Time bounding query implementation, GitHub Issue #13
+  if(req.query.time && layerModel.timeInfo && layerModel.timeInfo.startTimeField) {
+    whereQuery = op.and(whereQuery, getTimeBoundingWhereQuery(layerModel, req));
   }
 
   const boundingQuery = cts.andQuery(boundingQueries);

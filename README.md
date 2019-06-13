@@ -25,7 +25,7 @@ Each layer in a service descriptor can include a _bounding query_. The bounding 
 Service descriptors and their layers can be programatically controlled so additional tools or user interfaces can create and control the descriptors on the fly, dynamically controlling the features that are displayed when ESRI tools access those layers.
 
 #### Views
-The Koop provider service uses MarkLogic views defined by TDE templates (technically it could use lexicon-based views as well but this hasn't been tested). Each layer in a service descriptor tells the Koop provider service which view to use when handling queries for that layer. 
+The Koop provider service uses MarkLogic views defined by TDE templates (technically it could use lexicon-based views as well but this hasn't been tested). Each layer in a service descriptor tells the Koop provider service which view to use when handling queries for that layer.
 
 #### Queries
 The Koop provider service uses the Optic API to process all queries. Esri Feature Service requests (see [the Feature Service API](https://resources.arcgis.com/en/help/rest/apiref/featureserver.html) for details) are either requests for service or layer metadata or queries against a specific layer. Queries are translated into CTS and Optic queries and handled by one of two pipelines: feature queries or aggregations.
@@ -152,7 +152,7 @@ Note: If you have existing views in your MarkLogic database, you may be able to 
 <a name="Install-with-Example"></a>
 ### Install the Example as a New Database
 If you would like to try out the connector using the included example database, follow these steps to install to the `example` database configuration. This will create an app server, modules database, and content and schemas databases called `esri-example-app-content` and `esri-example-app-schemas` respectively.
-> NOTE: The connector project uses ml-gradle so, technically, you could use the connector project to configure databases or other MarkLogic cluster configuration items but it is preferable to manage your overall MarkLogic configuration in a separate ml-gradle (or other tool) project. 
+> NOTE: The connector project uses ml-gradle so, technically, you could use the connector project to configure databases or other MarkLogic cluster configuration items but it is preferable to manage your overall MarkLogic configuration in a separate ml-gradle (or other tool) project.
 1) Edit the `gradle-example-app.properties` and set the MarkLogic port you would like to install the backend service on, your MarkLogic host name, username and password and what port you want the Koop server to run on.
     ```
     mlAppName=esri-example-app
@@ -200,7 +200,7 @@ If your environment and feature service configuration match one to one, you can 
 ### Build an Archive to Run in Disconnected Mode
 There are times when you may need to install the connector from a machine that is not connected to the internet. To support this, the gradle build supports a number of tasks you can use to build an archive that has all the dependencies packaged up that you can install from.
 
-> Note: You must build the deployer archive from a machine running the same OS as where you will run the install and the connector from. I.E. if you will be running the connector from a Linux machine, you will need to execute these steps on a Linux machine. 
+> Note: You must build the deployer archive from a machine running the same OS as where you will run the install and the connector from. I.E. if you will be running the connector from a Linux machine, you will need to execute these steps on a Linux machine.
 
 1) From a machine that has internet connectivity and is the same platform that you will be installing to, run `./gradlew buildMlDeployer`
 1) If successful, the `buildMlDeployer` task will have created the `build/MarkLogic-Esri-Connector.zip` zip file. The archive contains all of the dependencies needed to install and run the connector, including the node.js binaries and modules for the platform it was built on. The gradle properties in that zip file are set so installs from the archive will run in "disconnected" mode.
@@ -292,3 +292,13 @@ koopHost=koop.mydomain.com
 ```
 
 The MarkLogic server will use the value in `mlHost` if this property is not supplied.
+
+
+## Configuring Time Aware Feature Layers
+
+Time aware feature layers allow users to query specific time periods. ArcGIS supports this using a time slider. More info on configuring time settings in ArcGIS Online, https://doc.arcgis.com/en/arcgis-online/create-maps/configure-time.htm.  Time aware layers have additional configuration properties, primarily a start and end date. A sample of the layer configuration is included in config/test/services/GDeltGKG.json, layer 6.  You must have a dateTime property defined in your TDE.  The layer configuration will reference this property name.
+
+### Limitations (TODO in another release)
+- This implementation only works for a start date. The end date configured in the layer and in your TDE will be ignored.
+- This implementation assumes that all server side dates are in UTC, there are no time zone conversions. The time zone and daylight savings indicator configured in your layer will be ignored.
+- The time extent configured in the layer is ignored

@@ -6,8 +6,8 @@ buildscript {
     }
     else {
         repositories {
-            maven { url "https://plugins.gradle.org/m2/" }
             jcenter()
+            maven { url "http://plugins.gradle.org/m2/" }
         }
 
         dependencies {
@@ -59,9 +59,9 @@ if (project.hasProperty("disconnected") && disconnected) {
  */
 else {
     repositories {
+        maven { url "http://developer.marklogic.com/maven2/" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "http://repository.cloudera.com/artifactory/cloudera-repos/" }
-        maven { url "https://developer.marklogic.com/maven2/" }
 
         jcenter()
     }
@@ -75,7 +75,8 @@ else {
     }
 
     dependencies {
-        mlcp "com.marklogic:mlcp:9.0.3"
+        //mlcp "com.marklogic:mlcp:9.0.3"
+        mlcp "com.marklogic:mlcp:9.0.8"
         mlcp "org.apache.commons:commons-csv:1.2"
         mlcp "com.marklogic:marklogic-mapreduce2:2.2.3"
         mlcp files("log")

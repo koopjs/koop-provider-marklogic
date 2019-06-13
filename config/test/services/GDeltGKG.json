@@ -204,6 +204,62 @@
       "view" : "Article",
       "includeFields": ["OBJECTID", "urlpubtimedate", "urlpubdate", "name", "url"],
       "readOnly": true
+    },
+    {
+      "id": 6,
+      "name" : "GKG level 1 Time Aware",
+      "decription": "GDelt GKG article data at geores 1 (country) Time Aware",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "geometryPath": "/geometry",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "timeInfo": {
+        "startTimeField": "urlpubtimedate",
+        "endTimeField": "",
+        "trackIdField": "",
+        "timeExtent": [
+          1546300800000,
+          1552694400000
+        ],
+        "timeReference": {
+          "timeZone": "UTC",
+          "respectsDaylightSaving": false
+        },
+        "timeInterval": 1,
+        "timeIntervalUnits": "esriTimeUnitsMonths",
+        "exportOptions": {
+          "useTime": false,
+          "timeDataCumulative": false,
+          "TimeOffset": 0,
+          "timeOffsetUnits": "esriTimeUnitsCenturies"
+        },
+        "hasLiveData": false
+      },
+      "schema": "GDeltGKG",
+      "view" : "Article",
+      "boundingQuery" : {
+        "jsonPropertyValueQuery" : {
+          "property" : ["geores"], "value" : [ 1 ],
+          "options" : ["lang=en"], "weight" : 0
+        }
+      },
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "xpath" : "//geometry"
+      },
+      "readOnly": true
     }
   ]
 }
