@@ -707,32 +707,39 @@ function parseGroupByFields(query) {
 /**
  * Builds an optic where clause for the time bounds given
  * the the layer model and req.
+ *
+ * Assume dates in ML documents are in UTC for now.
+ * Currently only handling startDate bounds.
+ *
+ * TODO implement bounds for start AND end time
+ * TODO get time zone info from layerModel.timeInfo.timeReference.timeZone
+ *  and convert time to TZ setting, https://developers.arcgis.com/javascript/3/jsapi/timeinfo.html
+
  * @param {object} layerModel - the layer description json data
  * @param {object} req - the request parameters passed into the service (json)
  * @return {booleanExpression} result of optic expressions, input to op.where
 */
 function getTimeBoundingWhereQuery(layerModel, req) {
-  let startTimeField = layerModel.timeInfo.startTimeField
-  let endTimeField = layerModel.timeInfo.endTimeField
-  let timeRange = req.query.time.split(",")
-  let startTime = new Date(parseInt(timeRange[0]))
-  let endTime = new Date(parseInt(timeRange[1]))
+  let startTimeField = layerModel.timeInfo.startTimeField;
+  let endTimeField = layerModel.timeInfo.endTimeField;
 
-  //Assume dates in ML documents are in UTC for now.
-  //Currently only handling startDate bounds.
+  if(req.query.time.toString().indexOf(",") >= 0) {  //Handle Time range
+    let timeRange = req.query.time.split(",");
+    let startTime = (timeRange[0]) ? new Date(parseInt(timeRange[0])) : new Date("0001-01-01T00:00:00");
+    let endTime = (timeRange[1]) ? new Date(parseInt(timeRange[1])) : new Date("9999-12-31T00:00:00");
+    let utcStartTime = new Date(Date.UTC(startTime.getFullYear(), startTime.getMonth(), startTime.getDate()));
+    let utcEndTime = new Date(Date.UTC(endTime.getFullYear(), endTime.getMonth(), endTime.getDate()));
 
-  //TODO implement bounds for start AND end time
+    return op.and(
+      op.ge(op.viewCol(layerModel.view, startTimeField), utcStartTime.toISOString()),
+      op.lt(op.viewCol(layerModel.view, startTimeField), utcEndTime.toISOString())
+    )
+  } else {  //Handle time instance
+    let startTime = new Date(parseInt(req.query.time));
+    let utcStartTime = new Date(Date.UTC(startTime.getFullYear(), startTime.getMonth(), startTime.getDate()));
 
-  //TODO get time zone info from layerModel.timeInfo.timeReference.timeZone
-  //  and convert time to TZ setting
-  //https://developers.arcgis.com/javascript/3/jsapi/timeinfo.html
-  let utcStartTime = new Date(Date.UTC(startTime.getFullYear(), startTime.getMonth(), startTime.getDate()))
-  let utcEndTime = new Date(Date.UTC(endTime.getFullYear(), endTime.getMonth(), endTime.getDate()))
-
-  return op.and(
-    op.ge(op.viewCol(layerModel.view, startTimeField), utcStartTime.toISOString()),
-    op.lt(op.viewCol(layerModel.view, startTimeField), utcEndTime.toISOString())
-  )
+    return op.eq(op.viewCol(layerModel.view, startTimeField), utcStartTime.toISOString());
+  }
 }
 
 // returns a Sequence of documents
