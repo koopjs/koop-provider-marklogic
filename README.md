@@ -1,6 +1,10 @@
 # Koop Provider MarkLogic 
 The Koop Provider MarkLogic enables communication with several Esri applications. The provider is a configurable component that allows documents in MarkLogic to be queried and exposed as Esri _features_ through one or more Esri _Feature Services_.
 
+## Releases
+The git tag 1.0.0 is for the tested connector prior to the MarkLogic Geo Data Services code split from this repo.
+The git tag 1.1.0 is for the connector after the MarkLogic Geo Data Services split and will therefore need you to make use of an mlBundle to build feature services into your codebase.
+
 ---
 ## Quick Start
 1. Configure gradle.properties 
