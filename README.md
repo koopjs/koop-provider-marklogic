@@ -3,6 +3,10 @@ The MarkLogic Esri Connector is a configurable component that allows documents i
 
 For those who don't want to read all the details below, skip right to the [installation instructions](#Install-the-Connector).
 
+## Releases
+The git tag 1.0.0 is for the tested connector prior to the MarkLogic Geo Data Services code split from this repo.
+The git tag 1.1.0 is for the connector after the MarkLogic Geo Data Services split and will therefore need you to make use of an mlBundle to build feature services into your codebase.
+
 ---
 ## Architecture
 The connector has two primary components: 1) A [Koop](http://koopjs.github.io/) __provider plugin__ and 2) A MarkLogic __REST resource extension__. The Koop provider plugin runs inside a Node.js Express server and makes calls out to the MarkLogic REST resource extension to service queries.
