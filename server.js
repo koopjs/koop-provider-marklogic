@@ -9,7 +9,7 @@ process.on('SIGINT', () => process.exit(0))
 process.on('SIGTERM', () => process.exit(0))
 
 const config = require('config');
-const log = require('./logger');
+const log = require('./src/koop/logger');
 const fs = require('fs');
 const express = require('express');
 const app = express();
@@ -17,7 +17,7 @@ const Koop = require('koop');
 const koop = new Koop();
 
 // Install the marklogic Provider
-const provider = require('./')
+const provider = require('./src/koop')
 koop.register(provider)
 
 if (config.ssl.enabled) {
