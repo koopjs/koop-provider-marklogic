@@ -13,8 +13,8 @@
     "connection": {
       "host":     "localhost",
       "port":     8096,
-      "user":     "geo-data-services-reader",
-      "password": "geo-data-services-reader",
+      "user":     "test-geo-data-services-reader",
+      "password": "test-geo-data-services-reader",
       "authType": "DIGEST"
     }
   }
