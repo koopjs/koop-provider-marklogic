@@ -176,3 +176,4 @@ gradle-app.setting
 .project
 .settings/org.eclipse.buildship.core.prefs
 package-lock.json
+test/bin/
