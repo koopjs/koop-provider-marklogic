@@ -9,6 +9,15 @@ Add certificates to the _ssl_ directory to use for HTTPS if needed.
 The Marklogic Koop Provider can be run using the following commands after installing
 via the instructions in the top-level README.md:
 
-``` npm install ```
-``` node server.js ```
+
+``` 
+# Install the NPM dependencies
+npm install
+
+# Optionally set the configuration to use
+export NODE_ENV=test
+
+# Start the Koop Server
+node server.js 
+```
 
