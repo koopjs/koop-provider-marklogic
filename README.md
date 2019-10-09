@@ -1,4 +1,4 @@
-# Koop Provider MarkLogic 
+# Koop Provider MarkLogic
 The Koop Provider MarkLogic enables communication with several Esri applications. The provider is a configurable component that allows documents in MarkLogic to be queried and exposed as Esri _Features_ through one or more Esri _Feature Services_.
 
 ## Releases
@@ -13,7 +13,7 @@ The git tag 1.1.0 is for the connector after the MarkLogic Geo Data Services spl
 3. Start Koop `node server.js`
 
 ## Architecture
-The connector has two primary components: 
+The connector has two primary components:
 
 1. A [Koop](http://koopjs.github.io/) provider plugin
 2. [MarkLogic Geo Data Services](https://github.com/marklogic-community/marklogic-geo-data-services)
@@ -39,7 +39,7 @@ Not all the capabilities defined in the feature service API spec have been imple
 The connector currently supports connecting to MarkLogic as a single user. Additional work needs to be done to develop an enhanced security model for the connector and how it will work with Esri tools.
 
 ### _Esri Insights_
-We could only get ESRI Insights to work with HTTP requests on port 80 and HTTPS requests on port 443. Running on these ports often requires sudo privileges. If you are not using ESRI Insights though, you can likely just disable SSL and run Koop on a port other than 80. Please see your `/config/<environment>.json` to modify the ports and protocols Koop will utilize.
+We could only get Esri Insights to work with HTTP requests on port 80 and HTTPS requests on port 443. Running on these ports often requires sudo privileges. If you are not using Esri Insights though, you can likely just disable SSL and run Koop on a port other than 80. Please see your `/config/<environment>.json` to modify the ports and protocols Koop will utilize.
 
 ---
 ## Configuring the Connector
@@ -91,7 +91,7 @@ Geo Data Services   0.0.6
 ## Running the Connector
 The connector uses Koop as the client-facing HTTP/S service. Koop utilizes a Node.js Express server to handle feature service requests.
 
-Koop's settings for this provider are stored in `/config/<environment>.json`. 
+Koop's settings for this provider are stored in `/config/<environment>.json`.
 
 1. Configure `/config/<environment>.json`
 2. Install `npm install`
