@@ -2,7 +2,7 @@
  * Copyright © 2017 MarkLogic Corporation
  */
 
- // use this to convert incoming ESRI geometry objects to GeoJSON in WGS84
+ // use this to convert incoming Esri geometry objects to GeoJSON in WGS84
 
 const config = require('config');
 const options = require('winnow/dist/options');

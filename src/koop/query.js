@@ -14,7 +14,7 @@ function MarkLogicQuery() {
 	MarkLogicQuery.prototype.providerGetData = function providerGetData(request) {
 		return new Promise((resolve, reject) => {
 			this.db.resources.post({
-				name: 'KoopProvider',
+				name: 'geoQueryService',
 				params: { },
 				documents : request
 			}).result((response) => {

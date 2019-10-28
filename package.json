@@ -1,0 +1,37 @@
+{
+  "name": "koop-provider-marklogic",
+  "version": "1.0.0",
+  "description": "A Marklogic provider for Koop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "config": "^3.1.0",
+    "winston": "^3.2.1",
+    "express": "^4.16.4",
+    "koop": "3.11.0",
+    "featureserver": "2.17.0",
+    "marklogic": "^2.2.0"
+  },
+  "author": "MarkLogic",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koopjs/koop-provider-marklogic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/koopjs/koop-provider-marklogic/issues"
+  },
+  "homepage": "https://github.com/koopjs/koop-provider-marklogic",
+  "keywords": [
+    "marklogic",
+    "koop",
+    "nosql",
+    "linked",
+    "data",
+    "big",
+    "data"
+  ]
+}
