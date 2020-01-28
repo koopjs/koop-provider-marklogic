@@ -27,7 +27,9 @@ Reponses from the MarkLogic Koop provider plugin are GeoJSON objects (with some 
 
 Supports running with HTTP as well as HTTPS.
 
-For more information on how MarkLogic is configured, please see the [marklogic-geo-data-services](https://github.com/marklogic-community/marklogic-geo-data-services) project.
+### MarkLogic Geo Data Services
+
+For information on how to configure MarkLogic, please see the [marklogic-geo-data-services](https://github.com/marklogic-community/marklogic-geo-data-services) project.
 
 ---
 ## Limitations
@@ -77,15 +79,12 @@ Add the `-PenvironmentName=<environment>` argument when running gradle to utiliz
 
 
 ---
-## Install the Connector
-Installing the connector will create a new MarkLogic app server and modules database, install the server-side MarkLogic code, load the example feature service descriptors into the content database, and load the example TDE templates into the schemas database. Please see the [marklogic-geo-data-services](https://github.com/marklogic-community/marklogic-geo-data-services) project for setting up the MarkLogic components of this setup.
-
 ### Tested Configuration
 ```
               NPM   6.4.1
              Node   10.2.1
         MarkLogic   9.0-10
-Geo Data Services   0.0.6
+MarkLogic Geo Data Services   1.1.0
 ```
 
 ## Running the Connector
@@ -117,11 +116,3 @@ http://localhost/marklogic/GDeltExample/FeatureServer
 
 To retrieve the first 10 features from layer 0, use the following link
 http://localhost/marklogic/GDeltExample/FeatureServer/0/query?where=1=1&resultRecordCount=10
-
-## Using the Connector with ArcGIS Pro
-
-MarkLogic is developing an ArcGIS Pro add-in that allows ArcGIS Pro users to directly query a MarkLogic database and save their searches as feature layers.
-
-There are additional setup requirements in order for the add-in to work properly with the connector.
-
-### Search Profiles
