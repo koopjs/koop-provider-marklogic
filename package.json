@@ -1,6 +1,6 @@
 {
   "name": "koop-provider-marklogic",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Marklogic provider for Koop",
   "main": "index.js",
   "scripts": {
