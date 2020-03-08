@@ -15,7 +15,7 @@ function createProxy(routePath) {
   router.all(routePath, 
     (clientReq, clientRes) => {
       const options = {
-        hostname: "unknown",//config.marklogic.connection.host,
+        hostname: config.marklogic.connection.host,
         port: config.marklogic.connection.port,
         path: clientReq.originalUrl,
         method: clientReq.method,
@@ -45,7 +45,7 @@ function createProxy(routePath) {
         clientRes.json(errorObj);
         clientRes.end();
         
-        log.warn(`Error '${err.code}' trying to proxy request to ${err.hostname}:${err.port} - sending back response ${errorObj.statusCode} ${errorObj.status}`);
+        log.warn(`Error '${err.code}' trying to proxy request to ${err.hostname}:${err.port}, responding with ${errorObj.statusCode} ${errorObj.status}`, { err: err });
       });
 
       clientReq.pipe(proxy, { end: true });
