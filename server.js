@@ -23,9 +23,10 @@ koop.register(provider);
 
 // create the "global" app
 const app = express();
-// allow direct access to Geo Data Services REST extensions
-app.use('/v1/resources', 
-  proxy.create(/\/geoQueryService|\/geoSearchService|\/modelService|\/documentService/));
+// proxy requests for Geo Data Services REST extensions and v1/documents
+app.use(/\/(v1|LATEST)/, 
+  proxy.create(/\/(resources\/(modelService|geoSearchService|geoQueryService)|documents)/));
+
 // otherwise route to Koop
 app.use('/', koop.server);
 
