@@ -1,0 +1,10 @@
+version: '3'
+services:
+  koop:
+    build:
+      context: .
+    ports:
+      - "9000:9000"
+      - "9443:9443" # HTTPS port which will only be open if ssl.enabled=true in provider-config.json
+    hostname: "koop"
+    container_name: "koop"

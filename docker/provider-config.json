@@ -1,0 +1,21 @@
+{
+  "logger" : {
+    "level" : "info"
+  },
+  "port" : 9000,
+  "ssl": {
+    "enabled" : false,
+    "port" : 9443,
+    "cert" : "certs/cert.pem",
+    "key" : "certs/key.pem"
+  },
+  "marklogic": {
+    "connection": {
+      "host":     "<marklogic host name>",
+      "port":     <marklogic port>,
+      "user":     "<user name>",
+      "password": "<password>",
+      "authType": "DIGEST"
+    }
+  }
+}
