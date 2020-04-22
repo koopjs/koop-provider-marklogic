@@ -11,17 +11,17 @@ function MarkLogicQuery() {
   this.db = marklogic.createDatabaseClient(this.conn);
 }
 
-	MarkLogicQuery.prototype.providerGetData = function providerGetData(request) {
-		return new Promise((resolve, reject) => {
-			this.db.resources.post({
-				name: 'geoQueryService',
-				params: { },
-				documents : request
-			}).result((response) => {
-				resolve(response);
-			}).catch(function(error){
-				reject(new Error(error.body.errorResponse.message));
-				console.log(error);
+MarkLogicQuery.prototype.providerGetData = function providerGetData(request) {
+	return new Promise((resolve, reject) => {
+		this.db.resources.post({
+			name: 'geoQueryService',
+			params: { },
+			documents : request
+		}).result((response) => {
+			resolve(response);
+		}).catch(function(error) { 
+			console.log(error);
+			reject(new Error(error));
 		})
 	})
 }
