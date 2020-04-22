@@ -17,7 +17,7 @@ const Koop = require('koop');
 const koop = new Koop();
 
 // Configure the auth plugin by executing its exported function with required args
-if (config.auth) {
+if (config.auth && config.auth.enabled) {
   let auth = null;
   if (config.auth.plugin === 'auth-direct-file') {
     auth = require('@koopjs/auth-direct-file')(config.auth.options.secret, config.auth.options.identityStore, config.auth.options);
