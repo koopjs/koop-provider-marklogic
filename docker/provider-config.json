@@ -17,5 +17,15 @@
       "password": "<password>",
       "authType": "DIGEST"
     }
+  },
+  "auth" : {
+    "enabled" : false,
+    "plugin" : "auth-direct-file",
+    "options" : {
+      "secret" : "<secret for token generation>",
+      "identityStore" : "auth/user-store.json",
+      "tokenExpirationMinutes" : 60,
+      "useHttp" : true
+    }
   }
 }
