@@ -17,5 +17,6 @@
       "password": "geo-data-services-reader",
       "authType": "DIGEST"
     }
-  }
+  },
+  "enableServiceProxy": false
 }
