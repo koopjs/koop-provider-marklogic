@@ -17,6 +17,20 @@ const proxy = require('./src/koop/proxy');
 const Koop = require('koop');
 const koop = new Koop();
 
+// Configure the auth plugin by executing its exported function with required args
+if (config.auth && config.auth.enabled) {
+  let auth = null;
+  if (config.auth.plugin === 'auth-direct-file') {
+    auth = require('@koopjs/auth-direct-file')(config.auth.options.secret, config.auth.options.identityStore, config.auth.options);
+  } else {
+    throw new Error(`auth plugin ${config.auth.plugin} not recognized`);
+  }
+
+  if (auth) {
+    koop.register(auth);
+  }
+}
+
 // install the Marklogic Provider
 const provider = require('./src/koop');
 koop.register(provider);
