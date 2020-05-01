@@ -22,6 +22,11 @@ MarkLogic.prototype.getData = function getData (req, callback) {
     // koop functions will use the modified values
     coerceQuery(req.query);
 
+    // returnGeometry should default to true
+    if (!req.query.hasOwnProperty('returnGeometry')) {
+      req.query.returnGeometry = true;
+    }
+
     // convert incoming geometry into GeoJSON in WGS84
     var geometry = options.prepare(req.query).geometry;
     if (req.query && req.query.geometry) {
