@@ -46,7 +46,7 @@ if (config.auth && config.auth.enabled) {
 } else {
   //if there's no auth provider configured, we have to use a direct pre-authenticated db client
   dbClientManager.useStaticClient(true);
-
+}
 // install the Marklogic Provider
 const provider = require('./src/koop');
 koop.register(provider);
