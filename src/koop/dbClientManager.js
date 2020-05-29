@@ -98,7 +98,7 @@ function checkDbClientConnection(db, username) {
             connectionInfo.error = true;
             connectionInfo.errorMsg = error.message;
             _dbClientCache.del(username);
-            log.debug("resolving connectionInfo:");
+            log.debug("resolving connection error connectionInfo:");
             log.debug(connectionInfo);
             resolve(connectionInfo);
         }).catch(error => {

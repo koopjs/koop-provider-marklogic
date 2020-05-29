@@ -89,7 +89,7 @@ function validateCredentials(req, username, password, resolve, reject) {
     }
     else {
         let err = new Error("MarkLogic error");
-        err.code(500);
+        err.code = 500;
         log.debug("MarkLogic error");
         reject(err);
     }
@@ -99,7 +99,7 @@ function validateCredentials(req, username, password, resolve, reject) {
         err.message = caughtErr.message;
         log.debug("MarkLogic error:");
         log.debug(caughtErr);
-        throw err;
+        reject(err);
 });
 }
 
