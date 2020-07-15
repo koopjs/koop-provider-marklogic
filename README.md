@@ -66,8 +66,8 @@ The project uses the node [config](https://www.npmjs.com/package/config) package
 The project supports the following authentication strategies:
 
 - None (Default)
-- MarkLogic: Koop relies on MarkLogic for authenticating user credentials.  Users must have a valid MarkLogic server user account.
-- Direct File: 
+- MarkLogic
+- File-based
 
 #### No Authentication
 
@@ -75,7 +75,7 @@ All Koop services will be publicly accessible.  Koop will still need valid MarkL
 
 #### MarkLogic Authentication
 
-This uses a _direct authentication_ pattern similar to [Koop-Auth-Direct-File](https://github.com/koopjs/koop-auth-direct-file), with MarkLogic being responsible for authenticating user credentials.  The user credentials supplied must match a valid MarkLogic server user account.
+This uses a _direct authentication_ pattern similar to [Koop-Auth-Direct-File](https://github.com/koopjs/koop-auth-direct-file), with MarkLogic being responsible for authenticating user credentials.  The credentials supplied must match a valid MarkLogic server user account.
 
 To setup, add an `auth` section to your `config/FILENAME.json`, for example:
 
@@ -95,7 +95,7 @@ To setup, add an `auth` section to your `config/FILENAME.json`, for example:
 | secret                 | Used to verify JSON web tokens                | string                      | auto-generated UUID |
 | tokenExpirationMinutes | The validity of tokens in minutes             | Number                      | 60                  |
 
-#### Direct File Authentication
+#### File-based Authentication
 
 This uses the [Koop-Auth-Direct-File](https://github.com/koopjs/koop-auth-direct-file) module for authentication.  Check out its [official project page](https://github.com/koopjs/koop-auth-direct-file) for more information.
 
