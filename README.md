@@ -61,46 +61,65 @@ We could only get Esri Insights to work with HTTP requests on port 80 and HTTPS 
 
 The project uses the node [config](https://www.npmjs.com/package/config) package to manage configurations. Update the necessary `config/FILENAME.json` file. You can use the `config/default.json` as a starting point. To make use of your configuration execute `export NODE_ENV=<environment>` before you run `node server.js`.
 
-### Test Settings
+### Authentication
 
-The test project uses the above node settings for the node server and [gradle properties plugin](https://github.com/stevesaliman/gradle-properties-plugin) to manage environment properties for gradle. Create a `/test/gradle-<environment>.properties` file to specify your environment settings that match your `/config/<environment>.json`.
+The project supports the following authentication strategies:
 
-The following properties can be overriden:
+- None (Default)
+- MarkLogic: Koop relies on MarkLogic for authenticating user credentials.  Users must have a valid MarkLogic server user account.
+- Direct File: 
 
+#### No Authentication
+
+All Koop services will be publicly accessible.  Koop will still need valid MarkLogic credentials to communicate with MarkLogic.  See `config/default.json` for an example.
+
+#### MarkLogic Authentication
+
+This uses a _direct authentication_ pattern similar to [Koop-Auth-Direct-File](https://github.com/koopjs/koop-auth-direct-file), with MarkLogic being responsible for authenticating user credentials.  The user credentials supplied must match a valid MarkLogic server user account.
+
+To setup, add an `auth` section to your `config/FILENAME.json`, for example:
+
+```json
+"auth": {
+  "plugin": "auth-marklogic-digest-basic",
+  "enabled": true,
+  "options": {
+    "secret": "7072c433-a4e7-4749-86f3-849a3ed0ee95",
+    "tokenExpirationMinutes": 60
+  }
+}
 ```
-mlAppName=<the name of the connector>
 
-mlHost=<host>
-mlRestPort=<port>
-koopMlUsername=<username>
-koopMlPassword=<password>
+| Option                 | Description                                   | Value                       | Default value       |
+|------------------------|-----------------------------------------------|-----------------------------|---------------------|
+| secret                 | Used to verify JSON web tokens                | string                      | auto-generated UUID |
+| tokenExpirationMinutes | The validity of tokens in minutes             | Number                      | 60                  |
 
+#### Direct File Authentication
 
-# Koop server setttings
-# Port the feature service will service HTTP requests on
-koopPort=<http port>
-# Whether or not to enable an HTTPS server as well
-koopSSLEnabled=<true|false>
-# Port the feature service will service HTTPS requests on
-koopSSLPort=<https port>
-# The SSL certificate to user for the HTTPS server
-koopSSLCert=<path to certificate pem file>
-# The SSL certificate key to user for the HTTPS server
-koopSSLKey=<path to the certificate public key file>
+This uses the [Koop-Auth-Direct-File](https://github.com/koopjs/koop-auth-direct-file) module for authentication.  Check out its [official project page](https://github.com/koopjs/koop-auth-direct-file) for more information.
+
+To setup, add an `auth` section to your `config/FILENAME.json`, for example:
+
+```json
+"auth": {
+  "plugin": "auth-direct-file",
+  "enabled": true,
+  "options": {
+    "secret": "7072c433-a4e7-4749-86f3-849a3ed0ee95",
+    "tokenExpirationMinutes": 60,
+    "identityStore": "tests/user-store.json",
+    "useHttp": true
+  }
+}
 ```
 
-Add the `-PenvironmentName=<environment>` argument when running gradle to utilize your configuration, you can copy the `/test/gradle.properties` default file as a starting point.
-
----
-
-### Tested Configuration
-
-```
-              NPM   6.4.1
-             Node   10.2.1
-        MarkLogic   9.0-10
-MarkLogic Geo Data Services   1.1.0
-```
+| Option                 | Description                                   | Value                       | Default value       |
+|------------------------|-----------------------------------------------|-----------------------------|---------------------|
+| secret                 | Used to verify JSON web tokens                | string                      | auto-generated UUID |
+| tokenExpirationMinutes | The validity of tokens in minutes             | Number                      | 60                  |
+| identityStore          | Path to JSON file containing list of users    | string                      | none                |
+| useHttp                | Allow HTTP for token services                 | boolean                     | false               |
 
 ## Running the Connector
 
@@ -148,3 +167,30 @@ The [MarkLogic ArcGIS Pro add-in](https://github.com/marklogic-community/marklog
 ```
 
 For security purposes, the *service proxy* is **disabled** by default.
+
+## Tests
+
+### Setup Test Environment
+
+1. Ensure you have a local MarkLogic server running.
+2. Go to `tests/ml` directory.
+3. Run `./gradlew mlDeploy` to deploy the test database.
+
+### Run Tests
+
+1. Go to the project root directory.
+2. Run `./run-tests.sh` to run all tests.
+
+### Run Individual Tests
+
+The tests are organized in several test suites:
+
+1. test:default - no authentication tests
+2. test:auth-ml - MarkLogic authentication tests
+3. test:auth-direct-file - Direct File authentication tests
+
+Use `npm run` to run them individually, for example:
+
+```bash
+npm run test:auth-ml
+```
