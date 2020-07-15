@@ -1,0 +1,19 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath "com.marklogic:marklogic-geo-data-services-modules:1.1.2"
+  }
+}
+plugins {
+  id "net.saliman.properties" version "1.5.1"
+  id "com.marklogic.ml-gradle" version "4.0.3"
+}
+repositories {
+  jcenter()
+}
+
+dependencies {
+  mlBundle "com.marklogic:marklogic-geo-data-services-modules:1.1.2"
+}

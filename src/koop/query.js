@@ -7,13 +7,11 @@ const config = require('config');
 const log = require('./logger');
 
 function MarkLogicQuery() {
-  this.conn = config.marklogic.connection;
-  this.db = marklogic.createDatabaseClient(this.conn);
 }
 
-MarkLogicQuery.prototype.providerGetData = function providerGetData(request) {
+MarkLogicQuery.prototype.providerGetData = function providerGetData(request, dbClient) {
 	return new Promise((resolve, reject) => {
-		this.db.resources.post({
+		dbClient.resources.post({
 			name: 'geoQueryService',
 			params: { },
 			documents : request
