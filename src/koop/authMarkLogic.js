@@ -15,8 +15,8 @@ function auth(options) {
 function authenticationSpecification() {
     return {
       useHttp: true
-    }
-};
+    };
+}
 
 function authenticate(req) {
     log.debug("called authenticate");
@@ -37,8 +37,8 @@ function authenticate(req) {
             
         // Validate user's credentials
         return _tokenMarklogicAuthentication.validateCredentials(req, inputUsername, inputPassword, resolve, reject);
-    })
-};
+    });
+}
 
 function authorize(req) {
     return _tokenMarklogicAuthentication.authorize(req);

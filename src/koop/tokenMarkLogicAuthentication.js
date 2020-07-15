@@ -70,18 +70,18 @@ function validateCredentials(req, username, password, resolve, reject) {
                 expiration = _tokenExpirationMinutes;
         }
         log.debug("about to make jwt");
-        let expires = Date.now() + (expiration * 60 * 1000)
+        let expires = Date.now() + (expiration * 60 * 1000);
         let json = {
             token: jwt.sign({exp: Math.floor(expires / 1000), sub: username}, _secret),
             expires
-        }
+        };
         req.marklogicUsername = username;
 
         log.debug("json token:");
         log.debug(json);
         resolve(json);
     } else if (response.authenticated == false) {
-        let err = new Error('Invalid credentials.')
+        let err = new Error('Invalid credentials.');
         err.code = 401;
         err.httpStatusMessage = response.httpStatusMessage;
         err.httpStatusCode = response.httpStatusCode;
