@@ -1,0 +1,7 @@
+{
+  "role-name": "koop-marklogic-provider-test-dept-a-role",
+  "role": [
+    "geo-data-services-reader", 
+    "rest-extension-user"
+  ]
+}

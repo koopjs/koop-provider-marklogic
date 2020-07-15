@@ -9,11 +9,11 @@ const dbClientManager = require("./dbClientManager");
 function tokenMarkLogicAuthentication(options) {
     options = options || {};
     this._secret = options.secret || uuidv4();
-    this._tokenExpirationMinutes = options.tokenExpirationMintes || 60;
+    this._tokenExpirationMinutes = options.tokenExpirationMinutes || 60;
     return {
         authorize,
         validateCredentials
-    }
+    };
 }
 
 function authorize(req) {
@@ -24,10 +24,10 @@ function authorize(req) {
         if (req && req.query && req.query.token) token = req.query.token;
         if ((req && req.headers && req.headers.authorization)) token = req.headers.authorization;
         if (!token) {
-            let tokenErr = new Error('No authorization token.')
-            tokenErr.code = 401
-            reject(tokenErr)
-            }
+            let tokenErr = new Error('No authorization token.');
+            tokenErr.code = 401;
+            reject(tokenErr);
+        }
         // Verify token with async decoded function
         jwt.verify(token, _secret, function (err, decoded) {
             // If token invalid, reject
