@@ -1,0 +1,35 @@
+{
+  "info" : {
+    "name" : "GDeltExample",
+    "description" : "GDeltExample"
+  },
+
+  "layers" : [
+    {
+      "id": 0,
+      "name" : "GKG",
+      "description": "All GDelt articles",
+      "geometryType": "Point",
+      "idField": "OBJECTID",
+      "displayField": "name",
+      "extent" : {
+        "xmin" : -180,
+        "ymin" : -90,
+        "xmax" : 180,
+        "ymax" : 90,
+        "spatialReference" : {
+          "wkid" : 4326,
+          "latestWkid" : 4326
+        }
+      },
+      "schema": "GDeltGKG",
+      "view" : "Article",
+      "geometry" : {
+        "type" : "Point",
+        "format" : "geojson",
+        "coordinateSystem" : "wgs84",
+        "xpath" : "//geometry"
+      }
+    }
+  ]
+}

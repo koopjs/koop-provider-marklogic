@@ -7,6 +7,10 @@
 const config = require('config');
 const options = require('winnow/dist/options');
 const log = require('./logger');
+
+ //Important to require dbClientManager as exactly "./dbClientManager"
+//to get the node module cache to make this be a singleton.
+const dbClientManager = require("./dbClientManager");
 const MarkLogicQuery = require('./query');
 
 function MarkLogic () {}
@@ -43,8 +47,10 @@ MarkLogic.prototype.getData = function getData (req, callback) {
 
     log.debug("provider request: ", providerRequest);
 
+    let dbClient = dbClientManager.getDBClient(req.marklogicUsername);
+
     var mq = new MarkLogicQuery();
-	  mq.providerGetData(providerRequest)
+	  mq.providerGetData(providerRequest, dbClient)
 	    .then(data => {
 	      logResult(data);
 	      callback(null, data);
