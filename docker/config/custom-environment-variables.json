@@ -1,0 +1,13 @@
+{
+  "marklogic": {
+    "connection": {
+      "host":     "MARKLOGIC_HOST",
+      "port":     "MARKLOGIC_PORT"
+    }
+  },
+  "auth" : {
+    "options" : {
+      "secret" : "ESRI_AUTH_SECRET"
+    }
+  }
+}
