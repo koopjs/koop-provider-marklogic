@@ -11,21 +11,18 @@
   },
   "marklogic": {
     "connection": {
-      "host":     "<marklogic host name>",
-      "port":     <marklogic port>,
-      "user":     "<user name>",
-      "password": "<password>",
+      "host":     "marklogic",
+      "port":     8095,
       "authType": "DIGEST"
     }
   },
   "auth" : {
-    "enabled" : false,
-    "plugin" : "auth-direct-file",
+    "enabled" : true,
+    "plugin" : "auth-marklogic-digest-basic",
     "options" : {
       "secret" : "<secret for token generation>",
-      "identityStore" : "auth/user-store.json",
       "tokenExpirationMinutes" : 60,
-      "useHttp" : true
+      "useHttp" : false
     }
   }
 }
