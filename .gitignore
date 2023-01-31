@@ -178,3 +178,6 @@ gradle-app.setting
 package-lock.json
 test/bin/
 bin/
+
+# Intellij
+.idea
