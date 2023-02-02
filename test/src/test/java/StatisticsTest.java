@@ -9,11 +9,7 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
 
     @Test
     public void testAverageTone() {
-
         String path = request2path("gkgAvgTone.json");
-        RestAssured.urlEncodingEnabled = false;
-
-        try {
         RestAssured
             .given()
 
@@ -37,22 +33,12 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
                 .body("features[0].attributes.average_urltone", is(12.96f))
 
                 .body("features[9].attributes.domain", is("camdencourier.com.au"))
-                .body("features[9].attributes.average_urltone", is(8.33f))
-
-            ;
-        }
-        finally {
-            RestAssured.reset();
-        }
+                .body("features[9].attributes.average_urltone", is(8.33f));
     }
 
     @Test
     public void testAverageMinMaxTone() {
-
         String path = request2path("gkgAvgMinMaxTone.json");
-        RestAssured.urlEncodingEnabled = false;
-
-        try{
         RestAssured
             .given()
             .when()
@@ -76,12 +62,7 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
                 .body("features[0].attributes.domain", is("newsbeast.gr"))
                 .body("features[0].attributes.average_urltone", is(12.96f))
                 .body("features[0].attributes.minimum_urltone", is(12.96f))
-                .body("features[0].attributes.maximum_urltone", is(12.96f))
-            ;
-        }
-        finally{
-            RestAssured.reset();
-        }
+                .body("features[0].attributes.maximum_urltone", is(12.96f));
     }
 
 

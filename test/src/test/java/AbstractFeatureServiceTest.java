@@ -1,33 +1,19 @@
-import java.util.Map;
-import org.junit.*;
-
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
-
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
 
 
 public abstract class AbstractFeatureServiceTest {
 
-    static String port = System.getProperty("featureServer.port");
-
-    @Before
-    public void setupRestAssured() {
-        if (port == null) {
-            port = "80";
-        }
-        RestAssured.port = Integer.valueOf(port);
-
-        String host = System.getProperty("featureServer.host");
-        if(host == null){
-            host = "localhost";
-        }
-        RestAssured.baseURI = "http://" + host;
+    @BeforeClass
+    public static void connectToNoAuthKoop() {
+        RestAssured.port = 8090;
+        RestAssured.baseURI = "http://localhost";
         RestAssured.urlEncodingEnabled = false; // we encode the URL parameters manually
     }
 

@@ -108,7 +108,7 @@ To setup, add an `auth` section to your `config/FILENAME.json`, for example:
   "options": {
     "secret": "7072c433-a4e7-4749-86f3-849a3ed0ee95",
     "tokenExpirationMinutes": 60,
-    "identityStore": "tests/user-store.json",
+    "identityStore": "config/fake-user-store.json",
     "useHttp": true
   }
 }
