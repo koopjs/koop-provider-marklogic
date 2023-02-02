@@ -1,18 +1,12 @@
 {
   "logger": {
-    "level": "debug"
+    "level": "info"
   },
-  "port": 9000,
-  "ssl": {
-    "enabled": false,
-    "port": 443,
-    "cert": "/ssl/cert.pem",
-    "key": "/ssl/key.pem"
-  },
+  "port": 8092,
   "marklogic": {
     "connection": {
       "host": "localhost",
-      "port": 8097
+      "port": 8096
     }
   },
   "auth": {

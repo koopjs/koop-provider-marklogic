@@ -1,13 +1,13 @@
 {
   "name": "@koopjs/provider-marklogic",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A Marklogic provider for Koop",
   "main": "index.js",
   "scripts": {
-    "test:default": "cross-env NODE_ENV=test-default jest --silent --testTimeout=10000 --testNamePattern=test-default",
-    "test:auth-ml": "cross-env NODE_ENV=test-auth-ml jest --silent --testTimeout=10000 --testNamePattern=test-auth-ml",
-    "test:auth-direct-file": "cross-env NODE_ENV=test-auth-direct-file jest --silent --testTimeout=10000 --testNamePattern=test-auth-direct-file",
-    "start": "node server.js"
+    "start": "node server.js",
+    "start-no-auth": "NODE_ENV=test-auth-none node server.js",
+    "start-file-auth": "NODE_ENV=test-auth-direct-file node server.js",
+    "start-ml-auth": "NODE_ENV=test-auth-ml node server.js"
   },
   "dependencies": {
     "config": "^3.1.0",
@@ -40,20 +40,5 @@
     "data",
     "big",
     "data"
-  ],
-  "devDependencies": {
-    "cross-env": "^7.0.2",
-    "jest": "^26.1.0",
-    "supertest": "^4.0.2"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "build"
-    ]
-  }
+  ]
 }
