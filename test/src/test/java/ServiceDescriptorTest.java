@@ -55,8 +55,8 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .body("units", is("esriDecimalDegrees"))
                 .body("syncEnabled", is(false))
 
-                .body("layers.size()", is(7))
-                .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3"))
+                .body("layers.size()", is(8))
+                .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3", "GKG level 4"))
             ;
 
         // we should probably add more validation here or just add new tests if there are
@@ -118,7 +118,7 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .log().ifError()
                 .statusCode(200)
                 .log().ifValidationFails()
-                .body("layers.size()", is(7))
+                .body("layers.size()", is(8))
                 .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3","GKG level 4"))
             ;
 

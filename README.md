@@ -168,29 +168,3 @@ The [MarkLogic ArcGIS Pro add-in](https://github.com/marklogic-community/marklog
 
 For security purposes, the *service proxy* is **disabled** by default.
 
-## Tests
-
-### Setup Test Environment
-
-1. Ensure you have a local MarkLogic server running.
-2. Go to `tests/ml` directory.
-3. Run `./gradlew mlDeploy` to deploy the test database.
-
-### Run Tests
-
-1. Go to the project root directory.
-2. Run `./run-tests.sh` to run all tests.
-
-### Run Individual Tests
-
-The tests are organized in several test suites:
-
-1. test:default - no authentication tests
-2. test:auth-ml - MarkLogic authentication tests
-3. test:auth-direct-file - Direct File authentication tests
-
-Use `npm run` to run them individually, for example:
-
-```bash
-npm run test:auth-ml
-```
