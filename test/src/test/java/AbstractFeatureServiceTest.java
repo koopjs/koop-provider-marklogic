@@ -19,7 +19,7 @@ public abstract class AbstractFeatureServiceTest {
     @Before
     public void setupRestAssured() {
         if (port == null) {
-            port = "9080";
+            port = "80";
         }
         RestAssured.port = Integer.valueOf(port);
 
@@ -28,17 +28,6 @@ public abstract class AbstractFeatureServiceTest {
             host = "localhost";
         }
         RestAssured.baseURI = "http://" + host;
-
-        String user = System.getProperty("featureServer.user");
-        if (user == null) {
-            user = "admin";
-        }
-        String password = System.getProperty("featureServer.password");
-        if (password == null) {
-            password = "admin";
-        }
-
-        RestAssured.authentication = basic(user, password);
         RestAssured.urlEncodingEnabled = false; // we encode the URL parameters manually
     }
 

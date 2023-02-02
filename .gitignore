@@ -181,3 +181,5 @@ bin/
 
 # Intellij
 .idea
+
+gradle-local.properties
