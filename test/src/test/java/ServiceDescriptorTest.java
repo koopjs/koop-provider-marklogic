@@ -11,7 +11,7 @@ import org.hamcrest.core.IsNull;
 public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
 
     @Test
-    public void testServiceDescriptor() {
+    public void getServiceDescriptor() {
         String path = request2path("featureService.json");
 
         RestAssured
@@ -57,14 +57,14 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
 
                 .body("layers.size()", is(8))
                 .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3", "GKG level 4"))
-            ;
 
-        // we should probably add more validation here or just add new tests if there are
-        // other specific fields we want to inspect
+                // Koop only defines useStandardizedQueries when returning a layer descriptor
+                .body("layers[0]", not(hasKey("useStandardizedQueries")))
+            ;
     }
 
     @Test
-    public void testLayerDescriptor() {
+    public void getLayerDescriptor() {
         String path = request2path("layer.json");
 
         RestAssured
@@ -98,14 +98,22 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .body("fields.size()", is(9))
                 .body("fields.name", hasItems("OBJECTID", "urlpubtimedate", "urlpubdate", "url", "name", "urltone", "domain", "urllangcode", "geores"))
                 .body("hasStaticData", is(false))
-            ;
 
-      // we should probably add more validation here or just add new tests if there are
-      // other specific fields we want to inspect
+                // Koop appears to add this automatically, and we haven't found a way for GDS to override it - which is fine,
+                // as we want this to be true since MarkLogic doesn't have a custom SQL dialect to support.
+                // Per https://enterprise.arcgis.com/en/server/latest/administer/windows/about-standardized-queries.htm,
+                // it seems expected that this defaults to "true" - i.e. if it's not set, then standardized queries are
+                // required.
+                .body("useStandardizedQueries", is(true))
+
+                // useStandardizedQueries also appears under advancedQueryCapabilities, which is shown in some of the
+                // examples at https://developers.arcgis.com/rest/services-reference/enterprise/layer-feature-service-.htm .
+                .body("advancedQueryCapabilities.useStandardizedQueries", is(true))
+            ;
     }
 
     @Test
-    public void testLayers() {
+    public void getAllLayerDescriptorsInFeatureService() {
         String path = request2path("featureService.json") + "/layers";
 
         RestAssured
@@ -120,10 +128,12 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .log().ifValidationFails()
                 .body("layers.size()", is(8))
                 .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3","GKG level 4"))
-            ;
 
-      // we should probably add more validation here or just add new tests if there are
-      // other specific fields we want to inspect
+                // Just like when requesting a single layer descriptor, useStandardizedQueries is expected to be present
+                // and to be true for each layer.
+                .body("layers[0].useStandardizedQueries", is(true))
+                .body("layers[0].advancedQueryCapabilities.useStandardizedQueries", is(true))
+            ;
     }
 }
 
