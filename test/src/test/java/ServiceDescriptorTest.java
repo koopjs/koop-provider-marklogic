@@ -12,18 +12,7 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
 
     @Test
     public void getServiceDescriptor() {
-        String path = request2path("featureService.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("featureService.json"))
                 .body("currentVersion", is(10.51f))
                 .body("serviceDescription", notNullValue())
                 .body("hasVersionedData", is(false))
@@ -65,18 +54,7 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
 
     @Test
     public void getLayerDescriptor() {
-        String path = request2path("layer.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("layer.json"))
                 .body("id", is(0))
                 .body("name", is("GKG level 1"))
                 .body("type", is("Feature Layer"))
@@ -113,27 +91,25 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
     }
 
     @Test
+    public void layerNotFound() {
+        getRequest(request2path("layerNotFound.json"))
+            // This doesn't seem desirable. But we haven't found an example based on the docs at
+            // https://koopjs.github.io/docs/development/provider/model for how to return an error that doesn't result
+            // in a 500 - i.e. the "callback(error)" call in marklogic.js always results in a 500.
+            .statusCode(500)
+            .body("error", is("Error: geoQueryService: response with invalid 404 status"));
+    }
+
+    @Test
     public void getAllLayerDescriptorsInFeatureService() {
-        String path = request2path("featureService.json") + "/layers";
+        getRequest(request2path("featureService.json") + "/layers")
+            .body("layers.size()", is(8))
+            .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3", "GKG level 4"))
 
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-                .body("layers.size()", is(8))
-                .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3","GKG level 4"))
-
-                // Just like when requesting a single layer descriptor, useStandardizedQueries is expected to be present
-                // and to be true for each layer.
-                .body("layers[0].useStandardizedQueries", is(true))
-                .body("layers[0].advancedQueryCapabilities.useStandardizedQueries", is(true))
-            ;
+            // Just like when requesting a single layer descriptor, useStandardizedQueries is expected to be present
+            // and to be true for each layer.
+            .body("layers[0].useStandardizedQueries", is(true))
+            .body("layers[0].advancedQueryCapabilities.useStandardizedQueries", is(true));
     }
 }
 

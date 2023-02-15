@@ -1,5 +1,6 @@
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
+import io.restassured.response.ValidatableResponse;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -15,6 +16,17 @@ public abstract class AbstractFeatureServiceTest {
         RestAssured.port = 8090;
         RestAssured.baseURI = "http://localhost";
         RestAssured.urlEncodingEnabled = false; // we encode the URL parameters manually
+    }
+
+    protected final ValidatableResponse getRequest(String path) {
+        return RestAssured.given()
+                   .when()
+                   // Logging the URI each time seems useful as it varies across tests
+                   .log().uri()
+                   .get(path)
+                   .then()
+                   .log().ifError()
+                   .log().ifValidationFails();
     }
 
     public static String request2path(String requestFile) {
