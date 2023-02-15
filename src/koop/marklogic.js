@@ -2,7 +2,7 @@
  * Copyright © 2017 MarkLogic Corporation
  */
 
- // use this to convert incoming Esri geometry objects to GeoJSON in WGS84
+// See https://koopjs.github.io/docs/development/provider/model for the spec for this module.
 
 const config = require('config');
 const options = require('winnow/dist/options');
