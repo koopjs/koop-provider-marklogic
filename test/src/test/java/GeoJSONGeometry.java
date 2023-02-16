@@ -1,9 +1,7 @@
 import static org.hamcrest.Matchers.*;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
-import org.hamcrest.core.IsNull;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
@@ -23,7 +21,7 @@ public class GeoJSONGeometry  extends AbstractFeatureServiceTest {
     @Test
     public void testXPathExtraction() throws UnsupportedEncodingException, ParseException  {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
 
         RestAssured
             .given()
@@ -55,7 +53,7 @@ public class GeoJSONGeometry  extends AbstractFeatureServiceTest {
     @Test
     public void testColumnExtraction() throws UnsupportedEncodingException, ParseException  {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
 
         RestAssured
             .given()
@@ -88,7 +86,7 @@ public class GeoJSONGeometry  extends AbstractFeatureServiceTest {
     @Test
     public void testXPathCtsExtraction() throws UnsupportedEncodingException, ParseException  {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
 
         RestAssured
             .given()

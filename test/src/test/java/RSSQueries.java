@@ -3,7 +3,6 @@ import static org.hamcrest.Matchers.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.hamcrest.core.IsNull;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
@@ -14,10 +13,10 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
 	@Test
     public void testRSSPolygon1() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[60.99609375,9.96885060854611],[86.1328125,9.96885060854611],[86.1328125,37.78808138412046],[60.99609375,37.78808138412046],[60.99609375,9.96885060854611]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -33,14 +32,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.attributes.name", hasItems("Kerala","Himachal Pradesh","Odisha","Chhattisgarh","Madhya Pradesh","Uttar Pradesh","Jammu and Kashmir","Karnataka","Rajasthan","Maharashtra","Gujarat","Haryana","Tamil Nadu","Telangana"))
             ;
 		}
-	
+
 	@Test
     public void testRSSGeometryPolygon1() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[60.99609375,9.96885060854611],[86.1328125,9.96885060854611],[86.1328125,37.78808138412046],[60.99609375,37.78808138412046],[60.99609375,9.96885060854611]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -58,14 +57,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.geometry.points.size()", not(0))
                 ;
 		}
-	
+
 	@Test
     public void testRSSPolygon2() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[54.58007812499999,2.3723687086440504],[105.99609375,2.3723687086440504],[105.99609375,41.178653972331674],[54.58007812499999,41.178653972331674],[54.58007812499999,2.3723687086440504]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -81,14 +80,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.attributes.name", hasItems("Kerala","Himachal Pradesh","Odisha","Chhattisgarh","Madhya Pradesh","Uttar Pradesh","Jammu and Kashmir","Karnataka","Rajasthan","Maharashtra","Gujarat","Haryana","Tamil Nadu","Telangana","West Bengal","Assam","Tripura"))
             ;
 		}
-	
+
 	@Test
     public void testRSSGeometryPolygon2() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[54.58007812499999,2.3723687086440504],[105.99609375,2.3723687086440504],[105.99609375,41.178653972331674],[54.58007812499999,41.178653972331674],[54.58007812499999,2.3723687086440504]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -102,18 +101,18 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(17))
                 .body("features.geometry.size()", is(17))
-                .body("features.geometry.points.size()", not(0))      
+                .body("features.geometry.points.size()", not(0))
                 .body("features.attributes.name", hasItems("Kerala","Himachal Pradesh","Odisha","Chhattisgarh","Madhya Pradesh","Uttar Pradesh","Jammu and Kashmir","Karnataka","Rajasthan","Maharashtra","Gujarat","Haryana","Tamil Nadu","Telangana","West Bengal","Assam","Tripura"))
                 ;
 		}
-	
+
 	@Test
     public void testRSSPolygon3() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[70.57617187499999,25.720735134412106],[83.5400390625,25.720735134412106],[83.5400390625,34.08906131584994],[70.57617187499999,34.08906131584994],[70.57617187499999,25.720735134412106]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -129,14 +128,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.attributes.name", hasItems("Himachal Pradesh","Uttar Pradesh","Jammu and Kashmir","Rajasthan","Haryana"))
             ;
 		}
-	
+
 	@Test
     public void testRSSGeometryPolygon3() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[70.57617187499999,25.720735134412106],[83.5400390625,25.720735134412106],[83.5400390625,34.08906131584994],[70.57617187499999,34.08906131584994],[70.57617187499999,25.720735134412106]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -150,18 +149,18 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(5))
                 .body("features.geometry.size()", is(5))
-                .body("features.geometry.points.size()", not(0))      
+                .body("features.geometry.points.size()", not(0))
                 .body("features.attributes.name", hasItems("Himachal Pradesh","Uttar Pradesh","Jammu and Kashmir","Rajasthan","Haryana"))
             ;
 		}
-	
+
 	@Test
     public void testRSSPolygon4() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[74.81689453125,24.666986385216273],[76.6845703125,24.666986385216273],[76.6845703125,25.64152637306577],[74.81689453125,25.64152637306577],[74.81689453125,24.666986385216273]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -176,14 +175,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.size()", is(0))
             ;
 		}
-	
+
 	@Test
     public void testRSSPolygon5() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[69.345703125,20.097206227083888],[74.1357421875,20.097206227083888],[74.1357421875,24.026396666017327],[69.345703125,24.026396666017327],[69.345703125,20.097206227083888]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -199,14 +198,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.attributes.name", hasItems("Gujarat"))
             ;
 		}
-	
+
 	@Test
     public void testRSSGeometryPolygon5() throws UnsupportedEncodingException, ParseException  {
 
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
 		String GeometryEncoded = URLEncoder.encode("{\"rings\":[[[69.345703125,20.097206227083888],[74.1357421875,20.097206227083888],[74.1357421875,24.026396666017327],[69.345703125,24.026396666017327],[69.345703125,20.097206227083888]]],\"spatialReference\":{\"wkid\":4326}}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -220,18 +219,18 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(1))
                 .body("features.geometry.size()", is(1))
-                .body("features.geometry.points.size()", not(0))      
+                .body("features.geometry.points.size()", not(0))
                 .body("features.attributes.name", hasItems("Gujarat"))
             ;
 		}
 
-	// Envelope Test cases 
+	// Envelope Test cases
 	@Test
     public void testRSSEnvelope1() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -246,13 +245,13 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.size()", is(14))
                 .body("features.attributes.name", hasItems("Kerala","Himachal Pradesh","Odisha","Chhattisgarh","Madhya Pradesh","Uttar Pradesh","Jammu and Kashmir","Karnataka","Rajasthan","Maharashtra","Gujarat","Haryana","Tamil Nadu","Telangana"))            ;
 	   }
-	
+
 	@Test
     public void testRSSGeometryEnvelope1() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -270,13 +269,13 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.geometry.points.size()", not(0))
             ;
 	   }
-	
+
 	@Test
     public void testRSSEnvelope2() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -288,17 +287,17 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
             .then()
                 .log().ifError()
                 .statusCode(200)
-                .body("features.size()", is(17))     
+                .body("features.size()", is(17))
                 .body("features.attributes.name", hasItems("Kerala","Himachal Pradesh","Odisha","Chhattisgarh","Madhya Pradesh","Uttar Pradesh","Jammu and Kashmir","Karnataka","Rajasthan","Maharashtra","Gujarat","Haryana","Tamil Nadu","Telangana","West Bengal","Assam","Tripura"))
                 ;
 	   }
-	
+
 	@Test
     public void testRSSGeometryEnvelope2() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -312,17 +311,17 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(17))
                 .body("features.geometry.size()", is(17))
-                .body("features.geometry.points.size()", not(0))      
+                .body("features.geometry.points.size()", not(0))
                 .body("features.attributes.name", hasItems("Kerala","Himachal Pradesh","Odisha","Chhattisgarh","Madhya Pradesh","Uttar Pradesh","Jammu and Kashmir","Karnataka","Rajasthan","Maharashtra","Gujarat","Haryana","Tamil Nadu","Telangana","West Bengal","Assam","Tripura"))
                 ;
 	   }
-	
+
 	@Test
     public void testRSSEnvelope3() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -334,17 +333,17 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
             .then()
                 .log().ifError()
                 .statusCode(200)
-                .body("features.size()", is(5))    
+                .body("features.size()", is(5))
                 .body("features.attributes.name", hasItems("Himachal Pradesh","Uttar Pradesh","Jammu and Kashmir","Rajasthan","Haryana"))
             ;
 	   }
-	
+
 	@Test
     public void testRSSGeometryEnvelope3() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -358,18 +357,18 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(5))
                 .body("features.geometry.size()", is(5))
-                .body("features.geometry.points.size()", not(0))      
+                .body("features.geometry.points.size()", not(0))
                 .body("features.attributes.name", hasItems("Himachal Pradesh","Uttar Pradesh","Jammu and Kashmir","Rajasthan","Haryana"))
             ;
 	   }
-	
+
 
 	@Test
     public void testRSSEnvelope4() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -381,16 +380,16 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
             .then()
                 .log().ifError()
                 .statusCode(200)
-                .body("features.size()", is(0))    
+                .body("features.size()", is(0))
             ;
 	   }
-	
+
 	@Test
     public void testRSSEnvelope5() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -406,13 +405,13 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.attributes.name", hasItems("Gujarat"))
                 ;
 	   }
-	
+
 	@Test
     public void testRSSGeometryEnvelope5() {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
     	RestAssured.urlEncodingEnabled = false;
- 	
+
         RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -426,18 +425,18 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(1))
                 .body("features.geometry.size()", is(1))
-                .body("features.geometry.points.size()", not(0))      
+                .body("features.geometry.points.size()", not(0))
                 .body("features.attributes.name", hasItems("Gujarat"));
 	   }
-	
+
 	//Point test cases
 	@Test
     public void testRSSPoint1() throws UnsupportedEncodingException, ParseException  {
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
 
 		String GeometryEncoded = URLEncoder.encode("{\"x\" : 73.432617, \"y\" : 27.391277}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -453,14 +452,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features[0].attributes.name", is("Rajasthan"))
             ;
 		}
-	
+
 	@Test
     public void testRSSGeometryPoint1() throws UnsupportedEncodingException, ParseException  {
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
 
 		String GeometryEncoded = URLEncoder.encode("{\"x\" : 73.432617, \"y\" : 27.391277}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -474,18 +473,18 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(1))
                 .body("features.geometry.size()", is(1))
-                .body("features.geometry.points.size()", not(0)) 
+                .body("features.geometry.points.size()", not(0))
                 .body("features[0].attributes.name", is("Rajasthan"))
             ;
 		}
-	
+
 	@Test
     public void testRSSPoint2() throws UnsupportedEncodingException, ParseException  {
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
 
 		String GeometryEncoded = URLEncoder.encode("{\"x\" : 92.46093749999999, \"y\" : 39.095962936305476}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -500,14 +499,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features.size()", is(0))
             ;
 		}
-	
+
 	@Test
     public void testRSSPoint3() throws UnsupportedEncodingException, ParseException  {
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}";
 
 		String GeometryEncoded = URLEncoder.encode("{\"x\" : 84.803467, \"y\" : 20.940920}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -523,14 +522,14 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .body("features[0].attributes.name", is("Odisha"))
             ;
 		}
-	
+
 	@Test
     public void testRSSGeometryPoint3() throws UnsupportedEncodingException, ParseException  {
-		String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?geometryType={geometryType}&geometry={geometry}&returnGeometry=true";
 
 		String GeometryEncoded = URLEncoder.encode("{\"x\" : 84.803467, \"y\" : 20.940920}" ,"UTF-8");
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -544,17 +543,17 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(1))
                 .body("features.geometry.size()", is(1))
-                .body("features.geometry.points.size()", not(0)) 
+                .body("features.geometry.points.size()", not(0))
                 .body("features[0].attributes.name", is("Odisha"))
             ;
 		}
-	
+
 	@Test
     public void testRSSAllFields() throws UnsupportedEncodingException, ParseException  {
 
 		String path = "marklogic/GeoLocation/FeatureServer/{layer}/query?outFields=*";
 		RestAssured.urlEncodingEnabled = false;
- 		
+
     	RestAssured
             .given()
             	.pathParam("layer", 2)
@@ -566,7 +565,7 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 .statusCode(200)
                 .body("features.size()", is(17))
                 .body("features.geometry.size()", is(17))
-                .body("features.geometry.points.size()", not(0))      
+                .body("features.geometry.points.size()", not(0))
                 .body("features.attributes.name", hasItems("Kerala","Himachal Pradesh","Odisha","Chhattisgarh","Madhya Pradesh","Uttar Pradesh","Jammu and Kashmir","Karnataka","Rajasthan","Maharashtra","Gujarat","Haryana","Tamil Nadu","Telangana","West Bengal","Assam","Tripura"))
                 ;
 		}
