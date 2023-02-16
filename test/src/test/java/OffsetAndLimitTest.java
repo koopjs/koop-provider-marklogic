@@ -9,20 +9,7 @@ public class OffsetAndLimitTest extends AbstractFeatureServiceTest {
 
 	@Test
     public void testGkgOffsetAndLimit() {
-
-        String path = request2path("gkgOffsetAndLimit.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
-
+        getRequest(request2path("gkgOffsetAndLimit.json"))
             .body("features.size()", is(10))
 
             .body("features[0].attributes.OBJECTID", is(3728))

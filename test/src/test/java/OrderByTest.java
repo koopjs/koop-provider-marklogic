@@ -9,19 +9,7 @@ public class OrderByTest extends AbstractFeatureServiceTest {
 
 	@Test
     public void testGkgOrderbyTop10() {
-
-        String path = request2path("gkgOrderbyTop10.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("gkgOrderbyTop10.json"))
             .body("features.size()", is(10))
 
             .body("features[0].attributes.OBJECTID", is(8991))
@@ -48,18 +36,7 @@ public class OrderByTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testGkgOrderbyLeadingWhitespace() {
-
-        String path = request2path("gkgOrderbyLeadingWhitespace.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("gkgOrderbyLeadingWhitespace.json"))
             .body("objectIdFieldName", is("OBJECTID"))
             .body("globalIdFieldName", is(""))
             .body("hasZ", is(false))

@@ -1,26 +1,13 @@
-import io.restassured.RestAssured;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 
 
 public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
     @Test
     public void testViewAsRoot() {
-        String path = request2path("ViewPlusSparqlJoin.json");
-
-        RestAssured
-                .given()
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-
+        getRequest(request2path("ViewPlusSparqlJoin.json"))
                 .body("features.size()", is(5))
 
                 .body("features[0].attributes.OBJECTID", is(1))
@@ -32,19 +19,7 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testDataSourceWithViewAsRoot() {
-        String path = request2path("DataSourceArrayExampleService.json");
-
-        RestAssured
-                .given()
-                .when()
-                    .log().uri()
-                    .get(path)
-
-                .then()
-                    .log().ifError()
-                    .statusCode(200)
-                    .log().ifValidationFails()
-
+        getRequest(request2path("DataSourceArrayExampleService.json"))
                     .body("features.size()", is(5))
 
                     .body("features[0].attributes.OBJECTID", is(1))
@@ -61,19 +36,7 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testDataSourceWithViewAsRootAndSparqlJoin() {
-        String path = request2path("DataSourceArrayViewPlusSparqlJoin.json");
-
-        RestAssured
-                .given()
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-
+        getRequest(request2path("DataSourceArrayViewPlusSparqlJoin.json"))
                 .body("features.size()", is(5))
 
                 .body("features[0].attributes.OBJECTID", is(1))
@@ -85,19 +48,7 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testDataSourceWithSparqlAsRoot() {
-        String path = request2path("DataSourceArraySparqlOnly.json");
-
-        RestAssured
-                .given()
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-
+        getRequest(request2path("DataSourceArraySparqlOnly.json"))
                 .body("features.size()", is(5))
 
                 .body("features[0].attributes.OBJECTID", is(0))
@@ -109,19 +60,7 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
     @Test
     @Ignore("Temporarily ignored, need some help with debugging why this query fails")
     public void testDataSourceWithSparqlAsRootAndViewJoinWithFieldsElement() {
-        String path = request2path("DataSourceArraySparqlPlusViewJoinWithFieldsElement.json");
-
-        RestAssured
-                .given()
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-
+        getRequest(request2path("DataSourceArraySparqlPlusViewJoinWithFieldsElement.json"))
                 .body("features.size()", is(5))
 
                 .body("features[0].attributes.OBJECTID", is(0))
@@ -134,19 +73,7 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
     @Test
     @Ignore("Temporarily ignored, need some help with debugging why this query fails")
     public void testDataSourceWithSparqlAsRootAndViewJoinWithoutFieldsElement() {
-        String path = request2path("DataSourceArraySparqlPlusViewJoinWithoutFieldsElement.json");
-
-        RestAssured
-                .given()
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-
+        getRequest(request2path("DataSourceArraySparqlPlusViewJoinWithoutFieldsElement.json"))
                 .body("features.size()", is(5))
 
                 .body("features[0].attributes.OBJECT_ID", is(0))
@@ -166,19 +93,7 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testDataSourceWithSparqlAsRootAndViewJoinWithoutFieldsElementStats() {
-        String path = request2path("DataSourceArraySparqlPlusViewJoinWithoutFieldsElementStats.json");
-
-        RestAssured
-                .given()
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-
+        getRequest(request2path("DataSourceArraySparqlPlusViewJoinWithoutFieldsElementStats.json"))
                 .body("features.size()", is(2))
                 .body(
                     "features.attributes.find { it.domain == '4-traders.com' }.objectid_count",
@@ -190,7 +105,4 @@ public class ServiceDescriptorArrayTest extends AbstractFeatureServiceTest {
                 )
         ;
     }
-
-
-
 }
