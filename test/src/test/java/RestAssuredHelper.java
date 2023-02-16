@@ -19,6 +19,10 @@ public class RestAssuredHelper {
     }
 
     public ValidatableResponse get(String path) {
+        return get(path, 200);
+    }
+
+    public ValidatableResponse get(String path, int expectedStatusCode) {
         return spec
                    .when()
                    // Logging the URI each time seems useful as it varies across tests
@@ -27,6 +31,6 @@ public class RestAssuredHelper {
                    .then()
                    .log().ifError()
                    .log().ifValidationFails()
-                   .statusCode(200);
+                   .statusCode(expectedStatusCode);
     }
 }

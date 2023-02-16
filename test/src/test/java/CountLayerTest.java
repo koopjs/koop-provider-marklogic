@@ -7,7 +7,6 @@ public class CountLayerTest extends AbstractFeatureServiceTest{
 	@Test
     public void testGkgCountLayer0() {
         getRequest(request2path("gkgCountLayer0.json"))
-                .statusCode(200)
                 .log().ifValidationFails()
                 .body("count", is(38765))
             ;
@@ -16,7 +15,6 @@ public class CountLayerTest extends AbstractFeatureServiceTest{
 	@Test
     public void testGkgCountLayer1() {
         getRequest(request2path("gkgCountLayer1.json"))
-                .statusCode(200)
                 .log().ifValidationFails()
                 .body("count", is(3557))
             ;
