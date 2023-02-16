@@ -9,7 +9,7 @@ public class IncludeFieldsTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testIncludeFieldsInFirstDataSourcesObject() {
-        String path = "/marklogic/{service}/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
+        String path = basePath("{service}") + "/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
                 RestAssured
                 .given()
                   .pathParam("service", "GDeltGKG")
@@ -44,7 +44,7 @@ public class IncludeFieldsTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testIncludeFieldsInOriginalSource() {
-        String path = "/marklogic/{service}/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
+        String path = basePath("{service}") + "/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
         RestAssured
                 .given()
                 .pathParam("service", "GDeltGKG")

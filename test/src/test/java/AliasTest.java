@@ -1,5 +1,4 @@
 import io.restassured.RestAssured;
-import org.hamcrest.core.IsNull;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -9,7 +8,7 @@ public class AliasTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testFieldAlias() {
-        String path = "/marklogic/{service}/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
+        String path = basePath("{service}") + "/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
                 RestAssured
                 .given()
                   .pathParam("service", "GDeltGKG")

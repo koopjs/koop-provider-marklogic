@@ -1,14 +1,15 @@
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.ValidatableResponse;
-import org.junit.Before;
 import org.junit.BeforeClass;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 
-
+/**
+ * Base class for all tests that exercise Koop endpoints.
+ */
 public abstract class AbstractFeatureServiceTest {
 
     @BeforeClass
@@ -29,15 +30,19 @@ public abstract class AbstractFeatureServiceTest {
                    .log().ifValidationFails();
     }
 
-    public static String request2path(String requestFile) {
-        return request2path(requestFile, true);
+    /**
+     * @param serviceName
+     * @return the start of a path for a request to a Koop server; one intent of this is to make it easier to change
+     * all of our tests when the base path changes between Koop versions
+     */
+    protected final String basePath(String serviceName) {
+        return String.format("/marklogic/%s", serviceName);
     }
 
-    public static String request2path(String requestFile, boolean urlEncode) {
+    protected final String request2path(String requestFile) {
         JsonPath jsonPath = new JsonPath(AbstractFeatureServiceTest.class.getResource("/" + requestFile));
 
-        String service = jsonPath.getString("params.id");
-        String url = "/marklogic/" + service + "/FeatureServer";
+        String url = basePath(jsonPath.getString("params.id")) + "/FeatureServer";
 
         String layer = jsonPath.getString("params.layer");
         if (layer != null) {
@@ -56,14 +61,11 @@ public abstract class AbstractFeatureServiceTest {
 
                 Object value = query.get(param);
                 if (value != null) {
-                    if (urlEncode) {
-                        try {
-                            value = URLEncoder.encode(value.toString(), "UTF-8");
-                        } catch(UnsupportedEncodingException e) {
-                            throw new RuntimeException(e);
-                        }
+                    try {
+                        value = URLEncoder.encode(value.toString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
                     }
-
                     url += param + "=" + value.toString() + "&";
                 }
             }
