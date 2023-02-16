@@ -92,11 +92,10 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
 
     @Test
     public void layerNotFound() {
-        getRequest(request2path("layerNotFound.json"))
-            // This doesn't seem desirable. But we haven't found an example based on the docs at
-            // https://koopjs.github.io/docs/development/provider/model for how to return an error that doesn't result
-            // in a 500 - i.e. the "callback(error)" call in marklogic.js always results in a 500.
-            .statusCode(500)
+        // This doesn't seem desirable. But we haven't found an example based on the docs at
+        // https://koopjs.github.io/docs/development/provider/model for how to return an error that doesn't result
+        // in a 500 - i.e. the "callback(error)" call in marklogic.js always results in a 500.
+        getRequest(request2path("layerNotFound.json"), 500)
             .body("error", is("Error: geoQueryService: response with invalid 404 status"));
     }
 

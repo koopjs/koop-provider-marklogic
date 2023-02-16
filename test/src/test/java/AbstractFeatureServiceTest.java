@@ -23,6 +23,10 @@ public abstract class AbstractFeatureServiceTest {
         return new RestAssuredHelper().get(path);
     }
 
+    protected final ValidatableResponse getRequest(String path, int expectedStatusCode) {
+        return new RestAssuredHelper().get(path, expectedStatusCode);
+    }
+
     /**
      * @param serviceName
      * @return the start of a path for a request to a Koop server; one intent of this is to make it easier to change

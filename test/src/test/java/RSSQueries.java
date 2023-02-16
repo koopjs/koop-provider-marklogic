@@ -1,10 +1,12 @@
-import static org.hamcrest.Matchers.*;
+import org.json.simple.parser.ParseException;
+import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.json.simple.parser.ParseException;
-import org.junit.Test;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 public class RSSQueries  extends AbstractFeatureServiceTest {
 
@@ -409,13 +411,10 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
 		}
 
 	@Test
-    public void testRSSAllFields() throws UnsupportedEncodingException, ParseException  {
-
-		String path = "marklogic/GeoLocation/FeatureServer/{layer}/query?outFields=*";
-
+    public void testRSSAllFields() {
+		String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?outFields=*";
         RestAssuredHelper helper = new RestAssuredHelper();
         helper.pathParam("layer", 2);
-
         helper.get(path)
                 .body("features.size()", is(17))
                 .body("features.geometry.size()", is(17))
@@ -424,7 +423,3 @@ public class RSSQueries  extends AbstractFeatureServiceTest {
                 ;
 		}
 	}
-
-
-
-///marklogic/GeoLocation/FeatureServer/0/query?outFields=*
