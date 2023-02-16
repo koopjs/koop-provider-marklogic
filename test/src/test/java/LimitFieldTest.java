@@ -9,19 +9,7 @@ public class LimitFieldTest extends AbstractFeatureServiceTest{
 
 	@Test
     public void testGkgLimitFields() {
-
-        String path = request2path("gkgLimitFields.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("gkgLimitFields.json"))
             .body("objectIdFieldName", is("OBJECTID"))
             .body("globalIdFieldName", is(""))
             .body("hasZ", is(false))
@@ -54,95 +42,35 @@ public class LimitFieldTest extends AbstractFeatureServiceTest{
 
     @Test
     public void testGkgAllLimitFields() {
-
-        String path = request2path("gkgLimitAllFields.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("gkgLimitAllFields.json"))
             .body("features.size()", is(5000))
         ;
     }
 
     @Test
     public void testGkgLimitResultRecordCount1() {
-
-        String path = request2path("gkgLimitResultRecordCount1.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("gkgLimitResultRecordCount1.json"))
             .body("objectIds.size()", is(3500))
         ;
     }
 
     @Test
     public void testGkgLimitResultRecordCount2() {
-
-        String path = request2path("gkgLimitResultRecordCount2.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("gkgLimitResultRecordCount2.json"))
             .body("objectIds.size()", is(7000))
         ;
     }
 
     @Test
     public void testGkgLimitResultRecordCount3() {
-
-        String path = request2path("gkgLimitResultRecordCount3.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("gkgLimitResultRecordCount3.json"))
             .body("features.size()", is(4000))
         ;
     }
 
     @Test
     public void testGkgLimitReturnIdsOnly0() {
-
-        String path = request2path("gkgLimitReturnIdsOnly0.json");
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("gkgLimitReturnIdsOnly0.json"))
             .body("objectIds.size()", is(10))
         ;
     }

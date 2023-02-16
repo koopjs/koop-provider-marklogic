@@ -1,51 +1,19 @@
-import static org.hamcrest.Matchers.is;
-
-import java.awt.List;
 import org.junit.Test;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.IsNull;
 
-import io.restassured.RestAssured;
+import static org.hamcrest.Matchers.is;
 
 public class IdTest extends AbstractFeatureServiceTest {
 
 	@Test
     public void testGkgIdsOnly() {
-
-        String path = request2path("gkgIdsOnly.json");
-
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("gkgIdsOnly.json"))
                 .body("objectIdField", is("OBJECTID"))
                 ;
     }
 
 	@Test
     public void testGkgObjectIds() {
-
-        String path = request2path("gkgObjectIds.json");
-
-
-        RestAssured
-        .given()
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
-
+        getRequest(request2path("gkgObjectIds.json"))
             .body("features.size()", is(2))
             .body("features[1].attributes.OBJECTID", is(56576))
             .body("features[1].attributes.urlpubtimedate", is(1495636200000L))

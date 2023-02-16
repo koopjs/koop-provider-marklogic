@@ -9,18 +9,7 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
 
     @Test
     public void testAverageTone() {
-        String path = request2path("gkgAvgTone.json");
-        RestAssured
-            .given()
-
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("gkgAvgTone.json"))
                 .body("displayFieldName", is(""))
                 .body("fieldAliases.domain", is("domain"))
                 .body("fieldAliases.average_urltone", is("average_urltone"))
@@ -38,17 +27,7 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
 
     @Test
     public void testAverageMinMaxTone() {
-        String path = request2path("gkgAvgMinMaxTone.json");
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("gkgAvgMinMaxTone.json"))
                 .body("displayFieldName", is(""))
                 .body("fieldAliases.domain", is("domain"))
                 .body("fieldAliases.average_urltone", is("average_urltone"))
@@ -68,19 +47,7 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
 
 	@Test
     public void testStddevAndVarUrltone() {
-
-        String path = request2path("stddevAndVarUrltone.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("stddevAndVarUrltone.json"))
                 .body("displayFieldName", is(""))
                 .body("fieldAliases.count_urltone", is("count_urltone"))
                 .body("fieldAliases.min_urltone", is("min_urltone"))
