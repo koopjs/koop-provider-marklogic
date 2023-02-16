@@ -1,4 +1,3 @@
-import io.restassured.RestAssured;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -9,25 +8,15 @@ public class AliasTest extends AbstractFeatureServiceTest {
     @Test
     public void testFieldAlias() {
         String path = basePath("{service}") + "/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
-                RestAssured
-                .given()
-                  .pathParam("service", "GDeltGKG")
+        RestAssuredHelper helper = new RestAssuredHelper();
+        helper.pathParam("service", "GDeltGKG")
                   .pathParam("layer", 4)
                   .pathParam("resultRecordCount", 5)
                   .pathParam("orderByFields", "name&nbspASC")
-                  .pathParam("returnGeometry", true)
+                  .pathParam("returnGeometry", true);
 
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-
+        helper.get(path)
                 .body("features.size()", is(5))
-
                 .body("features[0].attributes.OBJECTID", is(20643))
                 .body("features[0].attributes.urlpubtimedate", is(1495616400000l))
                 .body("features[0].attributes.urlpubdate", is(1495584000000l))

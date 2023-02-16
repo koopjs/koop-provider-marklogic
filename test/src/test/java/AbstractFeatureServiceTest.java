@@ -20,14 +20,7 @@ public abstract class AbstractFeatureServiceTest {
     }
 
     protected final ValidatableResponse getRequest(String path) {
-        return RestAssured.given()
-                   .when()
-                   // Logging the URI each time seems useful as it varies across tests
-                   .log().uri()
-                   .get(path)
-                   .then()
-                   .log().ifError()
-                   .log().ifValidationFails();
+        return new RestAssuredHelper().get(path);
     }
 
     /**
