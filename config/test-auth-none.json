@@ -11,6 +11,5 @@
       "password": "test-geo-data-services-writer",
       "authType": "DIGEST"
     }
-  },
-  "enableServiceProxy": false
+  }
 }
