@@ -14,11 +14,11 @@ const fs = require('fs');
 const express = require('express');
 const http = require('http');
 const proxy = require('./src/koop/proxy');
-const Koop = require('koop');
+const Koop = require('@koopjs/koop-core');
 //Important to require dbClientManager case sensitively as "dbClientManager"
 //to get the node module cache to effectively make this be a singleton.
 const dbClientManager = require('./src/koop/dbClientManager');
-const koop = new Koop();
+const koop = new Koop({});
 
 // Configure the auth plugin by executing its exported function with required args
 if (config.auth && config.auth.enabled) {
@@ -28,7 +28,7 @@ if (config.auth && config.auth.enabled) {
     dbClientManager.useStaticClient(true);
   } else if (config.auth.plugin === 'auth-marklogic-digest-basic') {
     auth = require("./src/koop/authMarkLogic")(config.auth.options);
-  } else if (config.auth.plugin) { 
+  } else if (config.auth.plugin) {
     //if it's something we don't recognize, try to require it by plugin name and pass in the options object
     //if this provider wants to use the static client, it will have to call dbClientManager.useStaticClient()
     //itself in the exported function.
@@ -61,7 +61,7 @@ const app = express();
 
 if (config.enableServiceProxy) {
   // proxy requests for Geo Data Services REST extensions and v1/documents
-  app.use(/\/(v1|LATEST)/, 
+  app.use(/\/(v1|LATEST)/,
     proxy.create(/\/(resources\/(modelService|geoSearchService|geoQueryService)|documents)/));
 }
 log.info(`Service proxy for geo data services is ${(config.enableServiceProxy ? 'enabled' : 'disabled')}`);

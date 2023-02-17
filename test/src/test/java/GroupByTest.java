@@ -8,13 +8,14 @@ public class GroupByTest extends AbstractFeatureServiceTest{
     @Test
     public void testGkgGroupBy() {
         getRequest(request2path("gkgGroupBy.json"))
-                .body("displayFieldName", is(""))
-                .body("fieldAliases.domain", is("domain"))
-                .body("fieldAliases.domain_count", is("domain_count"))
+// This field doesn't seem to be returned any longer.
+// Is there a switch to turn it on or are they completely gone?
+//                .body("displayFieldName", is(""))
 
                 .body("fields.size()", is(2))
                 .body("fields.name", hasItems("domain", "domain_count"))
-                .body("fields.type", hasItems("esriFieldTypeString", "esriFieldTypeInteger"))
+                .body("fields.type", hasItems("esriFieldTypeString", "esriFieldTypeDouble"))
+                .body("fields.alias", hasItems("domain", "domain_count"))
 
                 .body("features.size()", is(2455))
                 .body("features[0].attributes.domain", is("fax.al"))

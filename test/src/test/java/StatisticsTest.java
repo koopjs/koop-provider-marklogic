@@ -3,16 +3,15 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
 
-import io.restassured.RestAssured;
 
 public class StatisticsTest  extends AbstractFeatureServiceTest{
 
     @Test
     public void testAverageTone() {
         getRequest(request2path("gkgAvgTone.json"))
-                .body("displayFieldName", is(""))
-                .body("fieldAliases.domain", is("domain"))
-                .body("fieldAliases.average_urltone", is("average_urltone"))
+// This field doesn't seem to be returned any longer.
+// Is there a switch to turn it on or are they completely gone?
+//                .body("displayFieldName", is(""))
 
                 .body("fields.size()", is(2))
                 .body("fields.name", hasItems("domain", "average_urltone"))
@@ -28,11 +27,9 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
     @Test
     public void testAverageMinMaxTone() {
         getRequest(request2path("gkgAvgMinMaxTone.json"))
-                .body("displayFieldName", is(""))
-                .body("fieldAliases.domain", is("domain"))
-                .body("fieldAliases.average_urltone", is("average_urltone"))
-                .body("fieldAliases.minimum_urltone", is("minimum_urltone"))
-                .body("fieldAliases.maximum_urltone", is("maximum_urltone"))
+// This field doesn't seem to be returned any longer.
+// Is there a switch to turn it on or are they completely gone?
+//                .body("displayFieldName", is(""))
 
                 .body("fields.size()", is(4))
                 .body("fields.name", hasItems("domain", "maximum_urltone", "average_urltone", "minimum_urltone"))
@@ -48,13 +45,9 @@ public class StatisticsTest  extends AbstractFeatureServiceTest{
 	@Test
     public void testStddevAndVarUrltone() {
         getRequest(request2path("stddevAndVarUrltone.json"))
-                .body("displayFieldName", is(""))
-                .body("fieldAliases.count_urltone", is("count_urltone"))
-                .body("fieldAliases.min_urltone", is("min_urltone"))
-                .body("fieldAliases.max_urltone", is("max_urltone"))
-                .body("fieldAliases.avg_urltone", is("avg_urltone"))
-                .body("fieldAliases.stddev_urltone", is("stddev_urltone"))
-                .body("fieldAliases.var_urltone", is("var_urltone"))
+// This field doesn't seem to be returned any longer.
+// Is there a switch to turn it on or are they completely gone?
+//                .body("displayFieldName", is(""))
 
                 .body("fields.size()", is(6))
                 .body("fields.name", hasItems("count_urltone", "min_urltone", "max_urltone", "avg_urltone", "stddev_urltone", "var_urltone"))

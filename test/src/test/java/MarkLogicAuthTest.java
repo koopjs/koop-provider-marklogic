@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.is;
  *
  * Depends on "npm run start-ml-auth" running.
  */
-public class MarkLogicAuthTest {
+public class MarkLogicAuthTest extends AbstractFeatureServiceTest{
 
     @BeforeClass
     public static void connectToMarkLogicAuthKoop() {
@@ -33,7 +33,7 @@ public class MarkLogicAuthTest {
         RestAssured
             .given()
             .when().header("Authorization", accessToken)
-            .get("/marklogic/GDeltGKG/FeatureServer")
+            .get(basePath("GDeltGKG/FeatureServer"))
             .then()
             .statusCode(200)
             .body("serviceDescription", is("GDelt GKG data. Georesolution values are 1=country, 2=US State / non-US ADM1, 3=city/landmark."));
@@ -56,7 +56,7 @@ public class MarkLogicAuthTest {
         RestAssured
             .given()
             .when().header("Authorization", "not a valid token")
-            .get("/marklogic/GDeltGKG/FeatureServer")
+            .get(basePath("GDeltGKG/FeatureServer"))
             .then()
             // While none/file auth return a 200, our MarkLogic auth returns a 403. Not sure if this is expected to
             // differ from the other two auth strategies.

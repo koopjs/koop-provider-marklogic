@@ -23,14 +23,6 @@ task runNoAuthKoop(type: com.github.psxpaul.task.ExecFork) {
     waitForPort = 8090
 }
 
-task runFileAuthKoop(type: com.github.psxpaul.task.ExecFork) {
-    description = "Run a Koop server using file-based authentication"
-    executable = "npm"
-    args = ["run", "start-file-auth"]
-    workingDir = ".."
-    waitForPort = 8091
-}
-
 task runMarkLogicAuthKoop(type: com.github.psxpaul.task.ExecFork) {
     description = "Run a Koop server using MarkLogic-based authentication"
     executable = "npm"
@@ -42,5 +34,5 @@ task runMarkLogicAuthKoop(type: com.github.psxpaul.task.ExecFork) {
 task runKoopServers {
     description = "Run all 3 Koop servers that the JUnit tests depend on"
 }
-runKoopServers.dependsOn runNoAuthKoop, runFileAuthKoop, runMarkLogicAuthKoop
+runKoopServers.dependsOn runNoAuthKoop, runMarkLogicAuthKoop
 test.mustRunAfter runKoopServers

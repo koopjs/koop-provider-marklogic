@@ -33,7 +33,7 @@ public abstract class AbstractFeatureServiceTest {
      * all of our tests when the base path changes between Koop versions
      */
     protected final String basePath(String serviceName) {
-        return String.format("/marklogic/%s", serviceName);
+        return String.format("/marklogic/rest/services/%s", serviceName);
     }
 
     protected final String request2path(String requestFile) {
