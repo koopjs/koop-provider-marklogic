@@ -61,7 +61,7 @@ public class GroupByTest extends AbstractFeatureServiceTest{
 
     @Test
     public void testGroupByWithFilter() {
-        getRequest(request2path("groupByWithFilter.json"))
+        getRequest(request2path("groupByWIthFilter.json"))
                 .body("features.size()", is(2))
                 .body("features.attributes.find { it.domain == '4-traders.com' }.objectid_count", is(178))
                 .body("features.attributes.find { it.domain == '9news.com.au' }.objectid_count", is(14))
