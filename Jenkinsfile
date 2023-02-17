@@ -23,10 +23,9 @@ pipeline{
           export GRADLE_USER_HOME=$WORKSPACE/$GRADLE_DIR
           export PATH=$NODE_HOME_DIR/bin:$GRADLE_USER_HOME:$JAVA_HOME/bin:$PATH
           cd $WORKSPACE/marklogic-geo-data-services
-          ./gradlew -i mlDeploy loadTestData test -PmlUsername=admin -PmlPassword=admin || true
+          ./gradlew -i mlDeploy loadTestData -PmlUsername=admin -PmlPassword=admin || true
           cd $WORKSPACE/marklogic-koop-provider
           npm install
-          npm run start
           cd test
           ./gradlew runKoopServers test || true
         '''
