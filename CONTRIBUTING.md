@@ -21,13 +21,12 @@ The tests for this project are located in a Gradle project in the `./test` direc
 against the test application that is deployed by the marklogic-geo-data-services project. So you'll first need to 
 follow the CONTRIBUTING guide for that repository in order to deploy the test application in that repository. 
 
-These tests depend on hitting 3 different Koop servers:
+These tests depend on hitting 2 different Koop servers:
 
 1. A Koop server on port 8090 that doesn't require authentication.
-2. A Koop server on port 8091 that requires file-based authentication (using `./config/fake-user-store.json).
-3. A Koop server on port 8092 that requires MarkLogic-based authentication.
+2. A Koop server on port 8092 that requires MarkLogic-based authentication.
 
-To run the tests with all 3 Koop servers active, do the following:
+To run the tests with both Koop servers active, do the following:
 
     cd test
     ./gradlew runKoopServers test
@@ -38,7 +37,6 @@ port 8096 in your MarkLogic instance:
 
     npm run start-no-auth
 
-If you want to run `FileAuthTest` or `MarkLogicAuthTest`, you'll also need to run these in separate terminals:
+If you want to run `MarkLogicAuthTest`, you'll also need to run this in a separate terminal:
 
-    npm run start-file-auth
     npm run start-ml-auth

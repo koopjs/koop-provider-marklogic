@@ -67,7 +67,6 @@ The project supports the following authentication strategies:
 
 - None (Default)
 - MarkLogic
-- File-based
 
 #### No Authentication
 
@@ -75,7 +74,7 @@ All Koop services will be publicly accessible.  Koop will still need valid MarkL
 
 #### MarkLogic Authentication
 
-This uses a _direct authentication_ pattern similar to [Koop-Auth-Direct-File](https://github.com/koopjs/koop-auth-direct-file), with MarkLogic being responsible for authenticating user credentials.  The credentials supplied must match a valid MarkLogic server user account.
+This uses a _direct authentication_ pattern, with MarkLogic being responsible for authenticating user credentials.  The credentials supplied must match a valid MarkLogic server user account.
 
 To setup, add an `auth` section to your `config/FILENAME.json`, for example:
 
@@ -94,32 +93,6 @@ To setup, add an `auth` section to your `config/FILENAME.json`, for example:
 |------------------------|-----------------------------------------------|-----------------------------|---------------------|
 | secret                 | Used to verify JSON web tokens                | string                      | auto-generated UUID |
 | tokenExpirationMinutes | The validity of tokens in minutes             | Number                      | 60                  |
-
-#### File-based Authentication
-
-This uses the [Koop-Auth-Direct-File](https://github.com/koopjs/koop-auth-direct-file) module for authentication.  Check out its [official project page](https://github.com/koopjs/koop-auth-direct-file) for more information.
-
-To setup, add an `auth` section to your `config/FILENAME.json`, for example:
-
-```json
-"auth": {
-  "plugin": "auth-direct-file",
-  "enabled": true,
-  "options": {
-    "secret": "7072c433-a4e7-4749-86f3-849a3ed0ee95",
-    "tokenExpirationMinutes": 60,
-    "identityStore": "config/fake-user-store.json",
-    "useHttp": true
-  }
-}
-```
-
-| Option                 | Description                                   | Value                       | Default value       |
-|------------------------|-----------------------------------------------|-----------------------------|---------------------|
-| secret                 | Used to verify JSON web tokens                | string                      | auto-generated UUID |
-| tokenExpirationMinutes | The validity of tokens in minutes             | Number                      | 60                  |
-| identityStore          | Path to JSON file containing list of users    | string                      | none                |
-| useHttp                | Allow HTTP for token services                 | boolean                     | false               |
 
 ## Running the Connector
 
