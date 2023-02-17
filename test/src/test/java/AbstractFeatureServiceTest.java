@@ -2,10 +2,14 @@ import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.ValidatableResponse;
 import org.junit.BeforeClass;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+
+import static org.junit.Assert.fail;
 
 /**
  * Base class for all tests that exercise Koop endpoints.
@@ -37,7 +41,12 @@ public abstract class AbstractFeatureServiceTest {
     }
 
     protected final String request2path(String requestFile) {
-        JsonPath jsonPath = new JsonPath(AbstractFeatureServiceTest.class.getResource("/" + requestFile));
+        JsonPath jsonPath = null;
+        try {
+            jsonPath = new JsonPath(new ClassPathResource(requestFile).getInputStream());
+        } catch (IOException e) {
+            fail("Unable to read JSON from file: " + requestFile + "; cause: " + e.getMessage());
+        }
 
         String url = basePath(jsonPath.getString("params.id")) + "/FeatureServer";
 

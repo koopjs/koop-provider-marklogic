@@ -8,11 +8,12 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation "io.rest-assured:json-path:5.3.0"
-    testImplementation "io.rest-assured:rest-assured:5.3.0"
-    testImplementation "io.rest-assured:json-schema-validator:5.3.0"
-    testImplementation "com.googlecode.json-simple:json-simple:1.1.1"
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation "io.rest-assured:json-path:5.3.0"
+  testImplementation "io.rest-assured:rest-assured:5.3.0"
+  testImplementation "io.rest-assured:json-schema-validator:5.3.0"
+  testImplementation "com.googlecode.json-simple:json-simple:1.1.1"
+  testImplementation "org.springframework:spring-context:5.3.24"
 }
 
 task runKoopServers(type: com.github.psxpaul.task.ExecFork) {
