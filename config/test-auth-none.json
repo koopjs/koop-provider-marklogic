@@ -1,13 +1,13 @@
 {
-  "logger" : {
-    "level" : "info"
+  "logger": {
+    "level": "info"
   },
-  "port" : 8090,
+  "port": 8090,
   "marklogic": {
     "connection": {
-      "host":     "localhost",
-      "port":     8096,
-      "user":     "test-geo-data-services-writer",
+      "host": "localhost",
+      "port": 8096,
+      "user": "test-geo-data-services-writer",
       "password": "test-geo-data-services-writer",
       "authType": "DIGEST"
     }
