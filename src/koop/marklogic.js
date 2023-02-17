@@ -56,6 +56,15 @@ MarkLogic.prototype.getData = function getData (req, callback) {
 	      callback(null, data);
       })
       .catch(function(error) {
+        // Per https://koopjs.github.io/docs/usage/provider, Koop wants "error.code" to have the HTTP response code,
+        // which will be "error.statusCode" if this error comes from the MarkLogic Node Client.
+        error.code = error.statusCode;
+        // The nesting of the real error message is done by the MarkLogic Node Client. We want to bump it up to
+        // "message" so that a Koop client will see it.
+        if (error.body && error.body.errorResponse && error.body.errorResponse.message) {
+          error.message = error.body.errorResponse.message;
+        }
+        console.error(error);
         callback(error)
       });
 }
