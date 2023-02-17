@@ -1,19 +1,19 @@
 {
-  "logger" : {
-    "level" : "debug"
+  "logger": {
+    "level": "info"
   },
-  "port" : 80,
+  "port": 80,
   "ssl": {
-    "enabled" : false,
-    "port" : 443,
-    "cert" : "/ssl/cert.pem",
-    "key" : "/ssl/key.pem"
+    "enabled": false,
+    "port": 443,
+    "cert": "/ssl/cert.pem",
+    "key": "/ssl/key.pem"
   },
   "marklogic": {
     "connection": {
-      "host":     "localhost",
-      "port":     8095,
-      "user":     "sample-writer",
+      "host": "localhost",
+      "port": 8095,
+      "user": "sample-writer",
       "password": "sample-writer",
       "authType": "DIGEST"
     }

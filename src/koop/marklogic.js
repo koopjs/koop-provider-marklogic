@@ -15,7 +15,7 @@ const MarkLogicQuery = require('./query');
 function MarkLogic () {}
 
 MarkLogic.prototype.getData = function getData (req, callback) {
-    log.info("req.url:", req.url);
+  log.info(`Request URL: ${req.url}`);
 
     log.debug("req.params:", req.params);
     log.debug("req.query: ", req.query);
