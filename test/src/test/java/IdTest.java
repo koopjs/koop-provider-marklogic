@@ -7,7 +7,7 @@ public class IdTest extends AbstractFeatureServiceTest {
 	@Test
     public void testGkgIdsOnly() {
         getRequest(request2path("gkgIdsOnly.json"))
-                .body("objectIdField", is("OBJECTID"))
+                .body("objectIdFieldName", is("OBJECTID"))
                 ;
     }
 

@@ -1,7 +1,5 @@
 import org.junit.Test;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import static org.hamcrest.Matchers.*;
 
 import org.hamcrest.core.IsNull;
@@ -95,8 +93,9 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
         // This doesn't seem desirable. But we haven't found an example based on the docs at
         // https://koopjs.github.io/docs/development/provider/model for how to return an error that doesn't result
         // in a 500 - i.e. the "callback(error)" call in marklogic.js always results in a 500.
+        // After the upgrade, this call results in even less (and misleading) information.
         getRequest(request2path("layerNotFound.json"), 500)
-            .body("error", is("Error: geoQueryService: response with invalid 404 status"));
+            .body("error", is("Internal Server Error"));
     }
 
     @Test

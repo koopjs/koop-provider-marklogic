@@ -4,8 +4,7 @@
 
 // See https://koopjs.github.io/docs/development/provider/model for the spec for this module.
 
-const config = require('config');
-const options = require('winnow/dist/options');
+const normalizeGeometryFilter = require('@koopjs/winnow/src/normalize-query-options/geometry-filter');
 const log = require('./logger');
 
  //Important to require dbClientManager as exactly "./dbClientManager"
@@ -32,14 +31,15 @@ MarkLogic.prototype.getData = function getData (req, callback) {
     }
 
     // convert incoming geometry into GeoJSON in WGS84
-    var geometry = options.prepare(req.query).geometry;
+    const geometry = normalizeGeometryFilter(req.query);
+
     if (req.query && req.query.geometry) {
     	req.query.extension = {
     		geometry : geometry
     	};
     }
 
-    var providerRequest = {
+    const providerRequest = {
         url : req.url,
         params : req.params,
         query : req.query
@@ -49,7 +49,7 @@ MarkLogic.prototype.getData = function getData (req, callback) {
 
     let dbClient = dbClientManager.getDBClient(req.marklogicUsername);
 
-    var mq = new MarkLogicQuery();
+    const mq = new MarkLogicQuery();
 	  mq.providerGetData(providerRequest, dbClient)
 	    .then(data => {
 	      logResult(data);

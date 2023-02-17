@@ -2,10 +2,6 @@
  * Copyright © 2017 MarkLogic Corporation
  */
 
-const marklogic = require('marklogic');
-const config = require('config');
-const log = require('./logger');
-
 function MarkLogicQuery() {
 }
 
@@ -17,7 +13,7 @@ MarkLogicQuery.prototype.providerGetData = function providerGetData(request, dbC
 			documents : request
 		}).result((response) => {
 			resolve(response);
-		}).catch(function(error) { 
+		}).catch(function(error) {
 			console.log(error);
 			reject(new Error(error));
 		})
