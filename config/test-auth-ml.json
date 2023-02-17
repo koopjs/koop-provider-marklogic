@@ -2,7 +2,7 @@
   "logger": {
     "level": "info"
   },
-  "port": 8092,
+  "port": 8091,
   "marklogic": {
     "connection": {
       "host": "localhost",
