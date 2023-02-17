@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "config": "^3.3.9",
-    "winston": "^3.8.2",
     "@koopjs/koop-core": "^8.0.0",
     "@koopjs/featureserver": "^7.0.0",
     "marklogic": "^2.9.1",

@@ -57,4 +57,4 @@ const app = express();
 const port = config.port || 8080;
 app.use('/', koop.server);
 app.listen(port);
-console.log("Koop listening on port " + port + "; press ctrl-C to exit");
+log.info("Koop listening on port " + port + "; press ctrl-C to exit");
