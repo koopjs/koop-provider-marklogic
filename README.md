@@ -126,18 +126,3 @@ If you didn't change any of the defaults, you can use this link to test access
 
 To retrieve the first 10 features from layer 0, use the following link
 <http://localhost/marklogic/GDeltExample/FeatureServer/0/query?where=1=1&resultRecordCount=10>
-
-## Working with the ArcGIS Pro add-in
-
-The [MarkLogic ArcGIS Pro add-in](https://github.com/marklogic-community/marklogic-arcgis-pro-addin) relies on Koop and the connector to serve as its feature server and proxy for accessing [geo data services](https://github.com/marklogic-community/marklogic-geo-data-services). If you intend to use the add-in with the Koop server, you must explicitly enable the *service proxy* in your `config/<environment>.json` file by adding the following property:
-
-```js
-{
-  // ...other configuration settings
-  "enableServiceProxy": true
-}
-
-```
-
-For security purposes, the *service proxy* is **disabled** by default.
-

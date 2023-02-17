@@ -58,16 +58,3 @@ const port = config.port || 8080;
 app.use('/', koop.server);
 app.listen(port);
 console.log("Koop listening on port " + port + "; press ctrl-C to exit");
-
-// module.exports = server; // make it testable
-// Disabling for now, need to understand what it would be used for.
-// This may just need to go into documentation.
-// if (config.enableServiceProxy) {
-//   const proxy = require('./src/koop/proxy');
-//   // proxy requests for Geo Data Services REST extensions and v1/documents
-//   app.use(/\/(v1|LATEST)/,
-//     proxy.create(/\/(resources\/(modelService|geoSearchService|geoQueryService)|documents)/));
-// }
-// log.info(`Service proxy for geo data services is ${(config.enableServiceProxy ? 'enabled' : 'disabled')}`);
-// otherwise route to Koop
-// app.use('/', koop.server);

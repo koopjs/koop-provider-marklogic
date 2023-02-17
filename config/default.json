@@ -17,6 +17,5 @@
       "password": "sample-writer",
       "authType": "DIGEST"
     }
-  },
-  "enableServiceProxy": false
+  }
 }
