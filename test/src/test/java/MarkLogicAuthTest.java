@@ -8,14 +8,12 @@ import static org.hamcrest.Matchers.is;
 /**
  * Verifies that "MarkLogic auth" works - i.e. the client sends a MarkLogic username/password, and that's verified
  * against MarkLogic, and then our provider returns an access token.
- *
- * Depends on "npm run start-ml-auth" running.
  */
 public class MarkLogicAuthTest extends AbstractFeatureServiceTest{
 
     @BeforeClass
     public static void connectToMarkLogicAuthKoop() {
-        RestAssured.port = 8092;
+        RestAssured.port = 8091;
         RestAssured.baseURI = "http://localhost";
     }
 

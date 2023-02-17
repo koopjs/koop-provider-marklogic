@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "start-no-auth": "NODE_ENV=test-auth-none node server.js",
-    "start-ml-auth": "NODE_ENV=test-auth-ml node server.js"
+    "start-for-tests": "NODE_ENV=test-auth-none node server.js & NODE_ENV=test-auth-ml node server.js"
   },
   "dependencies": {
     "config": "^3.3.9",

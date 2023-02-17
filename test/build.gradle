@@ -15,24 +15,11 @@ dependencies {
     testImplementation "com.googlecode.json-simple:json-simple:1.1.1"
 }
 
-task runNoAuthKoop(type: com.github.psxpaul.task.ExecFork) {
-    description = "Run a Koop server with no authentication required"
+task runKoopServers(type: com.github.psxpaul.task.ExecFork) {
+    description = "Run the Koop servers needed by the tests"
     executable = "npm"
-    args = ["run", "start-no-auth"]
+    args = ["run", "start-for-tests"]
     workingDir = ".."
     waitForPort = 8090
 }
-
-task runMarkLogicAuthKoop(type: com.github.psxpaul.task.ExecFork) {
-    description = "Run a Koop server using MarkLogic-based authentication"
-    executable = "npm"
-    args = ["run", "start-ml-auth"]
-    workingDir = ".."
-    waitForPort = 8092
-}
-
-task runKoopServers {
-    description = "Run the Koop servers that the JUnit tests depend on"
-}
-runKoopServers.dependsOn runNoAuthKoop, runMarkLogicAuthKoop
 test.mustRunAfter runKoopServers
