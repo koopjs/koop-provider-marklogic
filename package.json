@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node server.js",
     "start-no-auth": "NODE_ENV=test-auth-none node server.js",
-    "start-file-auth": "NODE_ENV=test-auth-direct-file node server.js",
     "start-ml-auth": "NODE_ENV=test-auth-ml node server.js"
   },
   "dependencies": {

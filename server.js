@@ -23,10 +23,7 @@ const koop = new Koop({});
 // Configure the auth plugin by executing its exported function with required args
 if (config.auth && config.auth.enabled) {
   let auth = null;
-  if (config.auth.plugin === 'auth-direct-file') {
-    auth = require('@koopjs/auth-direct-file')(config.auth.options.secret, config.auth.options.identityStore, config.auth.options);
-    dbClientManager.useStaticClient(true);
-  } else if (config.auth.plugin === 'auth-marklogic-digest-basic') {
+  if (config.auth.plugin === 'auth-marklogic-digest-basic') {
     auth = require("./src/koop/authMarkLogic")(config.auth.options);
   } else if (config.auth.plugin) {
     //if it's something we don't recognize, try to require it by plugin name and pass in the options object
