@@ -1,7 +1,5 @@
 {
-  "logger": {
-    "level": "info"
-  },
+  "logLevel": "info",
   "port": 8091,
   "marklogic": {
     "connection": {

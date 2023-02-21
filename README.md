@@ -61,6 +61,16 @@ We could only get Esri Insights to work with HTTP requests on port 80 and HTTPS 
 
 The project uses the node [config](https://www.npmjs.com/package/config) package to manage configurations. Update the necessary `config/FILENAME.json` file. You can use the `config/default.json` as a starting point. To make use of your configuration execute `export NODE_ENV=<environment>` before you run `node server.js`.
 
+### Logging
+
+The MarkLogic Koop provider uses the [Koop-Logger](https://github.com/koopjs/koop/tree/master/packages/logger) 
+component for logging. The primary field to configure in a config JSON file is `logLevel`, which is a top-level 
+field. This field accepts values of `debug`, `info`, `warn`, and `error`. 
+
+For additional configuration options in Koop-Logger, please see [its source code](https://github.
+com/koopjs/koop/blob/master/packages/logger/src/index.js) as there does not yet appear to be public documentation for 
+this component yet. 
+
 ### Authentication
 
 The project supports the following authentication strategies:

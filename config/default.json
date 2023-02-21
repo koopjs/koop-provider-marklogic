@@ -1,7 +1,5 @@
 {
-  "logger": {
-    "level": "info"
-  },
+  "logLevel": "info",
   "port": 80,
   "ssl": {
     "enabled": false,
