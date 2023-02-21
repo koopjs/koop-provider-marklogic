@@ -32,9 +32,7 @@ function authenticate(req) {
 
         log.debug("username:");
         log.debug(inputUsername);
-        log.debug("password:");
-        log.debug(inputPassword);
-            
+
         // Validate user's credentials
         return _tokenMarklogicAuthentication.validateCredentials(req, inputUsername, inputPassword, resolve, reject);
     });
