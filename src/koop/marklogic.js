@@ -29,9 +29,6 @@ function MarkLogic () {}
 MarkLogic.prototype.getData = function getData (req, callback) {
   log.info(`Request URL: ${req.url}`);
 
-    log.debug("req.params:", req.params);
-    log.debug("req.query: ", req.query);
-
     // fix typing and parse JSON
     // this actually modifies the underlying request object so downstream
     // koop functions will use the modified values
@@ -51,20 +48,16 @@ MarkLogic.prototype.getData = function getData (req, callback) {
     	};
     }
 
-    const providerRequest = {
-        url : req.url,
-        params : req.params,
-        query : req.query
-    }
+  const providerRequest = {
+    url: req.url,
+    params: req.params,
+    query: req.query
+  }
 
-    log.debug("provider request: ", providerRequest);
+    const dbClient = dbClientManager.getDBClient(req.marklogicUsername);
 
-    let dbClient = dbClientManager.getDBClient(req.marklogicUsername);
-
-    const mq = new MarkLogicQuery();
-	  mq.providerGetData(providerRequest, dbClient)
+	  new MarkLogicQuery().providerGetData(providerRequest, dbClient)
 	    .then(data => {
-	      logResult(data);
 	      callback(null, data);
       })
       .catch(function(error) {
@@ -101,10 +94,6 @@ function coerceQuery (params) {
     else if (! isNaN(params[param])) { params[param] = Number(params[param]); }
   })
   return params;
-}
-
-function logResult(geojson) {
-  log.debug("result:", geojson);
 }
 
 module.exports = MarkLogic

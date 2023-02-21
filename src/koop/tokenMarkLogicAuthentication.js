@@ -76,9 +76,6 @@ function validateCredentials(req, username, password, resolve, reject) {
             expires
         };
         req.marklogicUsername = username;
-
-        log.debug("json token:");
-        log.debug(json);
         resolve(json);
     } else if (response.authenticated == false) {
         let err = new Error('Invalid credentials.');
