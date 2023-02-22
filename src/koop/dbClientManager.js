@@ -19,12 +19,11 @@ let _useStaticClient = false;
 const dbc = {
         getDBClient,
         useStaticClient,
-        connectClient,
-        ensureClientConnected
+        connectClient
     };
 
 function getDBClient(username) {
-    
+
     if (config.auth == null || _useStaticClient) {
         log.debug("getting static db client");
         if (_staticClient == null) {
@@ -37,26 +36,6 @@ function getDBClient(username) {
     }
     log.debug("getting dbClient for username " + username);
     return _dbClientCache.get(username);
-}
-
-function ensureClientConnected(username, password) {
-    if (config.auth == null || _useStaticClient) {
-        return true;
-    }
-    if (_dbClientCache.has(username)) {
-        return true;
-    }
-    else {
-        return connectClient(username, password).then(response => {
-            log.debug("ensureClientConnected connectClient() result: ");
-            log.debug(response);
-            return response.authenticated;
-        }).catch(err => {
-            log.debug("ensureClientConnected connectClient() error: ");
-            log.debug(err);
-            return false;
-        });
-    }
 }
 
 function useStaticClient(staticClientEnabled) {
