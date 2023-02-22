@@ -36,12 +36,11 @@ function authorize(req) {
                 err.code = 403;
                 reject(err);
             }
-            log.debug("setting req.marklogicUsername to " + decoded.sub);
             let username = decoded.sub;
-            req.marklogicUsername = username;
+            req.markLogicClientCacheKey = username;
 
             //now we need to make sure the client didn't get booted out of cache
-            if (dbClientManager.getDBClient(username)) {
+            if (dbClientManager.getCachedMarkLogicClient(username)) {
                 log.debug("authorize successful: dbClient previusly connected");
                 // Resolve the decoded token (an object)
                 resolve(decoded);
@@ -56,8 +55,7 @@ function authorize(req) {
 }
 
 function validateCredentials(req, username, password, resolve, reject) {
-    log.debug("calling dbClientManager.connectClient()...");
-    dbClientManager.connectClient(username, password).then(response => {
+    dbClientManager.connectAndCacheClient(username, password).then(response => {
     log.debug("response from connectClient: ");
     log.debug(response);
     if (response.authenticated) {
@@ -75,7 +73,7 @@ function validateCredentials(req, username, password, resolve, reject) {
             token: jwt.sign({exp: Math.floor(expires / 1000), sub: username}, _secret),
             expires
         };
-        req.marklogicUsername = username;
+        req.markLogicClientCacheKey = username;
         resolve(json);
     } else if (response.authenticated == false) {
         let err = new Error('Invalid credentials.');

@@ -9,7 +9,6 @@
   },
   "auth": {
     "plugin": "auth-marklogic-digest-basic",
-    "enabled": true,
     "options": {
       "secret": "7072c433-a4e7-4749-86f3-849a3ed0ee95",
       "tokenExpirationMinutes": 60
