@@ -1,0 +1,14 @@
+{
+  "logLevel": "debug",
+  "port": 8092,
+  "marklogic": {
+    "connection": {
+      "host": "localhost",
+      "port": 8096
+    }
+  },
+  "auth": {
+    "plugin": "auth-marklogic-basic-header",
+    "clientCacheTtlInSeconds": 10
+  }
+}

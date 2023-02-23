@@ -32,20 +32,20 @@ const dbClientManager = require('./src/koop/dbClientManager');
 const koop = new Koop({});
 
 // Determine the authorization strategy to use; see https://koopjs.github.io/docs/usage/authorization for more info.
-if (config.auth && config.auth.enabled) {
+if (config.auth && config.auth.plugin && config.auth.enabled !== false) {
+  log.info(`Enabling auth plugin: ${config.auth.plugin}`);
   let auth = null;
   if (config.auth.plugin === 'auth-marklogic-digest-basic') {
     auth = require("./src/koop/authMarkLogic")(config.auth.options);
+  } else if (config.auth.plugin === 'auth-marklogic-basic-header') {
+    auth = require("./src/koop/authBasicHeader")();
   } else if (config.auth.plugin) {
     auth = require(config.auth.plugin)(config.auth.options);
   }
-  if (auth) {
-    log.info(`Using auth plugin ${config.auth.plugin}`);
-    koop.register(auth);
-  }
+  koop.register(auth);
 } else {
-  dbClientManager.useStaticClient(true);
   log.info(`No auth plugin specified, relying on configured MarkLogic credentials`);
+  dbClientManager.useStaticClient(true);
 }
 
 // Install the Marklogic Provider after installing an authorization plugin.

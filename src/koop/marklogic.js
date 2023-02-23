@@ -54,7 +54,9 @@ MarkLogic.prototype.getData = function getData (req, callback) {
     query: req.query
   }
 
-    const dbClient = dbClientManager.getDBClient(req.marklogicUsername);
+  // The authentication plugin is expected to populate this parameter on the request to identify how a cached
+  // MarkLogic client object should be obtained for this particular request.
+  const dbClient = dbClientManager.getCachedMarkLogicClient(req.markLogicClientCacheKey);
 
 	  new MarkLogicQuery().providerGetData(providerRequest, dbClient)
 	    .then(data => {
