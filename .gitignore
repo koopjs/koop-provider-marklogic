@@ -182,4 +182,7 @@ test/out
 # Intellij
 .idea
 
+package
 gradle-local.properties
+*.tar
+*.tgz

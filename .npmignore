@@ -1,0 +1,14 @@
+# Defines files to ignore when running "npm pack"
+test
+docker
+build
+.idea
+.gradle
+.dockerignore
+.editorconfig
+.gitignore
+.jshintrc
+CONTRIBUTING.md
+Jenkinsfile
+*.tar
+*.tgz

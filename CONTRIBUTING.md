@@ -36,3 +36,32 @@ run this first from the root project directory so that you have a Koop server th
 port 8096 in your MarkLogic instance:
 
     npm run start-for-tests
+
+## Testing the application zip
+
+As part of each release, we publish to Github a tgz file that a user can download, extract, configure, and run, with a 
+goal of not having to touch any code. The user is always free to follow the [Koop quickstart directions]
+(https://koopjs.github.io/docs/basics/quickstart) and instead embed our Koop provider. But the benefit of this 
+application zip is that a user can quickly try out our Koop provider without having to worry about any of the mechanics
+of coding a Koop server. 
+
+To build and test our application zip, first run:
+
+    npm pack
+
+This will create a `koopjs-provider-marklogic-(version).tgz` file in the root project directory. This will include 
+all dependencies due to the presence of `"bundledDependencies":true` in the `package.json` file. And it excludes all the
+files listed in the `.npmignore` file in the root project directory.
+
+Next, unzip and extract the contents of the file (replacing the version in the filename as needed):
+
+    tar zxvf koopjs-provider-marklogic-2.0-SNAPSHOT.tgz
+
+This will create a directory named `package` that contains the source code and dependencies for our Koop provider and a
+runnable Koop server. To run that server, do the following:
+
+    cd package
+    npm run start
+
+This will connect to MarkLogic based on the contents of the `./package/config/default.json` file - feel free to adjust
+that file as needed before running `npm run start`.
