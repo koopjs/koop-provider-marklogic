@@ -58,6 +58,9 @@ MarkLogic.prototype.getData = function getData (req, callback) {
 
 	  new MarkLogicQuery().providerGetData(providerRequest, dbClient)
 	    .then(data => {
+        if (req.query.skipFiltering === true) {
+          data.filtersApplied.all = true;
+        }
 	      callback(null, data);
       })
       .catch(function(error) {
