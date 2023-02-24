@@ -24,6 +24,11 @@ public class RestAssuredHelper {
         return this;
     }
 
+    public RestAssuredHelper withRelaxedHTTPSValidation() {
+        spec.relaxedHTTPSValidation();
+        return this;
+    }
+
     private String buildBasicHeader(String username, String password) {
         String str = username + ":" + password;
         String encoded = new String(Base64.encodeBase64(str.getBytes()));

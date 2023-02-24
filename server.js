@@ -28,6 +28,7 @@ const Koop = require('@koopjs/koop-core');
 const config = require('config');
 const log = require('./src/koop/logger');
 const dbClientManager = require('./src/koop/dbClientManager');
+const fs = require('fs');
 
 const koop = new Koop({});
 
@@ -50,11 +51,23 @@ if (config.auth && config.auth.plugin && config.auth.enabled !== false) {
 
 // Install the Marklogic Provider after installing an authorization plugin.
 const provider = require('./src/koop');
+const https = require("https");
 koop.register(provider);
 
 // Create and configure the Express app server.
 const app = express();
-const port = config.port || 8080;
 app.use('/', koop.server);
-app.listen(port);
-log.info("Koop listening on port " + port + "; press ctrl-C to exit");
+
+let port = config.port || 8080;
+if (config.ssl.enabled) {
+  const https = require('https');
+  const options = {
+    key: fs.readFileSync(config.ssl.key, 'utf8'),
+    cert: fs.readFileSync(config.ssl.cert, 'utf8')
+  };
+  port = config.ssl.port || 443;
+  https.createServer(options, app).listen(port);
+} else {
+  app.listen(port);
+}
+log.info("Koop listening on " + port + "; press ctrl-C to exit");

@@ -27,6 +27,10 @@ public abstract class AbstractFeatureServiceTest {
         return new RestAssuredHelper().get(path);
     }
 
+    protected final ValidatableResponse getRelaxedHTTPSValidationRequest(String path) {
+        return new RestAssuredHelper().withRelaxedHTTPSValidation().get(path);
+    }
+
     protected final ValidatableResponse getRequest(String path, int expectedStatusCode) {
         return new RestAssuredHelper().get(path, expectedStatusCode);
     }
