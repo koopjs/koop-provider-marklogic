@@ -1,10 +1,10 @@
 {
-  "logLevel": "info",
-  "port": 8091,
+  "logLevel": "debug",
+  "port": 8093,
   "marklogic": {
     "connection": {
       "host": "localhost",
-      "port": 8096
+      "port": 8097
     }
   },
   "auth": {

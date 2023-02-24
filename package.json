@@ -5,8 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "start-for-tests": "NODE_ENV=test-auth-none node server.js & NODE_ENV=test-auth-ml node server.js & NODE_ENV=test-auth-basic-header node server.js & NODE_ENV=test-invalid-port-basic-header node server.js & NODE_ENV=test-ssl node server.js",
-    "start-test-invalid-port": "NODE_ENV=test-invalid-port-basic-header node server.js"
+    "start-for-tests": "npm run start-auth-none & npm run start-auth-digest-basic & npm run start-auth-basic-header & npm run start-invalid-port-basic-header & npm run start-invalid-port-digest-basic & npm run start-ssl",
+    "start-auth-none": "NODE_ENV=test-auth-none node server.js",
+    "start-auth-digest-basic": "NODE_ENV=test-auth-digest-basic node server.js",
+    "start-auth-basic-header": "NODE_ENV=test-auth-basic-header node server.js",
+    "start-invalid-port-digest-basic": "NODE_ENV=test-invalid-port-digest-basic node server.js",
+    "start-invalid-port-basic-header": "NODE_ENV=test-invalid-port-basic-header node server.js",
+    "start-ssl": "NODE_ENV=test-ssl node server.js",
+    "kill-serverjs-instances": "for pid in $(ps -ef | awk '/node server.js/ {print $2}'); do kill -9 $pid; done"
   },
   "dependencies": {
     "config": "^3.3.9",

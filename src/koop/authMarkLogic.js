@@ -19,21 +19,13 @@ function authenticationSpecification() {
 }
 
 function authenticate(req) {
-    log.debug("called authenticate");
-    
     return new Promise((resolve, reject) => {
         let inputUsername;
         let inputPassword;
-
         if (req && req.query) {
             inputUsername = req.query.username;
             inputPassword = req.query.password;
         }
-
-        log.debug("username:");
-        log.debug(inputUsername);
-
-        // Validate user's credentials
         return _tokenMarklogicAuthentication.validateCredentials(req, inputUsername, inputPassword, resolve, reject);
     });
 }
