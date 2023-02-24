@@ -1,0 +1,13 @@
+{
+  "logLevel": "info",
+  "port": 8080,
+  "marklogic": {
+    "connection": {
+      "host": "localhost",
+      "port": 8095,
+      "user": "sample-writer",
+      "password": "sample-writer",
+      "authType": "DIGEST"
+    }
+  }
+}
