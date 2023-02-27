@@ -4,7 +4,7 @@
   "marklogic": {
     "connection": {
       "host": "localhost",
-      "port": 8097
+      "port": 123456
     }
   },
   "auth": {
