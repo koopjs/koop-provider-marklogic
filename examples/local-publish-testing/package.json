@@ -1,0 +1,23 @@
+{
+  "name": "local-publish-testing",
+  "version": "0.1.0",
+  "description": "Example project for testing our Koop provider after it's been published to a local verdaccio registry",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@koopjs/koop-core": "^8.0.1",
+    "@koopjs/provider-marklogic": "2.0.0-alpha1",
+    "config": "^3.3.9"
+  },
+  "devDependencies": {
+    "@koopjs/cli": "^1.1.4"
+  },
+  "repository": "",
+  "private": true,
+  "keywords": [
+    "koop",
+    "app"
+  ]
+}
