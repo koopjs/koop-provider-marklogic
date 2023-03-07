@@ -43,6 +43,8 @@ MarkLogic.prototype.getData = function getData (req, callback) {
     const geometry = normalizeGeometryFilter(req.query);
 
     if (req.query && req.query.geometry) {
+      // The extension/geometry path is what GDS primarily looks at. But it also cares about geometryType so that it
+      // can perform some adjustments on the shape.
     	req.query.extension = {
     		geometry : geometry
     	};

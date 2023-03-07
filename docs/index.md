@@ -1,4 +1,8 @@
-# MarkLogic Koop Provider
+---
+layout: default
+title: Introduction
+nav_order: 1
+---
 
 The MarkLogic Koop Provider is an instance of an
 [Esri Koop provider](https://koopjs.github.io/docs/basics/what-is-koop) that allows for geospatial data in
@@ -8,5 +12,3 @@ the standard [GeoServices Query API](https://geoservices.github.io/query.html) .
 enterprise applications like [ArcGIS Pro](https://www.esri.com/en-us/arcgis/products/arcgis-pro/resources) or open
 source tools like [QGIS](https://www.qgis.org/en/site/) - can then access geospatial data in MarkLogic via these
 standard APIs.
-
-For more information, [please consult the user guide](https://koopjs.github.io/koop-provider-marklogic/).
