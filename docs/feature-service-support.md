@@ -43,4 +43,28 @@ type:
 
 ## Generate Renderer Operation
 
-TODO Coming soon via DEVEXP-250. 
+The following parameters in the 
+[Generate Renderer operation](https://developers.arcgis.com/rest/services-reference/enterprise/generate-renderer.htm)
+are supported:
+
+- `classificationDef`
+- `where`
+
+The `classificationDef` parameter is defined by the 
+[ArcGIS docs](https://developers.arcgis.com/documentation/common-data-types/classification-objects.htm); the following
+fields are supported in it:
+
+- `type`
+- `classificationField`
+- `classificationMethod`
+- `standardDeviationInternal`
+- `breakCount`
+- `uniqueValueFields`
+- `fieldDelimiter`
+
+The following optional parameters in `classificationDef` are not supported and will be ignored if included:
+
+- `normalizationType`
+- `normalizationField`
+- `baseSymbol`
+- `colorRamp`
