@@ -16,9 +16,9 @@
   },
   "dependencies": {
     "config": "^3.3.9",
-    "@koopjs/koop-core": "^8.0.0",
-    "@koopjs/featureserver": "^7.0.0",
-    "marklogic": "^2.9.1",
+    "@koopjs/koop-core": "^8.0.2",
+    "@koopjs/featureserver": "^7.1.1",
+    "marklogic": "^3.0.0",
     "jsonwebtoken": "^9.0.0",
     "node-cache": "^5.1.2",
     "yakaa": "^1.0.1",

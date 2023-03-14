@@ -27,9 +27,13 @@ function getCachedMarkLogicClient(clientCacheKey) {
   if (config.auth == null || _useStaticClient) {
     if (_staticClient == null) {
       log.info("Creating single MarkLogic client for all users to use");
-      let connectionParams = JSON.parse(JSON.stringify(config.marklogic.connection));
-      connectionParams.agent = _keepAliveAgent;
-      _staticClient = marklogic.createDatabaseClient(connectionParams);
+      if (config.marklogic && config.marklogic.connection) {
+        let connectionParams = JSON.parse(JSON.stringify(config.marklogic.connection));
+        connectionParams.agent = _keepAliveAgent;
+        _staticClient = marklogic.createDatabaseClient(connectionParams);
+      } else {
+        throw Error("Must define marklogic.connection block in JSON configuration file");
+      }
     }
     return _staticClient;
   }
