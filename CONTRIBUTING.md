@@ -54,7 +54,7 @@ Then run it:
 You can go to http://localhost:4873 to verify that it's running correctly. And you'll need to follow the first
 instruction there, which is to add a user:
 
-   npm adduser --registry http://localhost:4873
+    npm adduser --registry http://localhost:4873
 
 You can add any username/password you want, and the email does not need to be a real address.
 
