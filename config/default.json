@@ -4,8 +4,8 @@
   "ssl": {
     "enabled": false,
     "port": 443,
-    "key": "./config/key.pem",
-    "cert": "./config/server.crt"
+    "key": "./path/to/key.pem",
+    "cert": "./path/to/server.crt"
   },
   "marklogic": {
     "connection": {

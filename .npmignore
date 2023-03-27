@@ -12,4 +12,6 @@ CONTRIBUTING.md
 Jenkinsfile
 *.tar
 *.tgz
-
+docs
+examples
+config/test*

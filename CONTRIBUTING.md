@@ -11,7 +11,7 @@ the CONTRIBUTING guide there for instructions on deploying the examples/sample-p
 installs an app server in your MarkLogic instance on port 8095. You can then run the default Koop server (which does not 
 require any authentication):
 
-    npm run start
+    npm start
 
 This will expose a Koop server at http://localhost:80 . 
 
@@ -37,7 +37,7 @@ port 8096 in your MarkLogic instance:
 
     npm run start-for-tests
 
-## Testing this locally
+## Testing the provider locally
 
 The ./examples/local-publish-testing project can be used to test publishing this project's npm package to a local 
 registry and then using it in an example project built with [the Koop CLI](https://koopjs.github.
@@ -82,6 +82,17 @@ This should launch a Koop server on port 8080. You can verify this via the follo
 - http://localhost:8080/ = should display "Welcome to Koop!"
 - http://localhost:8080/marklogic/rest/services/GDeltExample/FeatureServer/0 = should return a JSON feature service 
   descriptor
+
+## Testing the application zip
+
+The "Installation Guide" in this project's docs directory describes how a user can download a versioned application 
+zip to use as a starting point for running a Koop server with the MarkLogic Koop provider in it. You can build and 
+test this zip locally via the following steps:
+
+1. Run `npm pack` . This will produce a `koopjs-provider-marklogic-(version).tgz` file in the root of this project.
+2. Extract the file, which will create a `package` directory (which is gitignore'd). 
+
+Then, follow the rest of the steps in the Installation Guide to configure and run the application.
 
 ## Testing the documentation locally
 

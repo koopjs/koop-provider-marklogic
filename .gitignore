@@ -183,3 +183,6 @@ test/out
 .idea
 
 gradle-local.properties
+
+# Directory created after running `npm pack` and extracting the contents of that file
+package
