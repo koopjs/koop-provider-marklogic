@@ -15,7 +15,7 @@ pipeline{
   stages{
     stage('tests'){
       steps{
-        copyRPM 'Latest','11.0'
+        copyRPM 'Latest','11'
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
         gitCheckout 'marklogic-geo-data-services','https://github.com/marklogic-community/marklogic-geo-data-services.git','develop';
         sh label:'test', script: '''#!/bin/bash
