@@ -1,7 +1,5 @@
 import org.junit.Test;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import static org.hamcrest.Matchers.*;
 
 import org.hamcrest.core.IsNull;
@@ -11,19 +9,8 @@ import org.hamcrest.core.IsNull;
 public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
 
     @Test
-    public void testServiceDescriptor() {
-        String path = request2path("featureService.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+    public void getServiceDescriptor() {
+        getRequest(request2path("featureService.json"))
                 .body("currentVersion", is(10.51f))
                 .body("serviceDescription", notNullValue())
                 .body("hasVersionedData", is(false))
@@ -55,28 +42,17 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .body("units", is("esriDecimalDegrees"))
                 .body("syncEnabled", is(false))
 
-                .body("layers.size()", is(7))
-                .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3"))
-            ;
+                .body("layers.size()", is(8))
+                .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3", "GKG level 4"))
 
-        // we should probably add more validation here or just add new tests if there are
-        // other specific fields we want to inspect
+                // Koop only defines useStandardizedQueries when returning a layer descriptor
+                .body("layers[0]", not(hasKey("useStandardizedQueries")))
+            ;
     }
 
     @Test
-    public void testLayerDescriptor() {
-        String path = request2path("layer.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+    public void getLayerDescriptor() {
+        getRequest(request2path("layer.json"))
                 .body("id", is(0))
                 .body("name", is("GKG level 1"))
                 .body("type", is("Feature Layer"))
@@ -98,32 +74,40 @@ public class ServiceDescriptorTest extends AbstractFeatureServiceTest {
                 .body("fields.size()", is(9))
                 .body("fields.name", hasItems("OBJECTID", "urlpubtimedate", "urlpubdate", "url", "name", "urltone", "domain", "urllangcode", "geores"))
                 .body("hasStaticData", is(false))
-            ;
 
-      // we should probably add more validation here or just add new tests if there are
-      // other specific fields we want to inspect
+                // Koop appears to add this automatically, and we haven't found a way for GDS to override it - which is fine,
+                // as we want this to be true since MarkLogic doesn't have a custom SQL dialect to support.
+                // Per https://enterprise.arcgis.com/en/server/latest/administer/windows/about-standardized-queries.htm,
+                // it seems expected that this defaults to "true" - i.e. if it's not set, then standardized queries are
+                // required.
+                .body("useStandardizedQueries", is(true))
+
+                // useStandardizedQueries also appears under advancedQueryCapabilities, which is shown in some of the
+                // examples at https://developers.arcgis.com/rest/services-reference/enterprise/layer-feature-service-.htm .
+                .body("advancedQueryCapabilities.useStandardizedQueries", is(true))
+            ;
     }
 
     @Test
-    public void testLayers() {
-        String path = request2path("featureService.json") + "/layers";
+    public void layerNotFound() {
+        // This doesn't seem desirable. But we haven't found an example based on the docs at
+        // https://koopjs.github.io/docs/development/provider/model for how to return an error that doesn't result
+        // in a 500 - i.e. the "callback(error)" call in marklogic.js always results in a 500.
+        // After the upgrade, this call results in even less (and misleading) information.
+        getRequest(request2path("layerNotFound.json"), 404)
+            .body("error", is("Layer 12345 not found"));
+    }
 
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
+    @Test
+    public void getAllLayerDescriptorsInFeatureService() {
+        getRequest(request2path("featureService.json") + "/layers")
+            .body("layers.size()", is(8))
+            .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3", "GKG level 4"))
 
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
-                .body("layers.size()", is(7))
-                .body("layers.name", hasItems("GKG level 1", "GKG level 2", "GKG level 3","GKG level 4"))
-            ;
-
-      // we should probably add more validation here or just add new tests if there are
-      // other specific fields we want to inspect
+            // Just like when requesting a single layer descriptor, useStandardizedQueries is expected to be present
+            // and to be true for each layer.
+            .body("layers[0].useStandardizedQueries", is(true))
+            .body("layers[0].advancedQueryCapabilities.useStandardizedQueries", is(true));
     }
 }
 

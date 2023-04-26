@@ -1,56 +1,58 @@
-import java.util.Map;
-import org.junit.*;
-
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
-
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
+import io.restassured.response.ValidatableResponse;
+import org.junit.BeforeClass;
+import org.springframework.core.io.ClassPathResource;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
 
+import static org.junit.Assert.fail;
 
+/**
+ * Base class for all tests that exercise Koop endpoints.
+ */
 public abstract class AbstractFeatureServiceTest {
 
-    static String port = System.getProperty("featureServer.port");
-
-    @Before
-    public void setupRestAssured() {
-        if (port == null) {
-            port = "9080";
-        }
-        RestAssured.port = Integer.valueOf(port);
-
-        String host = System.getProperty("featureServer.host");
-        if(host == null){
-            host = "localhost";
-        }
-        RestAssured.baseURI = "http://" + host;
-
-        String user = System.getProperty("featureServer.user");
-        if (user == null) {
-            user = "admin";
-        }
-        String password = System.getProperty("featureServer.password");
-        if (password == null) {
-            password = "admin";
-        }
-
-        RestAssured.authentication = basic(user, password);
+    @BeforeClass
+    public static void connectToNoAuthKoop() {
+        RestAssured.port = 8090;
+        RestAssured.baseURI = "http://localhost";
         RestAssured.urlEncodingEnabled = false; // we encode the URL parameters manually
     }
 
-    public static String request2path(String requestFile) {
-        return request2path(requestFile, true);
+    protected final ValidatableResponse getRequest(String path) {
+        return new RestAssuredHelper().get(path);
     }
 
-    public static String request2path(String requestFile, boolean urlEncode) {
-        JsonPath jsonPath = new JsonPath(AbstractFeatureServiceTest.class.getResource("/" + requestFile));
+    protected final ValidatableResponse getRelaxedHTTPSValidationRequest(String path) {
+        return new RestAssuredHelper().withRelaxedHTTPSValidation().get(path);
+    }
 
-        String service = jsonPath.getString("params.id");
-        String url = "/marklogic/" + service + "/FeatureServer";
+    protected final ValidatableResponse getRequest(String path, int expectedStatusCode) {
+        return new RestAssuredHelper().get(path, expectedStatusCode);
+    }
+
+    /**
+     * @param serviceName
+     * @return the start of a path for a request to a Koop server; one intent of this is to make it easier to change
+     * all of our tests when the base path changes between Koop versions
+     */
+    protected final String basePath(String serviceName) {
+        return String.format("/marklogic/rest/services/%s", serviceName);
+    }
+
+    protected final String request2path(String requestFile) {
+        JsonPath jsonPath = null;
+        try {
+            jsonPath = new JsonPath(new ClassPathResource(requestFile).getInputStream());
+        } catch (IOException e) {
+            fail("Unable to read JSON from file: " + requestFile + "; cause: " + e.getMessage());
+        }
+
+        String url = basePath(jsonPath.getString("params.id")) + "/FeatureServer";
 
         String layer = jsonPath.getString("params.layer");
         if (layer != null) {
@@ -69,14 +71,11 @@ public abstract class AbstractFeatureServiceTest {
 
                 Object value = query.get(param);
                 if (value != null) {
-                    if (urlEncode) {
-                        try {
-                            value = URLEncoder.encode(value.toString(), "UTF-8");
-                        } catch(UnsupportedEncodingException e) {
-                            throw new RuntimeException(e);
-                        }
+                    try {
+                        value = URLEncoder.encode(value.toString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
                     }
-
                     url += param + "=" + value.toString() + "&";
                 }
             }

@@ -1,0 +1,18 @@
+{
+  "logLevel": "info",
+  "ssl": {
+    "enabled": true,
+    "port": 443,
+    "key": "./config/test-key.pem",
+    "cert": "./config/test-server.crt"
+  },
+  "marklogic": {
+    "connection": {
+      "host": "localhost",
+      "port": 8096,
+      "user": "test-geo-data-services-writer",
+      "password": "test-geo-data-services-writer",
+      "authType": "DIGEST"
+    }
+  }
+}

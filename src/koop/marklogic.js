@@ -1,11 +1,22 @@
 /*
- * Copyright © 2017 MarkLogic Corporation
+ * Copyright (c) 2023 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
- // use this to convert incoming Esri geometry objects to GeoJSON in WGS84
+// See https://koopjs.github.io/docs/development/provider/model for the spec for this module.
 
-const config = require('config');
-const options = require('winnow/dist/options');
+const normalizeGeometryFilter = require('@koopjs/winnow/src/normalize-query-options/geometry-filter');
 const log = require('./logger');
 
  //Important to require dbClientManager as exactly "./dbClientManager"
@@ -16,10 +27,7 @@ const MarkLogicQuery = require('./query');
 function MarkLogic () {}
 
 MarkLogic.prototype.getData = function getData (req, callback) {
-    log.info("req.url:", req.url);
-
-    log.debug("req.params:", req.params);
-    log.debug("req.query: ", req.query);
+  log.info(`Request URL: ${req.url}`);
 
     // fix typing and parse JSON
     // this actually modifies the underlying request object so downstream
@@ -32,30 +40,41 @@ MarkLogic.prototype.getData = function getData (req, callback) {
     }
 
     // convert incoming geometry into GeoJSON in WGS84
-    var geometry = options.prepare(req.query).geometry;
+    const geometry = normalizeGeometryFilter(req.query);
+
     if (req.query && req.query.geometry) {
+      // The extension/geometry path is what GDS primarily looks at. But it also cares about geometryType so that it
+      // can perform some adjustments on the shape.
     	req.query.extension = {
     		geometry : geometry
     	};
     }
 
-    var providerRequest = {
-        url : req.url,
-        params : req.params,
-        query : req.query
-    }
+  const providerRequest = {
+    url: req.url,
+    params: req.params,
+    query: req.query
+  }
 
-    log.debug("provider request: ", providerRequest);
+  // The authentication plugin is expected to populate this parameter on the request to identify how a cached
+  // MarkLogic client object should be obtained for this particular request.
+  const dbClient = dbClientManager.getCachedMarkLogicClient(req.markLogicClientCacheKey);
 
-    let dbClient = dbClientManager.getDBClient(req.marklogicUsername);
-
-    var mq = new MarkLogicQuery();
-	  mq.providerGetData(providerRequest, dbClient)
+	  new MarkLogicQuery().providerGetData(providerRequest, dbClient)
 	    .then(data => {
-	      logResult(data);
 	      callback(null, data);
       })
       .catch(function(error) {
+        // Not certain that the error will always be a JSON object, but that is the case so far.
+        log.error(JSON.stringify(error));
+        // Per https://koopjs.github.io/docs/usage/provider, Koop wants "error.code" to have the HTTP response code,
+        // which will be "error.statusCode" if this error comes from the MarkLogic Node Client.
+        error.code = error.statusCode;
+        // The nesting of the real error message is done by the MarkLogic Node Client. We want to bump it up to
+        // "message" so that a Koop client will see it.
+        if (error.body && error.body.errorResponse && error.body.errorResponse.message) {
+          error.message = error.body.errorResponse.message;
+        }
         callback(error)
       });
 }
@@ -79,10 +98,6 @@ function coerceQuery (params) {
     else if (! isNaN(params[param])) { params[param] = Number(params[param]); }
   })
   return params;
-}
-
-function logResult(geojson) {
-  log.debug("result:", geojson);
 }
 
 module.exports = MarkLogic

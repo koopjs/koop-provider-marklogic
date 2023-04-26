@@ -1,22 +1,19 @@
 {
-  "logger" : {
-    "level" : "debug"
-  },
-  "port" : 80,
+  "logLevel": "info",
+  "port": 80,
   "ssl": {
-    "enabled" : false,
-    "port" : 443,
-    "cert" : "/ssl/cert.pem",
-    "key" : "/ssl/key.pem"
+    "enabled": false,
+    "port": 443,
+    "key": "./path/to/key.pem",
+    "cert": "./path/to/server.crt"
   },
   "marklogic": {
     "connection": {
-      "host":     "localhost",
-      "port":     8096,
-      "user":     "geo-data-services-reader",
-      "password": "geo-data-services-reader",
+      "host": "localhost",
+      "port": 8095,
+      "user": "sample-writer",
+      "password": "sample-writer",
       "authType": "DIGEST"
     }
-  },
-  "enableServiceProxy": false
+  }
 }

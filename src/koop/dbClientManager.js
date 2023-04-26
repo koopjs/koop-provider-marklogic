@@ -6,126 +6,92 @@
 */
 const config = require('config');
 const marklogic = require('marklogic');
-const http = require('http');
 const Agent = require('yakaa');
 const log = require('./logger');
 const NodeCache = require( "node-cache" );
 
-let _dbClientCache = new NodeCache({useClones:false});
+let _clientCache = new NodeCache({useClones:false});
+// "static" = a single client for all users to use for connecting to MarkLogic.
 let _staticClient = null;
 let _keepAliveAgent = new Agent({ keepAlive: true });
 let _useStaticClient = false;
 
-const dbc = {
-        getDBClient,
-        useStaticClient,
-        connectClient,
-        ensureClientConnected
-    };
-
-function getDBClient(username) {
-    
-    if (config.auth == null || _useStaticClient) {
-        log.debug("getting static db client");
-        if (_staticClient == null) {
-            log.debug("creating static dbClient");
-            let connectionParams = JSON.parse(JSON.stringify(config.marklogic.connection));
-            connectionParams.agent = _keepAliveAgent;
-             _staticClient = marklogic.createDatabaseClient(connectionParams);
-        }
-        return _staticClient;
+/**
+ * The marklogic.js module uses this to obtain a client instance, which is expected to have been configured via an
+ * authorization plugin. Or if no plugin was configured, then the "static" client is returned.
+ *
+ * @param clientCacheKey
+ * @returns {DatabaseClient|unknown}
+ */
+function getCachedMarkLogicClient(clientCacheKey) {
+  if (config.auth == null || _useStaticClient) {
+    if (_staticClient == null) {
+      log.info("Creating single MarkLogic client for all users to use");
+      if (config.marklogic && config.marklogic.connection) {
+        let connectionParams = JSON.parse(JSON.stringify(config.marklogic.connection));
+        connectionParams.agent = _keepAliveAgent;
+        _staticClient = marklogic.createDatabaseClient(connectionParams);
+      } else {
+        throw Error("Must define marklogic.connection block in JSON configuration file");
+      }
     }
-    log.debug("getting dbClient for username " + username);
-    return _dbClientCache.get(username);
-}
-
-function ensureClientConnected(username, password) {
-    if (config.auth == null || _useStaticClient) {
-        return true;
-    }
-    if (_dbClientCache.has(username)) {
-        return true;
-    }
-    else {
-        return connectClient(username, password).then(response => {
-            log.debug("ensureClientConnected connectClient() result: ");
-            log.debug(response);
-            return response.authenticated;
-        }).catch(err => {
-            log.debug("ensureClientConnected connectClient() error: ");
-            log.debug(err);
-            return false;
-        });
-    }
+    return _staticClient;
+  }
+  return _clientCache.get(clientCacheKey);
 }
 
 function useStaticClient(staticClientEnabled) {
-    if (staticClientEnabled == true) {
-        _useStaticClient = true;
-    } else {
-        _useStaticClient = false;
-    }
+  _useStaticClient = staticClientEnabled;
 }
 
-function checkDbClientConnection(db, username) {
-    let connectionInfo = {};
-    return new Promise((resolve, reject) => {
-        db.checkConnection().result(function(response) {
-            log.debug("db.checkConnection result:");
-            log.debug(response);
-            if (response.connected) {
-                log.debug("response is connected");
-                connectionInfo.authenticated = true;
-                log.debug("setting db client in cache...");
-                _dbClientCache.set(username, db);
-                resolve(connectionInfo);
+/**
+ * Expected to be used by authorization plugins to create a client and connect to MarkLogic, and if done successfully,
+ * cache the client as well so that marklogic.js can access it via an authorization-specific cache key.
+ *
+ * As expected from the signature, only supports basic/digest authentication today since username/password are required.
+ *
+ * @param username
+ * @param password
+ * @param ttlInSeconds
+ * @param clientCacheKey
+ * @returns {Promise<unknown>}
+ */
+function connectAndCacheClient(username, password, ttlInSeconds=0, clientCacheKey=username) {
+  const connectionParams = JSON.parse(JSON.stringify(config.marklogic.connection));
+  connectionParams.user = username;
+  connectionParams.password = password;
+  connectionParams.agent = _keepAliveAgent;
+
+  const client = marklogic.createDatabaseClient(connectionParams);
+  return new Promise((resolve, reject) => {
+    client
+      .checkConnection()
+      .result(
+        function (response) {
+          log.debug(`checkConnection response: ${JSON.stringify(response)}`);
+          if (response.connected) {
+            if (ttlInSeconds > 0) {
+              _clientCache.set(clientCacheKey, client, ttlInSeconds);
+            } else {
+              _clientCache.set(clientCacheKey, client);
             }
-            else {
-                log.debug("response is not connected");
-                connectionInfo.authenticated = false;
-                connectionInfo.httpStatusMessage = response.httpStatusMessage;
-                connectionInfo.httpStatusCode = response.httpStatusCode;
-                log.debug("clearing db client from cache...");
-                _dbClientCache.del(username);
-                log.debug("resolving connectionInfo:");
-                log.debug(connectionInfo);
-                resolve(connectionInfo);
-            }
-        },
-        function(error) {
-            log.debug("error occurred:");
-            log.error(error);
-            connectionInfo.error = true;
-            connectionInfo.errorMsg = error.message;
-            _dbClientCache.del(username);
-            log.debug("resolving connection error connectionInfo:");
-            log.debug(connectionInfo);
-            resolve(connectionInfo);
-        }).catch(error => {
-            log.error(error);
-            //throw new Error("Error connecting client");
-            log.debug("rejecting connectionInfo:");
-            log.debug(connectionInfo);
-            reject(connectionInfo);
-        })
-    });
+            resolve({"authenticated": true});
+          } else {
+            _clientCache.del(clientCacheKey);
+            resolve({"authenticated": false, "httpStatusMessage": response.httpStatusMessage});
+          }
+        }
+      )
+      .catch(error => {
+        // Add a message for context; the error already contains the message from the MarkLogic client.
+        error.message = `Received error while connecting as user ${username}`;
+        reject(error);
+      });
+  });
 }
 
-function connectClient(username, password) {
-    //we make a deep copy of the connection params so we don't leak 
-    //usernames/passwords across requests and so we can specify the
-    //agent.  Setting the agent to the global agent makes the
-    //marklogic.createDatabaseClient() call as well as the database client
-    //itself both lightweight 
-    let connectionParams = JSON.parse(JSON.stringify(config.marklogic.connection));
-    connectionParams.user = username;
-    connectionParams.password = password;
-    connectionParams.agent = _keepAliveAgent;
-
-    log.debug("creating dbClient...");
-    let db = marklogic.createDatabaseClient(connectionParams);
-    log.debug (db)
-    return checkDbClientConnection(db,username);
-}
-
-module.exports=dbc;
+module.exports={
+  connectAndCacheClient,
+  getCachedMarkLogicClient,
+  useStaticClient
+};

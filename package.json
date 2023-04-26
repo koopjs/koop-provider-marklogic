@@ -1,26 +1,31 @@
 {
   "name": "@koopjs/provider-marklogic",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "A Marklogic provider for Koop",
-  "main": "index.js",
+  "main": "src/koop/index.js",
   "scripts": {
-    "test:default": "cross-env NODE_ENV=test-default jest --silent --testTimeout=10000 --testNamePattern=test-default",
-    "test:auth-ml": "cross-env NODE_ENV=test-auth-ml jest --silent --testTimeout=10000 --testNamePattern=test-auth-ml",
-    "test:auth-direct-file": "cross-env NODE_ENV=test-auth-direct-file jest --silent --testTimeout=10000 --testNamePattern=test-auth-direct-file",
-    "start": "node server.js"
+    "start": "node server.js",
+    "start-for-tests": "npm run start-auth-none & npm run start-auth-digest-basic & npm run start-auth-basic-header & npm run start-invalid-port-basic-header & npm run start-invalid-port-digest-basic & npm run start-ssl",
+    "start-auth-none": "NODE_ENV=test-auth-none node server.js",
+    "start-auth-digest-basic": "NODE_ENV=test-auth-digest-basic node server.js",
+    "start-auth-basic-header": "NODE_ENV=test-auth-basic-header node server.js",
+    "start-invalid-port-digest-basic": "NODE_ENV=test-invalid-port-digest-basic node server.js",
+    "start-invalid-port-basic-header": "NODE_ENV=test-invalid-port-basic-header node server.js",
+    "start-ssl": "NODE_ENV=test-ssl node server.js",
+    "kill-serverjs-instances": "for pid in $(ps -ef | awk '/node server.js/ {print $2}'); do kill -9 $pid; done"
   },
   "dependencies": {
-    "config": "^3.1.0",
-    "winston": "^3.2.1",
-    "express": "^4.16.4",
-    "koop": "3.11.0",
-    "featureserver": "2.17.0",
-    "@koopjs/auth-direct-file": "^2.0.0",
-    "marklogic": "^2.2.0",
-    "jsonwebtoken": "^8.5.1",
-    "node-cache": "^5.1.0",
+    "config": "^3.3.9",
+    "@koopjs/koop-core": "^8.0.2",
+    "@koopjs/featureserver": "^7.1.1",
+    "marklogic": "^3.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "node-cache": "^5.1.2",
     "yakaa": "^1.0.1",
-    "uuid": "^8.0.0"
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "express": "^4.18.2"
   },
   "author": "MarkLogic",
   "license": "Apache-2.0",
@@ -40,20 +45,5 @@
     "data",
     "big",
     "data"
-  ],
-  "devDependencies": {
-    "cross-env": "^7.0.2",
-    "jest": "^26.1.0",
-    "supertest": "^4.0.2"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "build"
-    ]
-  }
+  ]
 }

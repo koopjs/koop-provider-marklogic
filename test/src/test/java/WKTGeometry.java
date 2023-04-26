@@ -1,13 +1,9 @@
 import static org.hamcrest.Matchers.*;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
-import org.hamcrest.core.IsNull;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
-
-import io.restassured.RestAssured;
 
 public class WKTGeometry  extends AbstractFeatureServiceTest {
 
@@ -23,19 +19,14 @@ public class WKTGeometry  extends AbstractFeatureServiceTest {
     @Test
     public void testXPathExtraction() throws UnsupportedEncodingException, ParseException  {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
 
-        RestAssured
-            .given()
-              .pathParam("layer", 6)
+        RestAssuredHelper helper = new RestAssuredHelper();
+        helper.pathParam("layer", 6)
               .pathParam("ids", 900001)
-              .pathParam("returnGeometry", true)
-            .when()
-                .log().uri()
-                .get(path)
-            .then()
-                .log().ifError()
-                .statusCode(200)
+              .pathParam("returnGeometry", true);
+
+        helper.get(path)
                 .body("features.size()", is(1))
                 .body("features.geometry.rings.size()", is(1))
                 .body("features.geometry.rings[0][0].size()", is(5))
@@ -55,19 +46,14 @@ public class WKTGeometry  extends AbstractFeatureServiceTest {
     @Test
     public void testColumnExtraction() throws UnsupportedEncodingException, ParseException  {
 
-        String path = "/marklogic/GeoLocation/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
+        String path = basePath("GeoLocation") + "/FeatureServer/{layer}/query?ids={ids}&returnGeometry={returnGeometry}";
 
-        RestAssured
-            .given()
-              .pathParam("layer", 7)
+        RestAssuredHelper helper = new RestAssuredHelper();
+        helper.pathParam("layer", 7)
               .pathParam("ids", 900001)
-              .pathParam("returnGeometry", true)
-            .when()
-                .log().uri()
-                .get(path)
-            .then()
-                .log().ifError()
-                .statusCode(200)
+              .pathParam("returnGeometry", true);
+
+        helper.get(path)
                 .body("features.size()", is(1))
                 .body("features.geometry.rings.size()", is(1))
                 .body("features.geometry.rings[0][0].size()", is(5))

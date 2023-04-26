@@ -1,27 +1,14 @@
-import org.junit.*;
+import org.junit.Test;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 
 public class FieldsTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testAllFields() {
-
-        String path = request2path("gkgAllFields.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("gkgAllFields.json"))
                 .body("features.size()", is(5))
                 .body("features[0].attributes.OBJECTID", notNullValue())
                 .body("features[0].attributes.urlpubtimedate", notNullValue())

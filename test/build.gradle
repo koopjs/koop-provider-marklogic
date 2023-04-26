@@ -1,188 +1,26 @@
-buildscript {
-  repositories {
-    maven { url "https://plugins.gradle.org/m2/" }
-    jcenter()
-  }
-
-  dependencies {
-    classpath 'org.codehaus.groovy:groovy-json:2.4.15'
-    classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
-    classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
-    classpath "net.saliman:gradle-properties-plugin:1.4.6"
-    classpath "com.marklogic:ml-gradle:3.3.0"
-  }
-}
-
-apply plugin: 'java'
-apply plugin: 'net.saliman.properties'
-apply plugin: "com.moowork.node"
-apply plugin: "com.marklogic.ml-gradle"
-
-ext {
-  mlDeployerAppName = "MarkLogic-Esri-Connector"
-  mlDeployerDir = "build/${mlDeployerAppName}"
-  mlDeployerGroup = "ML Deployer"
-  mlDeployerZipFilename = "${mlDeployerAppName}.zip"
+plugins {
+    id "java"
+    id "com.github.psxpaul.execfork" version "0.2.2"
 }
 
 repositories {
-  maven { url "https://plugins.gradle.org/m2/" }
-  maven { url "http://repository.cloudera.com/artifactory/cloudera-repos/" }
-  jcenter()
+    mavenCentral()
 }
-
 
 dependencies {
-  testImplementation 'junit:junit:4.12'
-  testImplementation 'io.rest-assured:rest-assured:3.0.6'
-  testImplementation 'io.rest-assured:json-path:3.0.6'
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation "io.rest-assured:json-path:5.3.0"
+  testImplementation "io.rest-assured:rest-assured:5.3.0"
+  testImplementation "io.rest-assured:json-schema-validator:5.3.0"
   testImplementation "com.googlecode.json-simple:json-simple:1.1.1"
-  testImplementation "org.gradle:gradle-tooling-api:2.1"
+  testImplementation "org.springframework:spring-context:5.3.24"
 }
 
-task copyProjectFiles(type: Copy, group: mlDeployerGroup) {
-
-  from "."
-  include "build.gradle", "gradle.properties"
-  include "gradle/**"
-  include "src/koop/**"
-  include "build/koop/**"
-  include "log/**"
-  into mlDeployerDir
+task runKoopServers(type: com.github.psxpaul.task.ExecFork) {
+    description = "Run the Koop servers needed by the tests"
+    executable = "npm"
+    args = ["run", "start-for-tests"]
+    workingDir = ".."
+    waitForPort = 8090
 }
-
-
-test {
-  doFirst {
-    println "Running tests using the following properties:"
-    println "host: " + mlHost
-    println "port: " + koopPort
-    println "user: " + koopMlUsername
-  }
-
-  systemProperty "featureServer.host", mlHost
-  systemProperty "featureServer.port", koopPort
-  systemProperty "featureServer.user", koopMlUsername
-  systemProperty "featureServer.password", koopMlPassword
-}
-
-node {
-  // Base URL for fetching node distributions (change if you have a mirror).
-  distBaseUrl = 'https://nodejs.org/dist'
-  version = '10.15.3'
-
-  // If true, it will download node using above parameters.
-  // If false, it will try to use globally installed node.
-  download = true
-
-  // Set the work directory for unpacking node
-  workDir = file("${project.buildDir}/koop/nodejs")
-
-  // Set the work directory for NPM
-  npmWorkDir = file("${project.buildDir}/koop/npm")
-}
-
-task configureKoop { //(dependsOn: ['copyProjectFiles']) {
-  outputs.upToDateWhen { false }
-  doLast {
-    copy {
-      from("src/koop/config") {
-        include "**"
-        filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-          KOOP_PORT : project.property("koopPort"),
-          KOOP_SSL_ENABLED : project.property("koopSSLEnabled"),
-          KOOP_SSL_PORT : project.property("koopSSLPort"),
-          KOOP_SSL_CERT : project.property("koopSSLCert"),
-          KOOP_SSL_KEY : project.property("koopSSLKey"),
-          ML_HOST : mlAppConfig.host,
-          ML_PORT : mlAppConfig.restPort.toString(),
-          ML_USER : project.property("koopMlUsername"),
-          ML_PASSWORD : project.property("koopMlPassword")
-        ])
-      }
-      into "build/koop/config"
-    }
-  }
-}
-
-task installKoop(type: NpmTask, dependsOn: ['configureKoop']) {
-    doFirst {
-        copy {
-            from "src/koop"
-            include "**"
-            exclude "config"
-            into "build/koop"
-        }
-    }
-
-    args = ['install']
-    workingDir = file('build/koop')
-}
-
-import groovy.json.JsonBuilder
-import groovy.json.JsonOutput
-import com.marklogic.client.io.DocumentMetadataHandle
-import com.marklogic.client.io.DocumentMetadataHandle.Capability
-
-/* task registerKoop(type: com.marklogic.gradle.task.MarkLogicTask) {
-  doLast {
-    def json = new JsonBuilder()
-    def config = json {
-      'host' project.findProperty('koopHost') ?: mlAppConfig.host
-      'port' project.property('koopSSLEnabled').toBoolean() ? project.property('koopSSLPort') : project.property('koopPort')
-      'ssl' project.property('koopSSLEnabled').toBoolean()
-    }
-    def docUri = '/koop/config.json'
-    def client = newClient()
-    def docManager = client.newJSONDocumentManager()
-    def metadata = new DocumentMetadataHandle()
-    metadata.getCollections().addAll('http://marklogic.com/koop-config')
-    metadata.getPermissions().add('esri-connector-reader', Capability.READ)
-    metadata.getPermissions().add('esri-connector-writer', Capability.UPDATE)
-    docManager.writeAs(docUri, metadata, json.toString())
-
-    println 'Registered the following Koop config into ML:'
-    println 'uri: ' + docUri
-    println 'doc: ' + JsonOutput.prettyPrint(json.toString())
-  }
-} */
-
-task runKoop(type: NodeTask) { //, dependsOn: ['registerKoop']
-  script = file('build/koop/server.js')
-  execOverrides {
-    it.workingDir = 'build/koop'
-
-    //it.standardOutput = new FileOutputStream('logs/my.log')
-  }
-
-  environment = [
-    'NODE_ENV': 'dev'
-  ]
-}
-
-
-// This task is used specifically for testing the roles assigned to the Service Descriptors.
-// We could do this in the test, but copying files with filtering is MUCH cleaner in Groovy.
-task configureUnauthorizedKoop {
-  outputs.upToDateWhen { false }
-  doLast {
-    copy {
-      from("src/koop/config") {
-        include "**"
-        filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-          KOOP_PORT : project.property("koopUnauthorizedPort"),
-          KOOP_SSL_ENABLED : project.property("koopSSLEnabled"),
-          KOOP_SSL_PORT : project.property("koopSSLPort"),
-          KOOP_SSL_CERT : project.property("koopSSLCert"),
-          KOOP_SSL_KEY : project.property("koopSSLKey"),
-          ML_HOST : mlAppConfig.host,
-          ML_PORT : mlAppConfig.restPort.toString(),
-          ML_USER : project.property("koopUnauthorizedMlUsername"),
-          ML_PASSWORD : project.property("koopUnauthorizedMlPassword")
-        ])
-      }
-
-      into "build/koop/config"
-    }
-  }
-}
+test.mustRunAfter runKoopServers

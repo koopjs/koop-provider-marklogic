@@ -1,0 +1,13 @@
+{
+  "version": "1",
+  "npmClient": "npm",
+  "type": "app",
+  "plugins": [
+    {
+      "type": "provider",
+      "name": "@koopjs/provider-marklogic",
+      "srcPath": "provider-marklogic",
+      "local": false
+    }
+  ]
+}

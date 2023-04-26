@@ -9,76 +9,28 @@ public class WhereTest extends AbstractFeatureServiceTest{
 
 	@Test
     public void testGkgCountWhere() {
-
-        String path = request2path("gkgCountWhere.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("gkgCountWhere.json"))
                 .body("count", is(197))
             ;
     }
 
 	@Test
     public void testGkgWhereISNOTNULL() {
-
-        String path = request2path("whereISNOTNULL.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereISNOTNULL.json"))
                 .body("count", is(38765))
             ;
     }
 
 	@Test
     public void testGkgWhereISNULL() {
-
-        String path = request2path("whereISNULL.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereISNULL.json"))
                 .body("count", is(0))
             ;
     }
 
 	@Test
     public void testGkgWhereIn() {
-
-        String path = request2path("gkgWhereIn.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("gkgWhereIn.json"))
                 .body("objectIdFieldName", is("OBJECTID"))
                 .body("globalIdFieldName", is(""))
                 .body("hasZ", is(false))
@@ -114,58 +66,21 @@ public class WhereTest extends AbstractFeatureServiceTest{
 
 	@Test
     public void testGkgWhereNotIn() {
-
-        String path = request2path("gkgWhereNotIn.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("gkgWhereNotIn.json"))
                 .body("count", is(38763))
             ;
     }
 
 	@Test
     public void testGkgtoDateWhere() {
-
-        String path = request2path("toDateWhere.json");
-
-        RestAssured
-        .given()
-
-        .when()
-            .log().uri()
-            .get(path)
-
-        .then()
-            .log().ifError()
-            .statusCode(200)
-            .log().ifValidationFails()
+        getRequest(request2path("toDateWhere.json"))
             .body("count", is(5427))
         ;
     }
 
     @Test
     public void testOneField() {
-
-        String path = request2path("whereOneField.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereOneField.json"))
                 .body("features.size()", is(29))
                 .body("features.attributes.domain", everyItem(isOneOf("nikkei.com")))
             ;
@@ -173,19 +88,7 @@ public class WhereTest extends AbstractFeatureServiceTest{
 
     @Test
     public void testOrTwoFields() {
-
-        String path = request2path("whereOr.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereOr.json"))
                 .body("features.size()", is(177))
                 .body("features.attributes.domain", everyItem(isOneOf("livetradingnews.com", "nikkei.com")))
             ;
@@ -193,36 +96,10 @@ public class WhereTest extends AbstractFeatureServiceTest{
 
     @Test
     public void testBetweenDates() {
-
-        //System.out.println("Method = " + Thread.currentThread().getStackTrace()[1].getMethodName());
-
-        String path1 = request2path("whereBetweenDates1.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path1)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereBetweenDates1.json"))
                 .body("count", is(33338))
             ;
-
-        String path2 = request2path("whereBetweenDates2.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path2)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereBetweenDates2.json"))
                 .body("count", is(5427))
             ;
 
@@ -230,75 +107,28 @@ public class WhereTest extends AbstractFeatureServiceTest{
 
     @Test
     public void testBetweenDatesNoMatch() {
-
-        String path = request2path("whereBetweenDatesNoMatch.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereBetweenDatesNoMatch.json"))
                 .body("count", is(0))
             ;
     }
 
     @Test
     public void testGreaterThanDate() {
-
-        String path = request2path("whereGreaterThanDate.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereGreaterThanDate.json"))
                 .body("count", is(5427))
             ;
     }
 
     @Test
     public void testGreaterThanTimestamp() {
-
-        String path = request2path("whereGreaterThanTimestamp.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereGreaterThanTimestamp.json"))
                 .body("count", is(33462))
             ;
     }
 
     @Test
     public void testLike() {
-        String path = request2path("whereLike.json");
-
-        RestAssured
-            .given()
-            .when()
-                .log().uri()
-                .get(path)
-
-            .then()
-                .log().ifError()
-                .statusCode(200)
-                .log().ifValidationFails()
+        getRequest(request2path("whereLike.json"))
                 .body("features.size()", is(227))
                 .body("features.attributes.domain", everyItem(containsString("journal")))
             ;

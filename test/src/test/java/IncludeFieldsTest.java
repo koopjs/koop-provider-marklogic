@@ -1,4 +1,3 @@
-import io.restassured.RestAssured;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -9,22 +8,15 @@ public class IncludeFieldsTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testIncludeFieldsInFirstDataSourcesObject() {
-        String path = "/marklogic/{service}/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
-                RestAssured
-                .given()
-                  .pathParam("service", "GDeltGKG")
+        String path = basePath("{service}") + "/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
+        RestAssuredHelper helper = new RestAssuredHelper();
+        helper.pathParam("service", "GDeltGKG")
                   .pathParam("layer", 4)
                   .pathParam("resultRecordCount", 5)
                   .pathParam("orderByFields", "name&nbspASC")
-                  .pathParam("returnGeometry", true)
+                  .pathParam("returnGeometry", true);
 
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
+        helper.get(path)
                 .log().ifValidationFails()
 
                 .body("features.size()", is(5))
@@ -44,22 +36,15 @@ public class IncludeFieldsTest extends AbstractFeatureServiceTest {
 
     @Test
     public void testIncludeFieldsInOriginalSource() {
-        String path = "/marklogic/{service}/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
-        RestAssured
-                .given()
-                .pathParam("service", "GDeltGKG")
+        String path = basePath("{service}") + "/FeatureServer/{layer}/query?resultRecordCount={resultRecordCount}&orderByFields={orderByFields}&returnGeometry={returnGeometry}";
+        RestAssuredHelper helper = new RestAssuredHelper();
+        helper.pathParam("service", "GDeltGKG")
                 .pathParam("layer", 5)
                 .pathParam("resultRecordCount", 5)
                 .pathParam("orderByFields", "name&nbspASC")
-                .pathParam("returnGeometry", true)
+                .pathParam("returnGeometry", true);
 
-                .when()
-                .log().uri()
-                .get(path)
-
-                .then()
-                .log().ifError()
-                .statusCode(200)
+        helper.get(path)
                 .log().ifValidationFails()
 
                 .body("features.size()", is(5))

@@ -1,91 +1,73 @@
 #!/usr/bin/env node
 
 /*
- * Copyright © 2017 MarkLogic Corporation
+ * Copyright (c) 2023 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 // clean shutdown on `ctrl + c`
 process.on('SIGINT', () => process.exit(0));
 process.on('SIGTERM', () => process.exit(0));
 
+// Following the example at https://koopjs.github.io/docs/usage/koop-core#koop-as-middleware of running Koop
+// in an existing Express server. A user can then further customize the Express server as desired.
+const express = require('express');
+const Koop = require('@koopjs/koop-core');
+
 const config = require('config');
 const log = require('./src/koop/logger');
-const fs = require('fs');
-const express = require('express');
-const http = require('http');
-const proxy = require('./src/koop/proxy');
-const Koop = require('koop');
-//Important to require dbClientManager case sensitively as "dbClientManager"
-//to get the node module cache to effectively make this be a singleton.
 const dbClientManager = require('./src/koop/dbClientManager');
-const koop = new Koop();
+const fs = require('fs');
 
-// Configure the auth plugin by executing its exported function with required args
-if (config.auth && config.auth.enabled) {
+const koop = new Koop({});
+
+// Determine the authorization strategy to use; see https://koopjs.github.io/docs/usage/authorization for more info.
+if (config.auth && config.auth.plugin && config.auth.enabled !== false) {
+  log.info(`Enabling auth plugin: ${config.auth.plugin}`);
   let auth = null;
-  if (config.auth.plugin === 'auth-direct-file') {
-    auth = require('@koopjs/auth-direct-file')(config.auth.options.secret, config.auth.options.identityStore, config.auth.options);
-    dbClientManager.useStaticClient(true);
-  } else if (config.auth.plugin === 'auth-marklogic-digest-basic') {
+  if (config.auth.plugin === 'auth-marklogic-digest-basic') {
     auth = require("./src/koop/authMarkLogic")(config.auth.options);
-  } else if (config.auth.plugin) { 
-    //if it's something we don't recognize, try to require it by plugin name and pass in the options object
-    //if this provider wants to use the static client, it will have to call dbClientManager.useStaticClient()
-    //itself in the exported function.
-    try {
-      auth = require(config.auth.plugin)(config.auth.options);
-    }
-    catch(err) {
-      throw new Error(`auth plugin ${config.auth.plugin} not recognized`);
-    }
+  } else if (config.auth.plugin === 'auth-marklogic-basic-header') {
+    auth = require("./src/koop/authBasicHeader")();
+  } else if (config.auth.plugin) {
+    auth = require(config.auth.plugin)(config.auth.options);
   }
-
-  if (auth) {
-    koop.register(auth);
-  }
-
-  log.info(`Using auth plugin ${config.auth.plugin}`);
-
+  koop.register(auth);
 } else {
-  //if there's no auth provider configured, we have to use a direct pre-authenticated db client
-  dbClientManager.useStaticClient(true);
-
   log.info(`No auth plugin specified, relying on configured MarkLogic credentials`);
+  dbClientManager.useStaticClient(true);
 }
-// install the Marklogic Provider
+
+// Install the Marklogic Provider after installing an authorization plugin.
 const provider = require('./src/koop');
+const https = require("https");
 koop.register(provider);
 
-// create the "global" app
+// Create and configure the Express app server.
 const app = express();
-
-if (config.enableServiceProxy) {
-  // proxy requests for Geo Data Services REST extensions and v1/documents
-  app.use(/\/(v1|LATEST)/, 
-    proxy.create(/\/(resources\/(modelService|geoSearchService|geoQueryService)|documents)/));
-}
-log.info(`Service proxy for geo data services is ${(config.enableServiceProxy ? 'enabled' : 'disabled')}`);
-
-// otherwise route to Koop
 app.use('/', koop.server);
 
-// create HTTP server
-const server = http.createServer(app)
-  .listen(config.port || 80);
-log.info(`Koop MarkLogic Provider listening for HTTP on ${config.port}`);
-
-// also create an HTTPS server if enabled
+let port = config.port || 8080;
 if (config.ssl.enabled) {
   const https = require('https');
   const options = {
-    key: fs.readFileSync(config.ssl.key),
-    cert: fs.readFileSync(config.ssl.cert)
+    key: fs.readFileSync(config.ssl.key, 'utf8'),
+    cert: fs.readFileSync(config.ssl.cert, 'utf8')
   };
-  https.createServer(options, app)
-    .listen(config.ssl.port || 443);
-  log.info(`Koop MarkLogic Provider listening for HTTPS on ${config.ssl.port}`);
+  port = config.ssl.port || 443;
+  https.createServer(options, app).listen(port);
+} else {
+  app.listen(port);
 }
-
-console.log('Press control + c to exit');
-
-module.exports = server; // make it testable
+log.info("Koop listening on " + port + "; press ctrl-C to exit");
