@@ -9,9 +9,9 @@ ready-to-run application that can be configured for your environment, or via a n
 Koop CLI.
 
 Both of these approaches require that you have a MarkLogic application with
-[MarkLogic Geo Data Services (GDS)](https://github.com/marklogic-community/marklogic-geo-data-services) installed. 
+[MarkLogic Geo Data Services (GDS)](https://github.com/marklogic/marklogic-geo-data-services) installed. 
 Please see 
-[the GDS documentation](https://marklogic-community.github.io/marklogic-geo-data-services/) for instructions on 
+[the GDS documentation](https://marklogic.github.io/marklogic-geo-data-services/) for instructions on 
 adding GDS to your MarkLogic application. 
 
 ## Using the application zip
@@ -70,7 +70,7 @@ following command:
 
 Then, before running `koop server`, you will need to configure the MarkLogic Koop provider so that it knows how to
 connect to your MarkLogic application that includes the
-[marklogic-geo-data-services modules](https://github.com/marklogic-community/marklogic-geo-data-services). To do so,
+[marklogic-geo-data-services modules](https://github.com/marklogic/marklogic-geo-data-services). To do so,
 open the `config/default.json` file that the Koop CLI created in your project directory and replace its contents
 with the following:
 

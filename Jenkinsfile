@@ -17,7 +17,7 @@ pipeline{
       steps{
         copyRPM 'Latest','11'
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-        gitCheckout 'marklogic-geo-data-services','https://github.com/marklogic-community/marklogic-geo-data-services.git','develop';
+        gitCheckout 'marklogic-geo-data-services','https://github.com/marklogic/marklogic-geo-data-services.git','develop';
         sh label:'test', script: '''#!/bin/bash
           export JAVA_HOME=$JAVA_HOME_DIR
           export GRADLE_USER_HOME=$WORKSPACE/$GRADLE_DIR
