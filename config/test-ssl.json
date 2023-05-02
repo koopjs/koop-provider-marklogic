@@ -2,7 +2,7 @@
   "logLevel": "info",
   "ssl": {
     "enabled": true,
-    "port": 443,
+    "port": 8443,
     "key": "./config/test-key.pem",
     "cert": "./config/test-server.crt"
   },

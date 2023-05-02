@@ -13,7 +13,7 @@ public class SslTest extends AbstractFeatureServiceTest {
 
     @Before
     public void connectToSslPort() {
-        RestAssured.port = 443;
+        RestAssured.port = 8443;
         RestAssured.baseURI = "https://localhost";
     }
 
